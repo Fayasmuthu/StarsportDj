@@ -1,0 +1,72 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <!-- Required meta tags -->
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta content="Codescandy" name="author">
+  <title>Starsport</title>
+  <link href="{% static 'web/assets/libs/tiny-slider/dist/tiny-slider.css' %}" rel="stylesheet">
+  <link href="{% static 'web/assets/libs/slick-carousel/slick/slick.css' %}" rel="stylesheet">
+  <link href="{% static 'web/assets/libs/slick-carousel/slick/slick-theme.css' %}" rel="stylesheet">
+  <!-- Favicon icon-->
+<link rel="shortcut icon" type="image/x-icon" href="../assets/images/favicon/favicon.ico">
+
+
+<!-- Libs CSS -->
+<link href="{% static 'web/assets/libs/bootstrap-icons/font/bootstrap-icons.min.css' %}" rel="stylesheet">
+<link href="{% static 'web/assets/libs/feather-webfont/dist/feather-icons.css' %}" rel="stylesheet">
+<link href="{% static 'web/assets/libs/simplebar/dist/simplebar.min.css' %}" rel="stylesheet">
+
+<!-- CDNjs -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+<!-- Theme CSS -->
+<link rel="stylesheet" href="{% static 'web/assets/css/theme.min.css' %}">
+  <!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-M8S4MT3EYG"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-M8S4MT3EYG');
+</script>
+
+</head>
+
+<body>
+
+   {% include "web/partials/header.html" %}
+    {% block content %}
+    {% endblock  %}
+   {% include "web/partials/footer.html" %} 
+   
+
+
+  <!-- Javascript-->
+  <!-- Libs JS -->
+  <script src="{% static 'web/assets/libs/jquery/dist/jquery.min.js' %}"></script>
+  <script src="{% static 'web/assets/libs/bootstrap/dist/js/bootstrap.bundle.min.js' %}"></script>
+  <script src="{% static 'web/assets/libs/simplebar/dist/simplebar.min.js' %}"></script>
+  
+  <!-- Theme JS -->
+    <script src="{% static 'web/assets/js/theme.min.js' %}"></script>
+    <script src="{% static 'web/assets/libs/slick-carousel/slick/slick.min.js' %}"></script>
+    <script src="{% static 'web/assets/js/vendors/slick-slider.js' %}"></script>
+    <script src="{% static 'web/assets/libs/tiny-slider/dist/min/tiny-slider.js' %}"></script>
+    <script src="{% static 'web/assets/js/vendors/tns-slider.js' %}"></script>
+    <script src="{% static 'web/assets/js/vendors/zoom.js' %}"></script>
+    <script src="{% static 'web/assets/js/vendors/increment-value.js' %}"></script>
+    <script src="{% static 'web/assets/libs/jquery-countdown/dist/jquery.countdown.min.js' %}"></script>
+    <script src="{% static 'web/assets/js/vendors/countdown.js' %}"></script>
+    <script src="{% static 'web/assets/libs/sticky-sidebar/dist/sticky-sidebar.min.js' %}"></script>
+    <script src="{% static 'web/assets/js/vendors/sticky.js' %}"></script>
+    <script src="{% static 'web/assets/js/vendors/modal.js' %}"></script>
+  
+  
+  </body>
+  
+  </html>
