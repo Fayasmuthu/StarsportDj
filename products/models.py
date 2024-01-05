@@ -68,11 +68,11 @@ class Category(models.Model):
     def get_cate_products(self):
         return Product.objects.filter(category=self)
     
-    def get_product_count(self):
-        return self.category.count()
+    def get_cate_product_count(self):
+        return self.product_set.count() 
 
     def __str__(self):
-        return f"{self.name}"
+        return f"{self.maincategory}--{self.name}" if self.maincategory else self.name
 
 class Subcategory(models.Model):
     category =models.ForeignKey("products.Category" , on_delete=models.CASCADE)
@@ -87,11 +87,12 @@ class Subcategory(models.Model):
     def get_sub_products(self):
         return Product.objects.filter(subcategory=self)
     
-    def get_product_count(self):
-        return self.subcategory.count()
+    def get_sub_product_count(self):
+        return self.Product_set.count()
 
     def __str__(self):
-        return f"{self.name}"
+        return f"{self.category.maincategory}--{self.category}--{self.name}" if self.category else self.name
+
     
 
 
@@ -135,8 +136,8 @@ class Product(models.Model):
     def get_sizes(self):
         return AvailableSize.objects.filter(product=self)
 
-    def get_sale_price(self):
-        return min([p.sale_price for p in self.get_sizes()])
+    def get_discount_price(self):
+        return min([p.discount_price for p in self.get_sizes()])
 
     def get_regular_price(self):
         sizes = self.get_sizes()
@@ -197,24 +198,24 @@ class AvailableSize(models.Model):
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
     weight = models.IntegerField()
     unit = models.CharField(max_length=10, choices=UNIT_CHOICES)
-    sale_price = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
-    discount_price = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
+    discount_price = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
+    regular_price  = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
     barcode = models.CharField(max_length=100, blank=True, null=True)
     is_stock = models.BooleanField(default=True)
  
     class Meta:
         verbose_name = _("Available Size")
         verbose_name_plural = _("Available Sizes")
-        ordering = ("sale_price",)
+        ordering = ("discount_price",)
 
     def offer_percent(self):
-        if self.regular_price and self.regular_price != self.sale_price:
-            return ((self.regular_price - self.sale_price) / self.regular_price) * 100
+        if self.regular_price and self.regular_price != self.discount_price:
+            return ((self.regular_price - self.discount_price) / self.regular_price) * 100
         return 0
 
     def save(self, *args, **kwargs):
         if self.regular_price is None:
-            self.regular_price = self.sale_price
+            self.regular_price = self.discount_price
         super().save(*args, **kwargs)
 
     def __str__(self):

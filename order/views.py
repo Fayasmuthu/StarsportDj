@@ -169,7 +169,7 @@ class OrderCreateView(LoginRequiredMixin,View):
                 "name": str(cart_item.product.product.name) + " / " + str(cart_item.product.weight) + " " + str(cart_item.product.unit),
                 "sku": str(cart_item.product.id),
                 "units": str(cart_item.quantity),
-                "selling_price": str(cart_item.product.sale_price),
+                "selling_price": str(cart_item.product.regular_price),
                 "discount": "0",  # You may adjust this based on your requirements
                 "tax": "0",  # You may adjust this based on your requirements
                 "hsn": ""  # You may adjust this based on your requirements
@@ -179,7 +179,7 @@ class OrderCreateView(LoginRequiredMixin,View):
                 order=data,
                 product=cart_item.product,
                 quantity=cart_item.quantity,
-                price=cart_item.product.sale_price
+                price=cart_item.product.regular_price
             )
             cart_item.delete()
         payment_data = Payment.objects.create(

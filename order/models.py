@@ -19,7 +19,7 @@ class CartItem(models.Model):
         return self.product.name
 
     def get_total_price(self):
-        return self.quantity * self.product.sale_price
+        return self.quantity * self.product.regular_price
     
     def cart_total(self):
         return float(sum(item.get_total_price() for item in CartItem.objects.filter(user=self.user)))

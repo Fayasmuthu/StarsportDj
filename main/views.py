@@ -439,7 +439,7 @@ def edit_product(request, pk):
         widgets = {
             "weight": forms.TextInput(attrs={'required': True,"placeholder": "Weight","class": "required form-control",'type':'number'}),
             "unit": forms.Select(attrs={"class": "required form-select",'required': True}),
-            "sale_price": forms.TextInput(attrs={"placeholder": "Sale Price ","class": "required form-control",'type':'number','required': True}),
+            "discount_price": forms.TextInput(attrs={"placeholder": "Sale Price ","class": "required form-control",'type':'number','required': True}),
             "regular_price": forms.TextInput(attrs={"placeholder": "Regular Price ","class": "required form-control",'type':'number','required': True}),
             "is_stock": forms.CheckboxInput(attrs={"class": "form-check-input required",'role':'switch','type':'checkbox'}),
         })

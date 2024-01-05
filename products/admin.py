@@ -99,18 +99,18 @@ class ProductAdmin(admin.ModelAdmin):
             )
         return None
 
-    def sale_price(self, obj):
-        return obj.get_sale_price()
+    def discount_price(self, obj):
+        return obj.get_discount_price()
 
     image_preview.short_description = "Image Preview"
-    sale_price.short_description = "Sale Price"
+    discount_price.short_description = "Sale Price"
     
 class AvailableSizeAdmin(admin.ModelAdmin):
     list_display = (
         "product",
         "weight",
         "unit",
-        "sale_price",
+        "discount_price",
         "regular_price",
         "is_stock",
     )

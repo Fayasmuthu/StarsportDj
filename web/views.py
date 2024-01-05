@@ -33,7 +33,7 @@ class ShopView(ListView):
     model = Product
     template_name = "web/shop.html"
     context_object_name = "products"
-    paginate_by = 4
+    paginate_by = 5
 
     def get_queryset(self):
         products = Product.objects.all()
@@ -56,14 +56,14 @@ class ShopView(ListView):
         if sort_by:
             if sort_by == "low_to_high":
                 annotated_queryset = products.annotate(
-                    min_sale_price=Min("availablesize__sale_price")
+                    min_discount_price=Min("availablesize__discount_price")
                 )
-                products = annotated_queryset.order_by("min_sale_price")
+                products = annotated_queryset.order_by("min_discount_price")
             elif sort_by == "high_to_low":
                 annotated_queryset = products.annotate(
-                    min_sale_price=Min("availablesize__sale_price")
+                    min_discount_price=Min("availablesize__discount_price")
                 )
-                products = annotated_queryset.order_by("-min_sale_price")
+                products = annotated_queryset.order_by("-min_discount_price")
             elif sort_by == "rating":
                 products = products.order_by("-rating")
             else:
@@ -73,8 +73,8 @@ class ShopView(ListView):
             try:
                 min_amount, max_amount = map(int, amount.split("-"))
                 products = products.filter(
-                    availablesize__sale_price__gte=min_amount,
-                    availablesize__sale_price__lte=max_amount,
+                    availablesize__discount_price__gte=min_amount,
+                    availablesize__discount_price__lte=max_amount,
                 ).distinct()
             except ValueError:
                 print("ValueError")
@@ -101,7 +101,7 @@ class ProductDetailView(DetailView):
         context = super().get_context_data(**kwargs)
         current_product = self.get_object()
         related_products = Product.objects.filter(
-            category=current_product.category
+            subcategory=current_product.subcategory
         ).exclude(pk=current_product.pk)[:12]
         context["related_products"] = related_products
         context["reviews"] = current_product.reviews.filter(approval=True)
