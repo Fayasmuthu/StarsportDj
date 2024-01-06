@@ -61,7 +61,14 @@ class CategoryAdmin(admin.ModelAdmin):
 
     image_preview.short_description = "Image Preview"
 
-admin.site.register(Subcategory)
+@admin.register(Subcategory)
+class SubcategoryAdmin(admin.ModelAdmin):
+    list_display = ('custom_str',)  # Display the custom representation in the admin panel
+
+    def custom_str(self, obj):
+        return str(obj)  # Use your __str__ method logic here
+
+    custom_str.short_description = 'Custom Display' 
 
 class ProductImageInline(admin.TabularInline):
     model = ProductImage

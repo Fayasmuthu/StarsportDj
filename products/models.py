@@ -112,6 +112,9 @@ class Product(models.Model):
         verbose_name="Product Rating(max:5)",
     )
     image = models.ImageField(
+        upload_to="products/img", help_text=" The recommended size is 120x120 pixels."
+    )
+    image_p = models.ImageField(
         upload_to="products/img", help_text=" The recommended size is 220x220 pixels."
     )
     is_popular = models.BooleanField(default=False)
@@ -119,8 +122,8 @@ class Product(models.Model):
     is_offer = models.BooleanField(default=False)
     is_active = models.BooleanField(default=False)
     # meta
-    meta_title = models.CharField(max_length=200, blank=False)
-    meta_description = models.TextField(max_length=500, blank=False)
+    meta_title = models.CharField(max_length=200, blank=True, null=True)
+    meta_description = models.TextField(max_length=500, blank=True, null=True)
 
     class Meta:
         ordering = [ "id",]
@@ -196,8 +199,8 @@ class ProductImage(models.Model):
 
 class AvailableSize(models.Model):
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
-    weight = models.IntegerField()
-    unit = models.CharField(max_length=10, choices=UNIT_CHOICES)
+    weight = models.IntegerField(blank=True, null=True)
+    unit = models.CharField(max_length=10, choices=UNIT_CHOICES,blank=True, null=True)
     discount_price = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
     regular_price  = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
     barcode = models.CharField(max_length=100, blank=True, null=True)
