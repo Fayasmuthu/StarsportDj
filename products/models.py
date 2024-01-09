@@ -90,9 +90,11 @@ class Subcategory(models.Model):
     def get_sub_product_count(self):
         return self.Product_set.count()
 
-    def __str__(self):
-        return f"{self.category.maincategory}--{self.category}--{self.name}" if self.category else self.name
+    # def __str__(self):
+    #     return f"{self.category.maincategory}--{self.category}--{self.name}" if self.category else self.name
 
+    def __str__(self):
+        return self.name
     
 
 
@@ -166,7 +168,8 @@ class Product(models.Model):
         return reverse_lazy("main:product_delete", kwargs={"pk": self.pk})
 
     def __str__(self):
-        return f" {self.name}"
+        return self.name
+    
 
 
 class ProductInformation(models.Model):

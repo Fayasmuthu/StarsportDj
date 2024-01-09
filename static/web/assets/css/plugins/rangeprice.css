@@ -1,0 +1,46 @@
+
+.widget-price {
+    margin-top: 20px;
+  }
+  .widget-price .irs .irs-min,
+  .widget-price .irs .irs-max {
+    display: none;
+  }
+  .widget-price .irs .irs-from,
+  .widget-price .irs .irs-to,
+  .widget-price .irs .irs-single {
+    color: #656565;
+    font-size: 16px;
+    font-weight: 600;
+    font-family: "Rajdhani", sans-serif;
+    padding: 0;
+    background: none;
+    border-radius: 0;
+    top: -5px;
+  }
+  .widget-price .irs .irs-from::before,
+  .widget-price .irs .irs-to::before,
+  .widget-price .irs .irs-single::before {
+    display: none;
+  }
+  .widget-price .irs .irs-line {
+    height: 4px;
+    background-color: #ebebeb;
+  }
+  .widget-price .irs .irs-bar {
+    height: 4px;
+    background-color: #ffb300;
+  }
+  .widget-price .irs .irs-handle {
+    width: 15px;
+    height: 15px;
+    background-color: #fff;
+    border: 3px solid #ffb300;
+    border-radius: 50%;
+    top: 19px;
+    cursor: pointer;
+  }
+  .widget-price .irs .irs-handle i {
+    display: none;
+  }
+  

@@ -1,4 +1,5 @@
 from django.db.models import Min, Q
+from django.shortcuts import get_object_or_404
 from django.http import JsonResponse
 from django.shortcuts import render,redirect
 from django.views import View
@@ -6,14 +7,17 @@ from django.views.generic import ListView
 from django.views.generic import TemplateView
 from django.views.generic.detail import DetailView
 # model
-from products.models import Category,Subcategory, Offer 
+from products.models import Category,Subcategory, Offer,Brand
 from products.models import Product
 from products.models import Slider
 from products.models import Tag
 # form
 from web.forms import ContactForm
 from products.forms import ReviewForm
-
+from django.template.loader import render_to_string
+from django.core.exceptions import ValidationError
+from decimal import Decimal
+from django.db.models import Count
 
 class IndexView(TemplateView):
     template_name = "web/index-5.html"
@@ -22,11 +26,19 @@ class IndexView(TemplateView):
         context = super().get_context_data(**kwargs)
         context["categories"] = Category.objects.filter(status='Published')
         context["subcategories"] = Subcategory.objects.all()
-        instances = Product.objects.filter(is_active=True)
-        context["popular_products"] = instances.filter(is_popular=True)
-        context["best_seller_products"] = instances.filter(is_best_seller=True)
+        products = Product.objects.filter(is_active=True)
+        context["popular_products"] = products.filter(is_popular=True)
+        context["best_seller_products"] = products.filter(is_best_seller=True)
         context["offers"] = Offer.objects.all()
         context["sliders"] = Slider.objects.all()
+
+         # Check for subcategory and filter products accordingly
+        subcategory = self.request.GET.get("subcategory")
+        if subcategory:
+            subcategory_title = get_object_or_404(Subcategory, slug=subcategory)
+            products = products.filter(subcategory=subcategory_title)               
+            context["products"] = products
+           
         return context
 
 
@@ -34,7 +46,7 @@ class ShopView(ListView):
     model = Product
     template_name = "web/shop.html"
     context_object_name = "products"
-    paginate_by = 12
+    paginate_by = 4
 
     def get_queryset(self):
         products = Product.objects.all()
@@ -42,18 +54,22 @@ class ShopView(ListView):
         category = self.request.GET.get("category")
         subcategory = self.request.GET.get("subcategory")
         sort_by = self.request.GET.get("sort_by")
-        price_range = self.request.GET.get("price-range")
+        # price_range = self.request.GET.get("price-range")
+        min_price = self.request.GET.get('min_price')
+        max_price = self.request.GET.get('max_price')
         category_title = None
         subcategory_title = None
 
+        if min_price and max_price:
+            products = products.filter( availablesize__discount_price__range=(min_price, max_price))
         if search_query:
             products = products.filter(Q(name__icontains=search_query))
         if category:
             category_title = Category.objects.get(slug=category)
-            products = products.filter(category__slug=category)
+            products = products.filter(category__slug=category_title)
         if subcategory:
-            subcategory_title = Subcategory.objects.get(slug=category)
-            products = products.filter(category__slug=category)
+            subcategory_title = Subcategory.objects.get(slug=subcategory)
+            products = products.filter(subcategory=subcategory_title)
         if sort_by:
             if sort_by == "low_to_high":
                 annotated_queryset = products.annotate(
@@ -69,16 +85,16 @@ class ShopView(ListView):
                 products = products.order_by("-rating")
             else:
                 products = products.order_by("-id")
-        if price_range:
-            amount = price_range.replace("₹", "")
-            try:
-                min_amount, max_amount = map(int, amount.split("-"))
-                products = products.filter(
-                    availablesize__discount_price__gte=min_amount,
-                    availablesize__discount_price__lte=max_amount,
-                ).distinct()
-            except ValueError:
-                print("ValueError")
+        # if price_range:
+        #     amount = price_range.replace("₹", "")
+        #     try:
+        #         min_amount, max_amount = map(int, amount.split("-"))
+        #         products = products.filter(
+        #             availablesize__discount_price__gte=min_amount,
+        #             availablesize__discount_price__lte=max_amount,
+        #         ).distinct()
+        #     except ValueError:
+        #         print("ValueError")
 
         self.category_title = category_title if category_title else None
         self.subcategory_title = subcategory_title if subcategory_title else None
@@ -86,13 +102,42 @@ class ShopView(ListView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context["categories"] = Category.objects.all()
+        context["categories"] = Category.objects.filter(status='Published')
         context["subcategories"] = Subcategory.objects.all()
+        context["brands"] = Brand.objects.annotate(store_count=Count('title'))
         context["tags"] = Tag.objects.all()
         context["title"] = self.category_title
         context["Sub_title"] = self.subcategory_title
         return context
 
+
+
+def filter_data(request):
+    selected_brand = request.GET.getlist('brands[]')
+    print("Selected Brands:", selected_brand)  # Add this line for debugging
+
+    if selected_brand:
+        course = Product.objects.filter(brand__id__in = selected_brand).order_by('-id')
+    else:
+        course = Product.objects.all().order_by('-id')
+
+    t = render_to_string('ajax/shop.html', {'course': course})
+    return JsonResponse({'data': t})
+
+from django.http import JsonResponse
+
+def filter_range_price(request):
+    min_price = request.GET.get('min_price')
+    max_price = request.GET.get('max_price')
+
+    # Filter products based on price range
+    products = Product.objects.filter(availablesize__discount_price__range=(min_price, max_price))
+
+    # Render the products as HTML
+    html = render_to_string('ajax/rangeprice.html', {'products': products})
+
+    # Return the HTML response
+    return JsonResponse({'html': html})
 
 class ProductDetailView(DetailView):
     model = Product

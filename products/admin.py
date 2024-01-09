@@ -35,7 +35,11 @@ class SliderAdmin(admin.ModelAdmin):
 
     image_preview.short_description = "Image Preview"
 
-admin.site.register(Brand)
+@admin.register(Brand)
+class BrandAdmin(admin.ModelAdmin):
+    list_display = ("title",)
+    prepopulated_fields = {"slug": ("title",)}    
+
 admin.site.register(Color)
 
 @admin.register(Tag)
@@ -63,12 +67,19 @@ class CategoryAdmin(admin.ModelAdmin):
 
 @admin.register(Subcategory)
 class SubcategoryAdmin(admin.ModelAdmin):
-    list_display = ('custom_str',)  # Display the custom representation in the admin panel
+    list_display = ('name', 'get_maincategory', 'get_category','get_subcategory', 'slug')
 
-    def custom_str(self, obj):
-        return str(obj)  # Use your __str__ method logic here
+    def get_maincategory(self, obj):
+        return obj.category.maincategory.title if obj.category and obj.category.maincategory else None
+    get_maincategory.short_description = 'Main Category'
 
-    custom_str.short_description = 'Custom Display' 
+    def get_category(self, obj):
+        return obj.category.name if obj.category else None
+    get_category.short_description = 'Category'
+
+    def get_subcategory(self, obj):
+        return obj.subcategory.name if obj.subcategory else None
+    get_subcategory.short_description = 'Subategory'
 
 class ProductImageInline(admin.TabularInline):
     model = ProductImage
@@ -87,16 +98,18 @@ class ProductInformationInline(admin.TabularInline):
 
 @admin.register(Product)
 class ProductAdmin(admin.ModelAdmin):
-    list_display = ("name", "image_preview", "subcategory", 'is_active')
+    list_display = ("name", "image_preview", "get_category", "get_subcategory", 'is_active')
     exclude = ("creator",)
     list_filter = (
+        "subcategory__category__maincategory",
+        "subcategory__category",
         "subcategory",
         "is_best_seller",
         "is_offer",
+        "is_active",
     )
     prepopulated_fields = {"slug": ("name",)}
-    search_fields = ("name", "subcategory__name")  # Add subcategory field for search
-    # autocomplete_fields = ("subcategory", "tag")
+    search_fields = ("name", "subcategory__name", "subcategory__category__name", "subcategory__category__maincategory__title")
     inlines = [ProductImageInline, AvailableSizeInline, ProductInformationInline]
 
     def image_preview(self, obj):
@@ -106,12 +119,16 @@ class ProductAdmin(admin.ModelAdmin):
             )
         return None
 
-    def discount_price(self, obj):
-        return obj.get_discount_price()
+    def get_category(self, obj):
+        return obj.subcategory.category.name if obj.subcategory and obj.subcategory.category else None
+    get_category.short_description = 'Category'
+
+    def get_subcategory(self, obj):
+        return obj.subcategory.name if obj.subcategory else None
+    get_subcategory.short_description = 'Subcategory'
 
     image_preview.short_description = "Image Preview"
-    discount_price.short_description = "Sale Price"
-    
+
 class AvailableSizeAdmin(admin.ModelAdmin):
     list_display = (
         "product",

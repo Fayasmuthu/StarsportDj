@@ -16,9 +16,16 @@
                   <a href="#!">Home</a>
                 </li>
                 <li class="breadcrumb-item">
-                  <a href="#!">Shop</a>
+                  <a href="{% url "web:shop" %}">Shop</a>
                 </li>
-                <li class="breadcrumb-item active" aria-current="page">Snacks & Munchies</li>
+                {% if title %}
+                <li class="breadcrumb-item">
+                  <a href="">{{ title }}</a>
+                </li>
+                {% endif %}
+                {% if Sub_title %}
+                <li class="breadcrumb-item active" aria-current="page">{{ Sub_title }}</li>
+                {% endif %}
               </ol>
             </nav>
           </div>
@@ -56,7 +63,7 @@
                             {% for subcategory in category.subcategory_set.all %}
                             <!-- nav item -->
                             <li class="nav-item">
-                              <a href="#!" class="nav-link">{{ subcategory.name }}</a>
+                              <a href="?subcategory={{subcategory.slug}}" class="nav-link">{{ subcategory.name }}</a>
                             </li>
                             {% endfor %}
                             <!-- nav item -->
@@ -83,7 +90,8 @@
                     <label class="form-check-label" for="eGrocery">E-Grocery</label>
                   </div>
                 </div>
-                <div class="mb-8">
+
+                {% comment %} <div class="mb-8">
                   <!-- price -->
                   <h5 class="mb-3">Price</h5>
                   <div>
@@ -91,7 +99,81 @@
                     <div id="priceRange" class="mb-3"></div>
                     <small class="text-muted">Price:</small> <span id="priceRange-value" class="small"></span>
                   </div>
+                </div> {% endcomment %}
+                
+                
+                            <div class="sidebar-widget">
+                                <h4 class="widget-title">Filter By Price</h4>
+                                <div class="widget-price">
+                                    <input id="price-range" type="text">
+                                </div>
+                            </div>
+                            <!-- Sidebar Widget End -->
+                           <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+                           <script src="https://cdn.jsdelivr.net/npm/ion-rangeslider@2.3.1/js/ion.rangeSlider.min.js"></script>
+                            <script>
+                                $(document).ready(function () {
+                                   // Function to get URL parameter by name
+                                   function getParameterByName(name, url) {
+                                       if (!url) url = window.location.href;
+                                       name = name.replace(/[\[\]]/g, "\\$&");
+                                       var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"),
+                                           results = regex.exec(url);
+                                       if (!results) return null;
+                                       if (!results[2]) return '';
+                                       return decodeURIComponent(results[2].replace(/\+/g, " "));
+                                   }
+                           
+                                   // Get min_price and max_price from URL parameters
+                                   var initialMinPrice = parseInt(getParameterByName('min_price')) || 0;
+                                   var initialMaxPrice = parseInt(getParameterByName('max_price')) || 50000;
+                           
+                                   // Initialize ionRangeSlider with initial values
+                                   $("#price-range").ionRangeSlider({
+                                       type: "double",
+                                       grid: false,
+                                       min: 0,
+                                       max: 50000,
+                                       from: initialMinPrice,
+                                       to: initialMaxPrice,
+                                       prefix: "$",
+                                       onFinish: function (data) {
+                                           // Extract the selected price range and update the URL
+                                           var queryParams = 'min_price=' + data.from + '&max_price=' + data.to;
+                                           window.location.href = '/shop/?' + queryParams;
+                                           $.ajax({
+                                            url: '{% url "web:filter-range-price" %}',
+                                            type: 'GET',
+                                            data: queryParams,
+                                            success: function (response) {
+                                                // Update the product list with filtered data
+                                                $('.product-list').html(response);
+                                            },
+                                            error: function (error) {
+                                                console.log(error);
+                                            }
+                                        });
+                                       }
+                                   });
+                               });
+                           </script> 
+                           
+                            
+                <div class="mb-10">
+                  <!-- price -->
+                  <h5 class="mb-3">Brand</h5>
+                  {% for b in brands %}
+                  <div class="form-check mb-2">
+                  <div>
+                    <input class="form-check-input filter-checkbox" type="checkbox" id="adidas-{{b.id}}" data-filter="brands" value="{{b.id}}">
+                    <label class="form-check-label widget-filter-item-text" for="adidas-{{b.id}}">{{ b.title }}</label>
+                    <span class="fs-xs text-muted">({{b.store_count}})</span>
+                  </div>
                 </div>
+                {% endfor %} 
+              </div> 
+
+
                 <!-- rating -->
                 <div class="mb-8">
                   <h5 class="mb-3">Rating</h5>
@@ -176,17 +258,19 @@
           </aside>
           <section class="col-lg-9 col-md-12">
             <!-- card -->
+            {% if Sub_title  %}
             <div class="card mb-4 bg-light border-0">
               <!-- card body -->
               <div class="card-body p-9">
-                <h2 class="mb-0 fs-1">Snacks & Munchies</h2>
+                <h2 class="mb-0 fs-1">{{ Sub_title }}</h2>
               </div>
             </div>
+            {% endif %}
             <!-- list icon -->
             <div class="d-lg-flex justify-content-between align-items-center">
               <div class="mb-3 mb-lg-0">
                 <p class="mb-0">
-                  <span class="text-dark">24</span> Products found
+                  <span class="text-dark">{{products.count}}</span> Products found
                 </p>
               </div>
 
@@ -219,53 +303,56 @@
                   </div>
                   <div>
                     <!-- select option -->
-                    <select class="form-select">
-                      <option selected>Sort by: Featured</option>
-                      <option value="Low to High">Price: Low to High</option>
-                      <option value="High to Low">Price: High to Low</option>
-                      <option value="Release Date">Release Date</option>
-                      <option value="Avg. Rating">Avg. Rating</option>
-                    </select>
-                  </div>
+                    <form method="get" action="">
+                        <select name="sort_by" class="form-select" onchange="this.form.submit()">
+                            <option value="all_products" {% if request.GET.sort_by == 'all_products' %}selected{% endif %}>Sort by: All Products</option>
+                            <option value="low_to_high" {% if request.GET.sort_by == 'low_to_high' %}selected{% endif %}>Price: Low to High</option>
+                            <option value="high_to_low" {% if request.GET.sort_by == 'high_to_low' %}selected{% endif %}>Price: High to Low</option>
+                            <option value="rating" {% if request.GET.sort_by == 'rating' %}selected{% endif %}>Rate: High to Low</option>
+                            <!-- Add other options for sorting if needed -->
+                        </select>
+                    </form>
+                </div>
                 </div>
               </div>
             </div>
             <!-- row -->
-            <div class="row g-4 row-cols-xl-4 row-cols-lg-3 row-cols-2 row-cols-md-2 mt-2">
+            <div class="row g-4 row-cols-xl-4 row-cols-lg-3 row-cols-2 row-cols-md-2 mt-2 " id="filteredStore">
               <!-- col -->
               {% for product in products %}
               {% include "web/include/product.html" %}
               {% endfor %}
               <!-- col -->
             </div>
+            {% if is_paginated %}
+
             <div class="row mt-8">
               <div class="col">
                 <!-- nav -->
                 <nav>
-                  <ul class="pagination">
-                    <li class="page-item disabled">
-                      <a class="page-link mx-1" href="#" aria-label="Previous"><i class="feather-icon icon-chevron-left"></i></a>
-                    </li>
-                    <li class="page-item">
-                      <a class="page-link mx-1 active" href="#">1</a>
-                    </li>
-                    <li class="page-item">
-                      <a class="page-link mx-1 text-body" href="#">2</a>
+                  <ul class="pagination justify-content-center ">
+
+                    <li class="page-item {% if not page_obj.has_previous %}action{% endif %}">
+                      <a class="page-link mx-1" href="{% if page_obj.has_previous %}?page={{ page_obj.previous_page_number }}&subcategory={{ request.GET.subcategory }}{% else %}#{% endif %}" aria-label="Previous">
+                        <i class="feather-icon icon-chevron-left"></i></a>
                     </li>
 
-                    <li class="page-item">
-                      <a class="page-link mx-1 text-body" href="#">...</a>
+                    {% for num in page_obj.paginator.page_range %}
+                    <li class="page-item {% if page_obj.number == num %}active{% endif %} ">
+                      <a class="page-link mx-1 active" href="?page={{ num }}&subcategory={{ request.GET.subcategory }}">{{ num }}</a>
                     </li>
-                    <li class="page-item">
-                      <a class="page-link mx-1 text-body" href="#">12</a>
-                    </li>
-                    <li class="page-item">
-                      <a class="page-link mx-1 text-body" href="#" aria-label="Next"><i class="feather-icon icon-chevron-right"></i></a>
+                    {% endfor %}
+
+                    <li class="page-item {% if not page_obj.has_next %}action{% endif %}">
+                      <a class="page-link mx-1 text-body" href="{% if page_obj.has_next %}?page={{ page_obj.next_page_number }}&subcategory={{ request.GET.subcategory }}{% else %}#{% endif %}" aria-label="Next">
+                        <i class="feather-icon icon-chevron-right"></i></a>
                     </li>
                   </ul>
                 </nav>
               </div>
             </div>
+            {% endif %}
+
           </section>
         </div>
       </div>
