@@ -4645,7 +4645,7 @@ fieldset:disabled .btn {
     --fc-btn-border-color: #044504;
     --fc-btn-hover-color: #fff;
     --fc-btn-hover-bg: #033b03;
-    --fc-btn-hover-border-color: #033703;
+    --fc-btn-hover-border-color: hsl(120, 90%, 11%);
     --fc-btn-focus-shadow-rgb: 42, 97, 42;
     --fc-btn-active-color: #fff;
     --fc-btn-active-bg: #033703;
@@ -9622,7 +9622,7 @@ fieldset:disabled .btn {
 
 .offcanvas-body {
     flex-grow: 1;
-    overflow-y: auto;
+    /* overflow-y: auto; */
     padding: var(--fc-offcanvas-padding-y) var(--fc-offcanvas-padding-x)
 }
 

@@ -247,11 +247,35 @@
                         </div>
                       </div>
                       <div>
-                        <span class="badge bg-danger rounded-pill">{{product.get_offer_percent_first|floatformat:2}}%</span>
+                        <span class="badge bg-danger rounded-pill">
+                          {% if product.get_offer_percent_first %}
+                          {{product.get_offer_percent_first|floatformat:2}}%
+                          {% endif %}
+
+                          {% if product.get_offer_percent_first_t %}
+                          {{product.get_offer_percent_first_t|floatformat:2}}%
+                          {% endif %}
+                        </span>
                         <h2 class="mt-3 fs-6"><a href="#" class="text-inherit">Salted Instant Popcorn</a></h2>
                         <div>
-                          <span class="text-dark fs-5 fw-bold">₹{{ product.get_discount_price|floatformat:0  }}</span> 
-                          <span class="text-decoration-line-through text-muted">₹{{ product.get_regular_price|floatformat:0 }}</span>
+                          <span class="text-dark fs-5 fw-bold">₹
+                            {% if product.get_sale_price %}
+                            ₹{{ product.get_sale_price|floatformat:0  }}
+                            {% endif %}
+              
+                            {% if product.get_sale_price_t %}
+                            ₹{{ product.get_sale_price_t|floatformat:0 }}
+                            {% endif %}
+                          </span> 
+                          <span class="text-decoration-line-through text-muted">
+                            {% if product.get_regular_price %}
+                            ₹{{ product.get_regular_price|floatformat:0 }}
+                            {% endif %}
+              
+                            {% if product.get_regular_price_t %}
+                            ₹{{ product.get_regular_price_t|floatformat:0 }}
+                            {% endif %}
+                          </span>
                         </div>
                         <div class="text-warning">
                           <!-- rating -->
@@ -279,7 +303,8 @@
   </main>
 
   <!-- Modal -->
-  <div class="modal fade" id="quickViewModal" tabindex="-1" aria-hidden="true">
+  {% for product in products %}
+  <div class="modal fade" id="quickViewModal-{{product.id}}" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-xl modal-dialog-centered">
       <div class="modal-content">
         <div class="modal-body p-8">
@@ -290,64 +315,33 @@
             <div class="col-lg-6">
               <!-- img slide -->
               <div class="product productModal" id="productModal">
-                <div class="zoom" onmousemove="zoom(event)" style="
-                  background-image: url(../assets/images/products/product-single-img-1.jpg);
-                ">
-                  <!-- img -->
-                  <img src="../assets/images/products/product-single-img-1.jpg" alt="" />
-                </div>
-                <div>
-                  <div class="zoom" onmousemove="zoom(event)" style="
-                    background-image: url(../assets/images/products/product-single-img-2.jpg);
-                  ">
-                    <!-- img -->
-                    <img src="../assets/images/products/product-single-img-2.jpg" alt="" />
-                  </div>
-                </div>
-                <div>
-                  <div class="zoom" onmousemove="zoom(event)" style="
-                    background-image: url(../assets/images/products/product-single-img-3.jpg);
-                  ">
-                    <!-- img -->
-                    <img src="../assets/images/products/product-single-img-3.jpg" alt="" />
-                  </div>
-                </div>
-                <div>
-                  <div class="zoom" onmousemove="zoom(event)" style="
-                    background-image: url(../assets/images/products/product-single-img-4.jpg);
-                  ">
-                    <!-- img -->
-                    <img src="../assets/images/products/product-single-img-4.jpg" alt="" />
-                  </div>
-                </div>
+
+              {% for i in product.get_images %}
+              <div class="zoom" onmousemove="zoom(event)"
+                style="background-image: url({{i.image.url}})">
+                <!-- img -->
+                <img src="{{i.image.url}}" alt="{{product.name}}">
+              </div>
+              {% endfor %}
+                
               </div>
               <!-- product tools -->
               <div class="product-tools">
                 <div class="thumbnails row g-3" id="productModalThumbnails">
-                  <div class="col-3" class="tns-nav-active">
+                  {% comment %} <div class="col-3" class="tns-nav-active">
                     <div class="thumbnails-img">
                       <!-- img -->
                       <img src="../assets/images/products/product-single-img-1.jpg" alt="" />
                     </div>
-                  </div>
+                  </div> {% endcomment %}
+                  {% for i in product.get_images %}              
                   <div class="col-3">
                     <div class="thumbnails-img">
                       <!-- img -->
-                      <img src="../assets/images/products/product-single-img-2.jpg" alt="" />
+                      <img src="{{i.image.url}}" alt="">
                     </div>
                   </div>
-                  <div class="col-3">
-                    <div class="thumbnails-img">
-                      <!-- img -->
-                      <img src="../assets/images/products/product-single-img-3.jpg" alt="" />
-                    </div>
-                  </div>
-                  <div class="col-3">
-                    <div class="thumbnails-img">
-                      <!-- img -->
-                      <img src="../assets/images/products/product-single-img-4.jpg" alt="" />
-                    </div>
-                  </div>
+                  {% endfor %} 
                 </div>
               </div>
             </div>
@@ -427,4 +421,5 @@
       </div>
     </div>
   </div>
+  {% endfor %}
 {% endblock %}

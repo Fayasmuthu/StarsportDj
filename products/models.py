@@ -141,13 +141,26 @@ class Product(models.Model):
     def get_sizes(self):
         return AvailableSize.objects.filter(product=self)
 
-    def get_discount_price(self):
-        return min([p.discount_price for p in self.get_sizes()])
+    # def get_sale_price(self):
+    #     return min([p.sale_price for p in self.get_sizes()])
+
+    # def get_regular_price(self):
+    #     sizes = self.get_sizes()
+    #     valid_prices = [p.regular_price for p in sizes if p.regular_price is not None]
+    #     return min(valid_prices) if valid_prices else None
+    
+    def get_sale_price(self):
+        sizes = self.get_sizes()
+        if sizes.exists():  # Check if queryset is not empty
+            return min([p.sale_price for p in sizes])
+        return None  # Return a default value when sizes are empty
 
     def get_regular_price(self):
         sizes = self.get_sizes()
         valid_prices = [p.regular_price for p in sizes if p.regular_price is not None]
-        return min(valid_prices) if valid_prices else None
+        if valid_prices:  # Check if the list of valid prices is not empty
+            return min(valid_prices)
+        return None  #
     
     def get_offer_percent_first(self):
         return  self.get_sizes().first().offer_percent()
@@ -166,6 +179,37 @@ class Product(models.Model):
 
     def get_delete_url(self):
         return reverse_lazy("main:product_delete", kwargs={"pk": self.pk})
+    
+    def get_sizes_t(self):
+        return Available.objects.filter(product=self)
+
+    def get_sale_price_t(self):
+        sizes = self.get_sizes_t()
+        if sizes.exists():  # Check if queryset is not empty
+            return min([p.sale_price for p in sizes])
+        return None  # Return a default value when sizes are empty
+
+    def get_regular_price_t(self):
+        sizes = self.get_sizes_t()
+        valid_prices = [p.regular_price for p in sizes if p.regular_price is not None]
+        if valid_prices:  # Check if the list of valid prices is not empty
+            return min(valid_prices)
+        return None 
+    
+    def get_offer_percent_first(self):
+        first_size = self.get_sizes_t().first()
+        if first_size and hasattr(first_size, 'offer_percent_t') and callable(getattr(first_size, 'offer_percent_t')):
+            return first_size.offer_percent_t()
+        return None  # Or any default value or action you prefer if there's no offer_percent_t
+
+   
+    def get_offer_percent(self):
+        sizes = self.get_sizes_t()
+        valid_percentages = [p.offer_percent_t() for p in sizes if hasattr(p, 'offer_percent_t') and callable(getattr(p, 'offer_percent_t'))]
+        if valid_percentages:  # Check if the list of valid percentages is not empty
+            return min(valid_percentages)
+        return None
+
 
     def __str__(self):
         return self.name
@@ -204,7 +248,7 @@ class AvailableSize(models.Model):
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
     weight = models.IntegerField(blank=True, null=True)
     unit = models.CharField(max_length=10, choices=UNIT_CHOICES,blank=True, null=True)
-    discount_price = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
+    sale_price = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
     regular_price  = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
     barcode = models.CharField(max_length=100, blank=True, null=True)
     is_stock = models.BooleanField(default=True)
@@ -212,16 +256,16 @@ class AvailableSize(models.Model):
     class Meta:
         verbose_name = _("Available Size")
         verbose_name_plural = _("Available Sizes")
-        ordering = ("discount_price",)
+        ordering = ("sale_price",)
 
     def offer_percent(self):
-        if self.regular_price and self.regular_price != self.discount_price:
-            return ((self.regular_price - self.discount_price) / self.regular_price) * 100
+        if self.regular_price and self.regular_price != self.sale_price:
+            return ((self.regular_price - self.sale_price) / self.regular_price) * 100
         return 0
 
     def save(self, *args, **kwargs):
         if self.regular_price is None:
-            self.regular_price = self.discount_price
+            self.regular_price = self.sale_price
         super().save(*args, **kwargs)
 
     def __str__(self):
@@ -266,3 +310,35 @@ class Review(models.Model):
 
     def __str__(self):
         return f"{self.headline} - {self.product.name}"
+    
+class Available(models.Model):
+    product = models.ForeignKey(Product, on_delete=models.CASCADE)
+    sale_price = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
+    regular_price  = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
+    barcode = models.CharField(max_length=100, blank=True, null=True)
+    is_stock = models.BooleanField(default=True)
+ 
+    class Meta:
+        verbose_name = _("Available ")
+        verbose_name_plural = _("Available")
+        ordering = ("sale_price",)
+
+    # def offer_percent_t(self):
+    #     if self.regular_price and self.regular_price != self.sale_price:
+    #         return ((self.regular_price - self.sale_price) / self.regular_price) * 100
+    #     return 0
+    
+    def offer_percent_t(self):
+        if self.regular_price is not None and self.sale_price is not None:
+            if self.regular_price != self.sale_price:
+                return ((self.regular_price - self.sale_price) / self.regular_price) * 100
+        return 0
+
+
+    def save(self, *args, **kwargs):
+        if self.regular_price is None:
+            self.regular_price = self.sale_price
+        super().save(*args, **kwargs)
+
+    def __str__(self):
+        return f"{self.product}"

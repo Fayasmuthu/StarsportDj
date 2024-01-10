@@ -18,6 +18,8 @@ from django.template.loader import render_to_string
 from django.core.exceptions import ValidationError
 from decimal import Decimal
 from django.db.models import Count
+from django.db.models import Min, Max
+from django.db.models.functions import Coalesce
 
 class IndexView(TemplateView):
     template_name = "web/index-5.html"
@@ -46,7 +48,7 @@ class ShopView(ListView):
     model = Product
     template_name = "web/shop.html"
     context_object_name = "products"
-    paginate_by = 4
+    paginate_by = 12
 
     def get_queryset(self):
         products = Product.objects.all()
@@ -61,7 +63,10 @@ class ShopView(ListView):
         subcategory_title = None
 
         if min_price and max_price:
-            products = products.filter( availablesize__discount_price__range=(min_price, max_price))
+            products = products.filter(
+                Q(availablesize__sale_price__range=(min_price, max_price)) |
+                Q(available__sale_price__range=(min_price, max_price))
+    )
         if search_query:
             products = products.filter(Q(name__icontains=search_query))
         if category:
@@ -73,14 +78,21 @@ class ShopView(ListView):
         if sort_by:
             if sort_by == "low_to_high":
                 annotated_queryset = products.annotate(
-                    min_discount_price=Min("availablesize__discount_price")
+                    min_sale_price_size=Min("availablesize__sale_price"),
+                    min_sale_price_t=Min("available__sale_price")
                 )
-                products = annotated_queryset.order_by("min_discount_price")
+                products = annotated_queryset.order_by(
+                    Coalesce("min_sale_price_size", "min_sale_price_t")
+                )         
+                    
             elif sort_by == "high_to_low":
                 annotated_queryset = products.annotate(
-                    min_discount_price=Min("availablesize__discount_price")
+                    max_sale_price_size=Max("availablesize__sale_price"),
+                    max_sale_price_t=Max("available__sale_price")
                 )
-                products = annotated_queryset.order_by("-min_discount_price")
+                products = annotated_queryset.order_by(
+                    "-max_sale_price_size", "-max_sale_price_t"
+                )
             elif sort_by == "rating":
                 products = products.order_by("-rating")
             else:
@@ -90,8 +102,8 @@ class ShopView(ListView):
         #     try:
         #         min_amount, max_amount = map(int, amount.split("-"))
         #         products = products.filter(
-        #             availablesize__discount_price__gte=min_amount,
-        #             availablesize__discount_price__lte=max_amount,
+        #             availablesize__sale_price__gte=min_amount,
+        #             availablesize__sale_price__lte=max_amount,
         #         ).distinct()
         #     except ValueError:
         #         print("ValueError")
@@ -117,7 +129,7 @@ def filter_data(request):
     print("Selected Brands:", selected_brand)  # Add this line for debugging
 
     if selected_brand:
-        course = Product.objects.filter(brand__id__in = selected_brand).order_by('-id')
+        course = Product.objects.filter(brand__slug__in = selected_brand).order_by('-id')
     else:
         course = Product.objects.all().order_by('-id')
 
@@ -131,7 +143,9 @@ def filter_range_price(request):
     max_price = request.GET.get('max_price')
 
     # Filter products based on price range
-    products = Product.objects.filter(availablesize__discount_price__range=(min_price, max_price))
+    products = Product.objects.filter(availablesize__sale_price__range=(min_price, max_price))
+    products = Product.objects.filter(available__sale_price__range=(min_price, max_price))
+
 
     # Render the products as HTML
     html = render_to_string('ajax/rangeprice.html', {'products': products})

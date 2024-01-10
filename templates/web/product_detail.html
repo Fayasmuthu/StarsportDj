@@ -75,10 +75,33 @@
               </small><a href="#" class="ms-2">({{product.rating}})</a></div>
             <div class="fs-4">
               <!-- price -->
-              <span class="fw-bold text-dark sale_price">₹{{ product.get_discount_price|floatformat:0  }}</span>
-              <span class="text-decoration-line-through text-muted original_price">₹{{ product.get_regular_price|floatformat:0 }}</span>
+              <span class="fw-bold text-dark sale_price">
+                {% if product.get_sale_price %}
+                ₹{{ product.get_sale_price|floatformat:0  }}
+                {% endif %}
+  
+                {% if product.get_sale_price_t %}
+                ₹{{ product.get_sale_price_t|floatformat:0 }}
+                {% endif %}
+              </span>
+              <span class="text-decoration-line-through text-muted original_price">
+                {% if product.get_regular_price %}
+                ₹{{ product.get_regular_price|floatformat:0 }}
+                {% endif %}
+  
+                {% if product.get_regular_price_t %}
+                ₹{{ product.get_regular_price_t|floatformat:0 }}
+                {% endif %}
+              </span>
               <span>
-                <small class="fs-6 ms-2 text-danger offer_percent">{{product.get_offer_percent_first|floatformat:2}}% Off</small>
+                <small class="fs-6 ms-2 text-danger offer_percent">
+                  {% if product.get_offer_percent_first %}
+                  {{product.get_offer_percent_first|floatformat:2}}% Off
+                  {% endif %}
+
+                  {% if product.get_offer_percent_first_t %}
+                  {{product.get_offer_percent_first_t|floatformat:2}}% Off
+                  {% endif %}</small>
               </span>
             </div>
             <!-- hr -->

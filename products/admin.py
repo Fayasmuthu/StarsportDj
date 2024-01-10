@@ -15,6 +15,7 @@ from .models import (
     Offer,
     OfferProduct,
     Review,
+    Available,
 )
 
 
@@ -95,6 +96,10 @@ class ProductInformationInline(admin.TabularInline):
     model = ProductInformation
     extra = 1
 
+class AvailableInline(admin.TabularInline):
+    model = Available
+    extra = 1
+
 
 @admin.register(Product)
 class ProductAdmin(admin.ModelAdmin):
@@ -110,7 +115,7 @@ class ProductAdmin(admin.ModelAdmin):
     )
     prepopulated_fields = {"slug": ("name",)}
     search_fields = ("name", "subcategory__name", "subcategory__category__name", "subcategory__category__maincategory__title")
-    inlines = [ProductImageInline, AvailableSizeInline, ProductInformationInline]
+    inlines = [ProductImageInline, AvailableSizeInline, ProductInformationInline,AvailableInline]
 
     def image_preview(self, obj):
         if obj.image:
@@ -134,7 +139,7 @@ class AvailableSizeAdmin(admin.ModelAdmin):
         "product",
         "weight",
         "unit",
-        "discount_price",
+        "sale_price",
         "regular_price",
         "is_stock",
     )

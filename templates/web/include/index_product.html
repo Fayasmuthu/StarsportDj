@@ -39,8 +39,24 @@
         <!-- price -->
         <div class="d-flex justify-content-between align-items-center mt-3">
           <div>
-            <span class="text-dark sale_price">₹{{ product.get_discount_price|floatformat:0  }}</span> 
-            <span class="text-decoration-line-through text-muted original_price">₹{{ product.get_regular_price|floatformat:0 }}</span>
+            <span class="text-dark sale_price">
+              {% if product.get_sale_price %}
+              ₹{{ product.get_sale_price|floatformat:0  }}
+              {% endif %}
+
+              {% if product.get_sale_price_t %}
+              ₹{{ product.get_sale_price_t|floatformat:0 }}
+              {% endif %}
+            </span> 
+            <span class="text-decoration-line-through text-muted original_price">
+              {% if product.get_regular_price %}
+              ₹{{ product.get_regular_price|floatformat:0 }}
+              {% endif %}
+
+              {% if product.get_regular_price_t %}
+              ₹{{ product.get_regular_price_t|floatformat:0 }}
+              {% endif %}
+            </span>
           </div>
           <!-- btn -->
           <div>
