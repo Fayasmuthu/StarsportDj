@@ -41,26 +41,49 @@
               </div>
             </div>
           </div>
+          {% if request.user.is_authenticated %}
           <div class="ms-6 text-center">
-            <a href="#" class="text-reset" data-bs-toggle="modal" data-bs-target="#userModal">
+            <a href="{% url "auth_logout" %}" class="text-reset">
               <div class="lh-1">
                 <div class="mb-2">
                   <i class="bi bi-person-circle fs-4"></i>
                 </div>
-                <p class="mb-0 d-none d-xl-block small">Sign up</p>
+                <p class="mb-0 d-none d-xl-block small">logout</p>
               </div>
             </a>
           </div>
+
+            <div class="ms-6 text-center">
+              <a href="{% url "main:orders" %}" class="text-reset">
+                <div class="lh-1">
+                  <div class="mb-2">
+                    <i class="bi bi-archive fs-4"></i>
+                  </div>
+                  <p class="mb-0 d-none d-xl-block small">My Orders</p>
+                </div>
+              </a>
+            </div>
+          {% else %}
           <div class="ms-6 text-center">
-            <a href="account-orders.html" class="text-reset">
+            <a href="{% url "auth_login" %}" class="text-reset">
               <div class="lh-1">
                 <div class="mb-2">
-                  <i class="bi bi-archive fs-4"></i>
+                  <i class="bi bi-person-circle fs-4"></i>
                 </div>
-                <p class="mb-0 d-none d-xl-block small">My Orders</p>
+                <p class="mb-0 d-none d-xl-block small">Login</p>
               </div>
             </a>
           </div>
+            {% endif %}
+
+          {% comment %}           
+          <a href=""><div class="navbar-tool-text ms-n3"><small>Hello, logout</small>My {{ user.username }}
+          </div></a>
+          {% else %}
+          <a href=""><div class="navbar-tool-text ms-n3"><small>Hello, Login</small>My Account</div> </a>
+          {% endif %} {% endcomment %}
+
+          
           <div class="text-center ms-6">
             <a data-bs-toggle="offcanvas" data-bs-target="#offcanvasRight" href="#offcanvasExample" role="button" aria-controls="offcanvasRight" class="text-reset">
               <div class="text-center">

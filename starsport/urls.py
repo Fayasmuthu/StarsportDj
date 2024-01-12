@@ -11,6 +11,8 @@ urlpatterns = (
         path("", include("order.urls", namespace="order")),
         path("main/", include("main.urls", namespace="main")),
         path("product/", include("products.urls", namespace="product")),
+        path("accounts/", include("accounts.urls", namespace="accounts")),
+        path('accounts/', include('registration.backends.simple.urls')),
         path(
             "sitemap.xml",
             TemplateView.as_view(template_name="sitemap.xml", content_type="text/xml"),

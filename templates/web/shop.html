@@ -53,7 +53,7 @@
                   <ul class="nav nav-category" id="categoryCollapseMenu">
                     {% for category in categories %}
                     <li class="nav-item border-bottom w-100">
-                      <a href="#" class="nav-link collapsed" data-bs-toggle="collapse" data-bs-target="#{{ category.slug }}" aria-expanded="false" aria-controls="{{ category.slug }}">{{ category.name }}<i class="feather-icon icon-chevron-right"></i></a>
+                      <a href="#" class="nav-link collapsed" data-bs-toggle="collapse" data-bs-target="#{{ category.slug }}" aria-expanded="false" aria-controls="{{ category.slug }}">{{ category.name }} <i class="feather-icon icon-chevron-right"></i></a>
                       <!-- accordion collapse -->
                       <div id="{{ category.slug }}" class="accordion-collapse collapse" data-bs-parent="#categoryCollapseMenu">
                         <div>
@@ -63,7 +63,7 @@
                             {% for subcategory in category.subcategory_set.all %}
                             <!-- nav item -->
                             <li class="nav-item">
-                              <a href="?subcategory={{subcategory.slug}}" class="nav-link">{{ subcategory.name }}</a>
+                              <a href="?subcategory={{subcategory.slug}}" class="nav-link">{{ subcategory.name }} ({{ subcategory.get_sub_product_count }})</a>
                             </li>
                             {% endfor %}
                             <!-- nav item -->

@@ -41,7 +41,7 @@
             <option 
               value="{{item.id}}"
               data-original_price="{{item.regular_price|floatformat:0}}"
-              data-sale_price="{{item.get_sale_price|floatformat:0 }}" 
+              data-sale_price="{{item.sale_price|floatformat:0 }}" 
               data-offer_percent="{{item.offer_percent|floatformat:2 }}" 
               {% if forloop.first %} selected {% endif %} >
               {{item.weight}} {{item.unit}}

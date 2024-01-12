@@ -258,7 +258,7 @@
                         </span>
                         <h2 class="mt-3 fs-6"><a href="#" class="text-inherit">Salted Instant Popcorn</a></h2>
                         <div>
-                          <span class="text-dark fs-5 fw-bold">₹
+                          <span class="text-dark fs-5 fw-bold">
                             {% if product.get_sale_price %}
                             ₹{{ product.get_sale_price|floatformat:0  }}
                             {% endif %}
@@ -303,8 +303,8 @@
   </main>
 
   <!-- Modal -->
-  {% for product in products %}
-  <div class="modal fade" id="quickViewModal-{{product.id}}" tabindex="-1" aria-hidden="true">
+  {% for product in popular_products %}
+  <div class="modal fade" id="quickViewModal-{{ product.id }}" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-xl modal-dialog-centered">
       <div class="modal-content">
         <div class="modal-body p-8">

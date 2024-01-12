@@ -33,6 +33,8 @@ class IndexView(TemplateView):
         context["best_seller_products"] = products.filter(is_best_seller=True)
         context["offers"] = Offer.objects.all()
         context["sliders"] = Slider.objects.all()
+        context["products"] = Product.objects.all()
+
 
          # Check for subcategory and filter products accordingly
         subcategory = self.request.GET.get("subcategory")

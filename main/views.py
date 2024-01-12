@@ -40,7 +40,7 @@ class IndexView(SuperAdminLoginRequiredMixin, TemplateView):
 
 #order
 class OrderView(SuperAdminLoginRequiredMixin, ListView):
-    template_name = "dashboard/order/list.html"
+    template_name = "dashboard/order/order-list.html"
     model = Order
     extra_context = {'is_order':True}
 
@@ -51,7 +51,7 @@ class OrderDetailView(SuperAdminLoginRequiredMixin,DetailView):
     context_object_name = 'order'
     slug_field = 'order_id'  
     slug_url_kwarg = 'order_id'
-    extra_context = {'is_order':True}
+    extra_context = {'is_order_single':True}
 
 class OrderUpdateView(SuperAdminLoginRequiredMixin,View):
     def get(self, request, *args, **kwargs):
@@ -345,7 +345,7 @@ class CategoryDelete(SuperAdminLoginRequiredMixin,DeleteView):
 
 # product
 class ProductListView(SuperAdminLoginRequiredMixin,ListView):
-    template_name = "dashboard/product/list.html"
+    template_name = "dashboard/products/list.html"
     model = Product
     extra_context = {'is_product':True,'is_product_list':True}
 

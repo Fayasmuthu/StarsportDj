@@ -65,9 +65,11 @@
               <ul class="nav flex-column">
                 <li class="nav-item mb-2"><a href="javascript:valid(0)" class="nav-link">Company</a></li>
                 <li class="nav-item mb-2"><a href="javascript:valid(0)" class="nav-link">About</a></li>
-                <li class="nav-item mb-2"><a href="javascript:valid(0)" class="nav-link">Blog</a></li>
+                <li class="nav-item mb-2"><a href="{% url "main:orders" %}" class="nav-link">Blog</a></li>
+                <li class="nav-item mb-2"><a href="{% url "main:index" %}" class="nav-link">Dashboard</a></li>
                 <li class="nav-item mb-2"><a href="javascript:valid(0)" class="nav-link">Help Center</a></li>
                 <li class="nav-item mb-2"><a href="javascript:valid(0)" class="nav-link">Our Value</a></li>
+
               </ul>
             </div>
             <div class="col-6 col-sm-6 col-md-3">

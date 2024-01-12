@@ -1,0 +1,63 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <!-- Required meta tags -->
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta content="Codescandy" name="author">
+    <title>Dashboard - Starsport </title>
+<!-- Favicon icon-->
+<link rel="shortcut icon" type="image/x-icon" href="../assets/images/favicon/favicon.ico">
+
+
+<!-- Libs CSS -->
+<link href="{% static 'web/assets/libs/bootstrap-icons/font/bootstrap-icons.min.css' %}" rel="stylesheet">
+<link href="{% static 'web/assets/libs/feather-webfont/dist/feather-icons.css' %}" rel="stylesheet">
+<link href="{% static 'web/assets/libs/simplebar/dist/simplebar.min.css' %}" rel="stylesheet">
+
+
+<!-- Theme CSS -->
+<link rel="stylesheet" href="{% static 'web/assets/css/theme.min.css' %}">
+<!-- Google tag (gtag.js' %}) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-M8S4MT3EYG"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-M8S4MT3EYG');
+</script>
+
+
+</head>
+
+<body>
+    <!-- main -->
+    <div>
+       {% include "dashboard/include/top_nav.html" %}
+
+        <div class="main-wrapper">
+            <!-- navbar vertical -->
+            
+            {% include "dashboard/include/sidebar.html" %}
+
+                            
+
+                                            {% block content %}
+                                            {% endblock  %}
+
+                                                <!-- Libs JS -->
+<script src="{% static 'web/assets/libs/jquery/dist/jquery.min.js' %}"></script>
+<script src="{% static 'web/assets/libs/bootstrap/dist/js/bootstrap.bundle.min.js' %}"></script>
+<script src="{% static 'web/assets/libs/simplebar/dist/simplebar.min.js' %}"></script>
+
+<!-- Theme JS -->
+<script src="{% static 'web/assets/js/theme.min.js' %}"></script>
+    <script src="{% static 'web/assets/libs/apexcharts/dist/apexcharts.min.js' %}"></script>
+    <script src="{% static 'web/assets/js/vendors/chart.js' %}"></script>
+
+</body>
+
+</html>

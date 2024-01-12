@@ -69,7 +69,7 @@ class Category(models.Model):
         return Product.objects.filter(category=self)
     
     def get_cate_product_count(self):
-        return self.product_set.count() 
+        return self.category.count() 
 
     def __str__(self):
         return f"{self.maincategory}--{self.name}" if self.maincategory else self.name
@@ -88,7 +88,7 @@ class Subcategory(models.Model):
         return Product.objects.filter(subcategory=self)
     
     def get_sub_product_count(self):
-        return self.Product_set.count()
+        return self.subcategory.count()
 
     # def __str__(self):
     #     return f"{self.category.maincategory}--{self.category}--{self.name}" if self.category else self.name
@@ -162,8 +162,14 @@ class Product(models.Model):
             return min(valid_prices)
         return None  #
     
+    # def get_offer_percent_first(self):
+    #     return  self.get_sizes().first().offer_percent()
+    
     def get_offer_percent_first(self):
-        return  self.get_sizes().first().offer_percent()
+        first_size = self.get_sizes().first()
+        if first_size and hasattr(first_size, 'offer_percent') and callable(getattr(first_size, 'offer_percent')):
+            return first_size.offer_percent()
+        return None 
    
     def get_offer_percent(self):
         return min([p.offer_percent() for p in self.get_sizes()])
@@ -196,7 +202,7 @@ class Product(models.Model):
             return min(valid_prices)
         return None 
     
-    def get_offer_percent_first(self):
+    def get_offer_percent_first_t(self):
         first_size = self.get_sizes_t().first()
         if first_size and hasattr(first_size, 'offer_percent_t') and callable(getattr(first_size, 'offer_percent_t')):
             return first_size.offer_percent_t()
