@@ -1,0 +1,441 @@
+{% extends 'dashboard/base.html' %}
+{% load static %}
+{% block content %}
+  <!-- main -->
+  <main class="main-content-wrapper">
+    <!-- container -->
+    <div class="container">
+      <!-- row -->
+      <div class="row mb-8">
+        <div class="col-md-12">
+          <div class="d-md-flex justify-content-between align-items-center">
+            <!-- page header -->
+            <div>
+              <h2>{{ title }}</h2>
+              <!-- breacrumb -->
+              <nav aria-label="breadcrumb">
+                <ol class="breadcrumb mb-0">
+                  <li class="breadcrumb-item">
+                    <a href="#" class="text-inherit">Dashboard</a>
+                  </li>
+                  <li class="breadcrumb-item">
+                    <a href="#" class="text-inherit">Products</a>
+                  </li>
+                  <li class="breadcrumb-item active" aria-current="page">Add New Product</li>
+                </ol>
+              </nav>
+            </div>
+            <!-- button -->
+            <div>
+              <a href="products.html" class="btn btn-light">Back to Product</a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <form method="POST" enctype="multipart/form-data" class="ajax redirect skip_empty_row" data-redirect="{% url 'main:product_list' %}">
+        {% csrf_token %}
+      <!-- row -->
+      <div class="row">
+        <div class="col-lg-8 col-12">
+          <!-- card -->
+          <div class="card mb-6 card-lg">
+            <!-- card body -->
+            <div class="card-body p-6">
+              <div class="mb-4 d-flex">
+                <div class="mb-3">
+                  <h4 class="mb-5 h5">Product Image</h4>
+                  <div class="mb-4 d-flex">
+                    <div class="position-relative">
+                      {% if is_edit %}
+                        <img class="image icon-shape icon-xxxl bg-light rounded-4" src="{{ form.instance.image.url }}" alt="Image" />
+                      {% else %}
+                        <img class="image icon-shape icon-xxxl bg-light rounded-4" src="{% static 'web/assets/images/products/upload.png' %}" alt="Image" />
+                      {% endif %}
+                      <div class="file-upload position-absolute end-0 top-0 mt-n2 me-n1">
+                        <input type="file" class="file-input" name="image" />
+                        <span class="icon-shape icon-sm rounded-circle bg-white">
+                          <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="currentColor" class="bi bi-pencil-fill text-muted" viewBox="0 0 16 16">
+                            <path d="M12.854.146a.5.5 0 0 0-.707 0L10.5 1.793 14.207 5.5l1.647-1.646a.5.5 0 0 0 0-.708l-3-3zm.646 6.061L9.793 2.5 3.293 9H3.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.207l6.5-6.5zm-7.468 7.468A.5.5 0 0 1 6 13.5V13h-.5a.5.5 0 0 1-.5-.5V12h-.5a.5.5 0 0 1-.5-.5V11h-.5a.5.5 0 0 1-.5-.5V10h-.5a.499.499 0 0 1-.175-.032l-.179.178a.5.5 0 0 0-.11.168l-2 5a.5.5 0 0 0 .65.65l5-2a.5.5 0 0 0 .168-.11l.178-.178z" />
+                          </svg>
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                  {% if form.image.help_text %}
+                  {% endif %}
+                </div>
+                <div class="mb-3">
+                  <h4 class="mb-5 h5">Product Image</h4>
+                  <div class="mb-4 d-flex">
+                    <div class="position-relative">
+                      {% if is_edit %}
+                        <img class="image icon-shape icon-xxxl bg-light rounded-4" src="{{ form.instance.image.url }}" alt="Image" />
+                      {% else %}
+                        <img class="image icon-shape icon-xxxl bg-light rounded-4" src="{% static 'web/assets/images/products/upload.png' %}" alt="Image" />
+                      {% endif %}
+                      <div class="file-upload position-absolute end-0 top-0 mt-n2 me-n1">
+                        <input type="file" class="file-input" name="image" />
+                        <span class="icon-shape icon-sm rounded-circle bg-white">
+                          <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="currentColor" class="bi bi-pencil-fill text-muted" viewBox="0 0 16 16">
+                            <path d="M12.854.146a.5.5 0 0 0-.707 0L10.5 1.793 14.207 5.5l1.647-1.646a.5.5 0 0 0 0-.708l-3-3zm.646 6.061L9.793 2.5 3.293 9H3.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.207l6.5-6.5zm-7.468 7.468A.5.5 0 0 1 6 13.5V13h-.5a.5.5 0 0 1-.5-.5V12h-.5a.5.5 0 0 1-.5-.5V11h-.5a.5.5 0 0 1-.5-.5V10h-.5a.499.499 0 0 1-.175-.032l-.179.178a.5.5 0 0 0-.11.168l-2 5a.5.5 0 0 0 .65.65l5-2a.5.5 0 0 0 .168-.11l.178-.178z" />
+                          </svg>
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                  {% if form.image.help_text %}
+                    <span class="text-danger">{{ form.image.help_text }}</span>
+                  {% endif %}
+                </div>
+              </div>
+
+              <h4 class="mb-4 h5">Product Information</h4>
+              <div class="row">
+                <!-- input -->
+                <div class="mb-3 col-lg-6">
+                  <label class="form-label">{{form.name.label}} {% if form.name.field.required %}<span class="text-danger">*</span>{% endif %} </label>
+                  {{ form.name }}
+                </div>
+                <!-- input -->
+                <div class="mb-3 col-lg-6">
+            
+                  <label class="form-label">{{form.slug.label}} {% if form.slug.field.required %}<span class="text-danger">*</span>{% endif %}</label>
+                  {{form.slug}}
+                </div>
+                <div class="mb-3 col-lg-6">
+                  <label class="form-label">Display Name</label>
+                  <input type="text" class="form-control" placeholder="Enter Product Title" />
+                </div>
+                <!-- input -->
+                <div class="mb-3 col-lg-6">
+                  <label class="form-label">Product Rating(max:5)</label>
+                  <input type="text" class="form-control" placeholder="Enter Product Title" />
+                </div> 
+                <!-- input -->
+                <div class="mb-3 col-lg-12">
+                  <label class="form-label">Meta title</label>
+                  {{form.meta_title}}
+
+                </div>
+                <div class="mb-3 col-lg-12">
+                  <label class="form-label">Meta description</label>
+                  {{form.meta_description}}
+
+                </div>
+                <!-- input -->
+                <div>
+                  <div class="mb-3 col-lg-12 mt-5">
+                    <!-- heading -->
+                    <h4 class="mb-3 h5">Product Images</h4>
+
+                    <!-- input -->
+                    <form action="#" class="d-block dropzone border-dashed rounded-2">
+                      <div class="fallback">
+                        <input name="file" type="file" multiple />
+                      </div>
+                    </form>
+                  </div>
+                </div>
+                <!-- input -->
+                {% comment %} <div class="mb-3 col-lg-12 mt-5">
+                  <h4 class="mb-3 h5">Product Descriptions</h4>
+                  <div class="py-8" id="editor"></div>
+                </div> {% endcomment %}
+                <div class="mb-3 col-lg-12 mt-5">
+                  <h4 class="mb-3 h5">Product Descriptions</h4>
+                  {{ form.details }}
+                  <div class="py-8" id="editor"></div>
+                </div>
+                <div class="form-check form-switch mb-4 col-lg-4">
+                  <input class="form-check-input" type="checkbox" role="switch" id="id_is_popular" {% if form.instance.id_is_popular %} checked {% endif %} name="is_popular" />
+                  <label class="form-check-label" for="id_is_popular">Is popular</label>
+                </div>
+                <!-- input -->
+                <!-- input -->
+                <div class="form-check form-switch mb-4 col-lg-4">
+                  <input class="form-check-input" type="checkbox" role="switch" id="id_is_best_seller" {% if form.instance.is_best_seller %} checked {% endif %} name="is_best_seller" />
+                  <label class="form-check-label" for="id_is_best_seller">Is best seller</label>
+                </div>
+                <!-- input -->
+                <!-- input -->
+                <div class="form-check form-switch mb-4 col-lg-4">
+                  <input class="form-check-input" type="checkbox" role="switch" id="id_is_offer" {% if form.instance.is_offer %} checked {% endif %} name="is_offer" />
+                  <label class="form-check-label" for="id_is_offer">Is offer</label>
+                </div>
+                <!-- input -->
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-4 col-12">
+          <!-- card -->
+          <div class="card mb-6 card-lg">
+            <!-- card body -->
+            <div class="card-body p-6">
+              <!-- input -->
+              
+              <!-- input -->
+              <div class="form-check form-switch mb-4">
+                <input class="form-check-input" type="checkbox" role="switch" id="id_is_active" {% if form.instance.is_active %} checked {% endif %} name="is_active" />
+                <label class="form-check-label" for="id_is_active">Is active</label>
+              </div>
+              <!-- input -->
+              <div>
+                <div class="mb-3">
+                  <label class="form-label">Product Subcategory</label>
+                  <select class="form-select">
+                    <option selected>Product Category</option>
+                    <option value="Dairy, Bread & Eggs">Dairy, Bread & Eggs</option>
+                    <option value="Snacks & Munchies">Snacks & Munchies</option>
+                    <option value="Fruits & Vegetables">Fruits & Vegetables</option>
+                  </select>
+                </div>
+                <!-- input -->
+                <div class="mb-3">
+                  <label class="form-label">Brand</label>
+                  <select class="form-select">
+                    <option selected>Product Category</option>
+                    <option value="Dairy, Bread & Eggs">Dairy, Bread & Eggs</option>
+                    <option value="Snacks & Munchies">Snacks & Munchies</option>
+                    <option value="Fruits & Vegetables">Fruits & Vegetables</option>
+                  </select>
+                </div>
+                <div class="mb-3">
+                  <label class="form-label">Tag</label>
+                  <select class="form-select">
+                    <option selected>Product Category</option>
+                    <option value="Dairy, Bread & Eggs">Dairy, Bread & Eggs</option>
+                    <option value="Snacks & Munchies">Snacks & Munchies</option>
+                    <option value="Fruits & Vegetables">Fruits & Vegetables</option>
+                  </select>
+                </div>
+                <!-- input -->
+                <div class="mb-3">
+                  <label class="form-label" id="productSKU">Status</label><br />
+                  <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio1" value="option1" checked />
+                    <label class="form-check-label" for="inlineRadio1">Active</label>
+                  </div>
+                  <!-- input -->
+                  <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio2" value="option2" />
+                    <label class="form-check-label" for="inlineRadio2">Disabled</label>
+                  </div>
+                  <!-- input -->
+                </div>
+                
+
+              </div>
+            </div>
+          </div>
+          <!-- card -->
+          <div class="card mb-6 card-lg">
+            <!-- card body -->
+            <div class="card-body p-6">
+              <h4 class="mb-5 h5">Product Images </h4>
+          <div class=" product_image_formset table-responsive">
+            <span class="text-danger mb-2"> The recommended size is 800x600 pixels.</span>
+            <table class="table">
+              <tbody>
+                {% for form in product_image_formset %}
+                <tr class=" form_set_row ">
+                  <td>
+                    <div class="mb-4 d-flex">
+                      <div class="position-relative" >
+                        {% if is_edit %}
+                        {{form.id}}
+                        <img class="image  icon-shape icon-xxxl bg-light rounded-4" src="{{ form.instance.image.url }}" alt="Image">
+                        {% else %}
+                        <img class="image  icon-shape icon-xxxl bg-light rounded-4" src="{% static 'web/assets/images/products/upload.png' %}" alt="Image">
+                        {% endif %}
+                        <div class="file-upload position-absolute end-0 top-0 mt-n2 me-n1 check_empty">
+                          {{form.image}}
+                          <span class="icon-shape icon-sm rounded-circle bg-white">
+                          <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="currentColor" class="bi bi-pencil-fill text-muted" viewBox="0 0 16 16">
+                              <path d="M12.854.146a.5.5 0 0 0-.707 0L10.5 1.793 14.207 5.5l1.647-1.646a.5.5 0 0 0 0-.708l-3-3zm.646 6.061L9.793 2.5 3.293 9H3.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.207l6.5-6.5zm-7.468 7.468A.5.5 0 0 1 6 13.5V13h-.5a.5.5 0 0 1-.5-.5V12h-.5a.5.5 0 0 1-.5-.5V11h-.5a.5.5 0 0 1-.5-.5V10h-.5a.499.499 0 0 1-.175-.032l-.179.178a.5.5 0 0 0-.11.168l-2 5a.5.5 0 0 0 .65.65l5-2a.5.5 0 0 0 .168-.11l.178-.178z"/>
+                            </svg>
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                    </td>
+                  <td style="vertical-align: middle;"></td>
+                </tr>
+                {% endfor %}
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+    <div class="row">
+      <div class="col-md-12">
+        <div class="card mb-6 card-lg">
+          <div class="card-body p-6 ">
+            <h4 class="mb-3 h5">Product Available Size & Price</h4>
+            <div class=" available_size_formset table-responsive">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th width="22%">Weight</th>
+                    <th width="18%">Unit</th>
+                    <th width="18%">Sale Price</th>
+                    <th width="18%">Regular Price</th>
+                    <th width="11%">Is Stock</th>
+                    <th width=""></th>
+                  </tr>
+                </thead>
+                  <tbody>
+                    {% for form in available_size_formset %}
+                    <tr class=" form_set_row ">
+                      {{form.id}}
+                      <td  style="vertical-align: middle; padding: 5px 10px;"><span class="check_empty">{{form.weight}}</span></td>
+                      <td  style="vertical-align: middle; padding: 5px 10px;">{{form.unit}}</td>
+                      <td  style="vertical-align: middle; padding: 5px 10px;">{{form.sale_price}}</td>
+                      <td  style="vertical-align: middle; padding: 5px 10px;">{{form.regular_price}}</td>
+                      <td  style="vertical-align: middle; padding: 5px 10px;"><span class="form-check form-switch" style="padding-left: 4.5em;">{{form.is_stock}}</span></td>
+                      <td style="vertical-align: middle;"></td>
+                    </tr>
+                    {% endfor %}
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-md-12">
+        <div class="card mb-6 card-lg">
+          <div class="card-body p-6 ">
+            <h4 class="mb-3 h5">Product Available Size & Price</h4>
+            <div class=" available_size_formset table-responsive">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th width="22%">Weight</th>
+                    <th width="18%">Unit</th>
+                    <th width="18%">Sale Price</th>
+                    <th width="18%">Regular Price</th>
+                    <th width="11%">Is Stock</th>
+                    <th width=""></th>
+                  </tr>
+                </thead>
+                  <tbody>
+                    {% for form in available_size_formset %}
+                    <tr class=" form_set_row ">
+                      {{form.id}}
+                      <td  style="vertical-align: middle; padding: 5px 10px;"><span class="check_empty">{{form.weight}}</span></td>
+                      <td  style="vertical-align: middle; padding: 5px 10px;">{{form.unit}}</td>
+                      <td  style="vertical-align: middle; padding: 5px 10px;">{{form.sale_price}}</td>
+                      <td  style="vertical-align: middle; padding: 5px 10px;">{{form.regular_price}}</td>
+                      <td  style="vertical-align: middle; padding: 5px 10px;"><span class="form-check form-switch" style="padding-left: 4.5em;">{{form.is_stock}}</span></td>
+                      <td style="vertical-align: middle;"></td>
+                    </tr>
+                    {% endfor %}
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    {{ available_size_formset.management_form }}
+    {{ product_image_formset.management_form }}
+    <!-- button -->
+    <div class="d-grid">
+      <a href="#" class="btn btn-primary">Create Product</a>
+    </div>
+</form>
+
+    </div>
+  </main>
+</div>
+{% endblock %}
+
+{% block js_plugins %}
+<script src="{% static 'web/assets/js/formset.js' %}"></script>
+{% include 'web/include/form-ajax.html' %}
+<script src="https://cdn.tiny.cloud/1/9cvvdpu7uhs90es7skaryob9mtmcmv22t1n4x2y4ze4j3bbw/tinymce/6/tinymce.min.js" referrerpolicy="origin"></script>
+<script>tinymce.init({selector:'#id_details'});</script>
+
+<script>
+  $(document).ready(function () {
+    // Function to update the slug based on the name
+    function updateSlug() {
+        var name = $('#id_name').val();
+        var slug = name.toLowerCase().replace(/[^a-z0-9]+/g, '-');
+        $('#id_slug').val(slug);
+    }
+
+    // Attach the function to the change event of the name field
+    $('#id_name').on('input', updateSlug);
+});
+</script>
+<script>
+  $(document).ready(function () {
+    $('.product_image_formset table tr.form_set_row').formset({
+      prefix:'{{product_image_formset.prefix}}',
+      formCssClass: 'dynamic-formset1',
+      'added' : function (row) {
+      }
+    })
+    $('.available_size_formset table tr.form_set_row').formset({
+      prefix:'{{available_size_formset.prefix}}',
+      formCssClass: 'dynamic-formset1',
+      'added' : function (row) {
+      }
+    })
+    
+
+    $(document).on('click','.form_set_row .icon-trash', function(){
+      var $this = $(this);
+      $parent_table = $this.parents('table');
+      var length = $parent_table.find('tr').length;
+      if(length > 3){
+        $this.parents('tr').remove();
+      }
+    });
+    $('.add_item_container .icon_add_item').click(function(){
+      var $nearTable = $(this).parents('.add_item_container').find('table');
+      var $second_last_tr = $nearTable.find('tr:nth-last-child(2)');
+      var rowTemp = $nearTable.find('tr:nth-last-child(2)').html();
+      $second_last_tr.after('<tr class="form_set_row">' + rowTemp + '</tr>');
+      $second_last_tr.find('tr:last-child input').removeAttr('id');
+    });
+  });
+</script>
+{{available_size_formset.media}}
+{{product_image_formset.media}}
+{% endblock %}
+
+{% block css %}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/material-design-iconic-font/2.2.0/css/material-design-iconic-font.min.css">
+<style>
+  .btn-icon {
+    border-radius: 50%;
+    width: 40px;
+    line-height: 40px !important;
+    height: 40px;
+    padding: 0;
+    text-align: center;
+    display: inline-block;
+  }
+  .waves-effect {
+    position: relative;
+    cursor: pointer;
+    display: inline-block;
+    overflow: hidden;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.16), 0 2px 10px rgba(0, 0, 0, 0.12);
+}
+.dynamic-formset1-add td {
+    text-align: center;
+}
+</style>
+{% endblock%}

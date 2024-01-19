@@ -5,6 +5,7 @@ from django.utils.translation import gettext_lazy as _
 from ckeditor.fields import RichTextField 
 from django.urls import reverse_lazy
 from main.models import ICON_CHOICES, COLOR_CHOICES, UNIT_CHOICES, GENDER_CHOICES, STATUS_CHOICES
+
 # Create your models here.
 
 class Slider(models.Model):
@@ -127,10 +128,16 @@ class Product(models.Model):
     meta_title = models.CharField(max_length=200, blank=True, null=True)
     meta_description = models.TextField(max_length=500, blank=True, null=True)
 
+
     class Meta:
         ordering = [ "id",]
         verbose_name = "Product"
         verbose_name_plural = "Products"
+
+    def save(self, *args, **kwargs):
+        if not self.created_at:
+            self.created_at = timezone.now()
+        super().save(*args, **kwargs)
 
     def get_images(self):
         return ProductImage.objects.filter(product=self)

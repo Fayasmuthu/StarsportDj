@@ -347,11 +347,12 @@ class CategoryDelete(SuperAdminLoginRequiredMixin,DeleteView):
 class ProductListView(SuperAdminLoginRequiredMixin,ListView):
     template_name = "dashboard/products/list.html"
     model = Product
-    extra_context = {'is_product':True,'is_product_list':True}
+    context_object_name = 'product_list'
+    extra_context = {'is_product':True,'is_product_list':Product.objects.all()}
 
 
 class CreateProductView(SuperAdminLoginRequiredMixin,View):
-    template_name = 'dashboard/product/entry.html'
+    template_name = 'dashboard/products/entry.html'
     form_class = ProductForm
     available_size_formset_class = formset_factory(AvailableSizeForm, extra=1, can_delete=True)
     product_image_formset_class = formset_factory(ProductImageForm, extra=2, can_delete=True)
@@ -511,7 +512,12 @@ class ProductDelete(SuperAdminLoginRequiredMixin,DeleteView):
 
 # customer
 class CustomerListView(SuperAdminLoginRequiredMixin,ListView):
-    template_name = "dashboard/customer/list.html"
+    template_name = "dashboard/customer/customers.html"
     model = User
     extra_context = {'is_customer':True} 
     
+# Review
+class ReviewListView(SuperAdminLoginRequiredMixin,ListView):
+    template_name = "dashboard/reviews.html"
+    model = User
+    extra_context = {'is_reviews':True} 

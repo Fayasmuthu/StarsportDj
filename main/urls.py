@@ -36,5 +36,11 @@ urlpatterns = [
     path("district/<str:pk>/delete/", views.DistrictDeleteView.as_view(), name="district_delete"),
     #customer
     path("customers/", views.CustomerListView.as_view(), name="customers"),
+    # path("customers/create/", views.customersCreateView.as_view(), name="customers_create"),
+    # path("customers/<str:pk>/update/", views.customersUpdateView.as_view(), name="customers_update"),
+    # path("customers/<str:pk>/delete/", views.customersDeleteView.as_view(), name="customers_delete"),
+
+    #Review
+    path("Review/", views.ReviewListView.as_view(), name="Review"),
     
 ]

@@ -46,14 +46,14 @@
                 <a class="nav-link {% if is_order %}active{% endif %} " href="{% url "main:orders" %}">List</a>
               </li>
               <!-- Nav item -->
-              <li class="nav-item">
-                <a class="nav-link {% if is_order_single %}active{% endif %} " href="{% url "main:order_detail" %}">Single</a>
-              </li>
+              {% comment %} <li class="nav-item">
+                <a class="nav-link {% if is_order_single %}active{% endif %} " href="{% url "main:order_detail" order_id=order.id %}" >Single</a>
+              </li> {% endcomment %}
             </ul>
           </div>
         </li>
 
-        <li class="nav-item {% if is_product %}active{% endif %} ">
+        <li class="nav-item d-none {% if is_product %}active{% endif %} ">
           <a class="nav-link" href="vendor-grid.html">
             <div class="d-flex align-items-center">
               <span class="nav-link-icon"><i class="bi bi-shop"></i></span>
@@ -62,7 +62,7 @@
           </a>
         </li>
         <li class="nav-item">
-          <a class="nav-link {% if is_product %}active{% endif %} " href="customers.html">
+          <a class="nav-link {% if is_customer %}active{% endif %} " href="{% url "main:customers" %}">
             <div class="d-flex align-items-center">
               <span class="nav-link-icon"><i class="bi bi-people"></i></span>
               <span class="nav-link-text">Customers</span>
@@ -70,7 +70,7 @@
           </a>
         </li>
         <li class="nav-item">
-          <a class="nav-link {% if is_product %}active{% endif %} " href="reviews.html">
+          <a class="nav-link {% if is_reviews %}active{% endif %} " href="{% url "main:Review" %}">
             <div class="d-flex align-items-center">
               <span class="nav-link-icon"><i class="bi bi-star"></i></span>
               <span class="nav-link-text">Reviews</span>
