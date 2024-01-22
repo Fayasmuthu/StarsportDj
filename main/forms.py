@@ -27,12 +27,15 @@ class ProductForm(forms.ModelForm):
         widgets = {
             "name": forms.TextInput(attrs={"placeholder": "Product Name","class": "form-control"}),
             "slug": forms.TextInput(attrs={"placeholder": "Product Slug","class": "form-control"}),
+            "display_name": forms.TextInput(attrs={"placeholder": "Product display_name","class": "form-control"}),
             "details": forms.Textarea(attrs={'cols':"30", 'rows':"10"}),
             "meta_title": forms.TextInput(attrs={"placeholder": "Title","class": "form-control"}),
             "meta_description": forms.Textarea(attrs={"placeholder": "Description","class": "form-control",'rows':3}),
             "image": forms.FileInput(attrs={"class": "file-input"}),
-            "category": forms.Select(attrs={"class": "form-select"}),
+            "image_p": forms.FileInput(attrs={"class": "file-input"}),
+            "subcategory": forms.Select(attrs={"class": "form-select"}),
             "tag": forms.Select(attrs={"class": "form-select"}),
+            "brand": forms.Select(attrs={"class": "form-select"}),
             "rating": forms.TextInput(attrs={"placeholder": "Product Rating ","class": "form-control",'type':'number','max':5,'min':1}),
         }
 

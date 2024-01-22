@@ -5,6 +5,7 @@ from django.utils.translation import gettext_lazy as _
 from ckeditor.fields import RichTextField 
 from django.urls import reverse_lazy
 from main.models import ICON_CHOICES, COLOR_CHOICES, UNIT_CHOICES, GENDER_CHOICES, STATUS_CHOICES
+from django.utils import timezone
 
 # Create your models here.
 
@@ -134,10 +135,10 @@ class Product(models.Model):
         verbose_name = "Product"
         verbose_name_plural = "Products"
 
-    def save(self, *args, **kwargs):
-        if not self.created_at:
-            self.created_at = timezone.now()
-        super().save(*args, **kwargs)
+    # def save(self, *args, **kwargs):
+    #     if not self.created_at:
+    #         self.created_at = timezone.now()
+    #     super().save(*args, **kwargs)
 
     def get_images(self):
         return ProductImage.objects.filter(product=self)

@@ -27,7 +27,7 @@
             </div>
             <!-- button -->
             <div>
-              <a href="products.html" class="btn btn-light">Back to Product</a>
+              <a onclick="history.back()" class="btn btn-light">Back to Product</a>
             </div>
           </div>
         </div>
@@ -63,6 +63,7 @@
                     </div>
                   </div>
                   {% if form.image.help_text %}
+                  <span class="text-danger">{{form.image.help_text}}</span>
                   {% endif %}
                 </div>
                 <div class="mb-3">
@@ -70,7 +71,7 @@
                   <div class="mb-4 d-flex">
                     <div class="position-relative">
                       {% if is_edit %}
-                        <img class="image icon-shape icon-xxxl bg-light rounded-4" src="{{ form.instance.image.url }}" alt="Image" />
+                        <img class="image icon-shape icon-xxxl bg-light rounded-4" src="{{ form.instance.image_p.url }}" alt="Image" />
                       {% else %}
                         <img class="image icon-shape icon-xxxl bg-light rounded-4" src="{% static 'web/assets/images/products/upload.png' %}" alt="Image" />
                       {% endif %}
@@ -85,7 +86,7 @@
                     </div>
                   </div>
                   {% if form.image.help_text %}
-                    <span class="text-danger">{{ form.image.help_text }}</span>
+                    <span class="text-danger">{{ form.image_p.help_text }}</span>
                   {% endif %}
                 </div>
               </div>
@@ -99,18 +100,17 @@
                 </div>
                 <!-- input -->
                 <div class="mb-3 col-lg-6">
-            
                   <label class="form-label">{{form.slug.label}} {% if form.slug.field.required %}<span class="text-danger">*</span>{% endif %}</label>
                   {{form.slug}}
                 </div>
                 <div class="mb-3 col-lg-6">
-                  <label class="form-label">Display Name</label>
-                  <input type="text" class="form-control" placeholder="Enter Product Title" />
+                  <label class="form-label">{{form.display_name.label}} {% if form.display_name.field.required %}<span class="text-danger">*</span>{% endif %}</label>
+                  {{form.display_name}}
                 </div>
                 <!-- input -->
                 <div class="mb-3 col-lg-6">
-                  <label class="form-label">Product Rating(max:5)</label>
-                  <input type="text" class="form-control" placeholder="Enter Product Title" />
+                  <label class="form-label">{{form.rating.label}} {% if form.rating.field.required %}<span class="text-danger">*</span>{% endif %}</label>
+                  {{form.rating}}
                 </div> 
                 <!-- input -->
                 <div class="mb-3 col-lg-12">
@@ -124,7 +124,7 @@
 
                 </div>
                 <!-- input -->
-                <div>
+                <div class="d-none">
                   <div class="mb-3 col-lg-12 mt-5">
                     <!-- heading -->
                     <h4 class="mb-3 h5">Product Images</h4>
@@ -183,35 +183,20 @@
               <!-- input -->
               <div>
                 <div class="mb-3">
-                  <label class="form-label">Product Subcategory</label>
-                  <select class="form-select">
-                    <option selected>Product Category</option>
-                    <option value="Dairy, Bread & Eggs">Dairy, Bread & Eggs</option>
-                    <option value="Snacks & Munchies">Snacks & Munchies</option>
-                    <option value="Fruits & Vegetables">Fruits & Vegetables</option>
-                  </select>
+                  <label class="form-label">{{form.subcategory.label}} {% if form.subcategory.field.required %}<span class="text-danger">*</span>{% endif %}</label>
+                  {{form.subcategory}}
                 </div>
                 <!-- input -->
                 <div class="mb-3">
-                  <label class="form-label">Brand</label>
-                  <select class="form-select">
-                    <option selected>Product Category</option>
-                    <option value="Dairy, Bread & Eggs">Dairy, Bread & Eggs</option>
-                    <option value="Snacks & Munchies">Snacks & Munchies</option>
-                    <option value="Fruits & Vegetables">Fruits & Vegetables</option>
-                  </select>
+                  <label class="form-label">{{form.brand.label}} {% if form.brand.field.required %}<span class="text-danger">*</span>{% endif %}</label>
+                  {{form.brand}}
                 </div>
                 <div class="mb-3">
-                  <label class="form-label">Tag</label>
-                  <select class="form-select">
-                    <option selected>Product Category</option>
-                    <option value="Dairy, Bread & Eggs">Dairy, Bread & Eggs</option>
-                    <option value="Snacks & Munchies">Snacks & Munchies</option>
-                    <option value="Fruits & Vegetables">Fruits & Vegetables</option>
-                  </select>
+                  <label class="form-label">{{form.tag.label}} {% if form.tag.field.required %}<span class="text-danger">*</span>{% endif %}</label>
+                  {{form.tag}}
                 </div>
                 <!-- input -->
-                <div class="mb-3">
+                <div class="mb-3 d-none">
                   <label class="form-label" id="productSKU">Status</label><br />
                   <div class="form-check form-check-inline">
                     <input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio1" value="option1" checked />
@@ -306,7 +291,7 @@
       </div>
     </div>
 
-    <div class="row">
+    {% comment %} <div class="row">
       <div class="col-md-12">
         <div class="card mb-6 card-lg">
           <div class="card-body p-6 ">
@@ -340,13 +325,16 @@
           </div>
         </div>
       </div>
-    </div>
+    </div> {% endcomment %}
     {{ available_size_formset.management_form }}
     {{ product_image_formset.management_form }}
     <!-- button -->
-    <div class="d-grid">
+    <div class="d-grid d-none">
       <a href="#" class="btn btn-primary">Create Product</a>
     </div>
+    <div class="col-md-5">
+      <button style="width:60%" type="submit" class="btn btn-primary">Submit</button>
+   </div>
 </form>
 
     </div>
