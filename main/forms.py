@@ -5,16 +5,27 @@ from products.models import Category
 from products.models import Product
 from main.models import State
 from main.models import District
-from products.models import Product, AvailableSize
+from products.models import Product, AvailableSize ,Review
 
+ICON_CHOICES = (
+    ('fa-solid fa-baseball-bat-ball', 'Cricket'),
+    ('fa-solid fa-futbol', 'Football'),
+    ('fa-solid fa-table-tennis-paddle-ball', 'Badminton'),
+    ('fa-solid fa-person-biking', 'Cycle'),
+    ('fa-solid fa-person-running', 'Running'),
+    ('fa-solid fa-person-skiing-nordic', 'Skiing'),
+    ('fa-solid fa-dumbbell', 'Fitness'),
+)
 
 class CategoryForm(forms.ModelForm):
     class Meta:
         model = Category
-        fields = ("name", "image","slug","status",)
+        fields = ("maincategory", "name", "slug", "icon", "image", "status",)
         widgets = {
+            "maincategory": forms.Select(attrs={"class": "form-select"}),
             "name": forms.TextInput(attrs={"placeholder": "Product Name","class": "form-control"}),
             "slug": forms.TextInput(attrs={"placeholder": "Product Slug","class": "form-control"}),
+            "icon": forms.Select(choices=ICON_CHOICES, attrs={"class": "form-select"}),
             "image": forms.FileInput(attrs={"class": "file-input"}),
             "status": forms.Select(attrs={"class": "form-select"}),
         }
@@ -91,4 +102,42 @@ class ProductImageForm(forms.ModelForm):
         widgets = {
             "image": forms.FileInput(attrs={"class": "file-input required",'type':'file','required': True}),
             
+        }
+
+
+class ReviewForm(forms.ModelForm):
+    RATING_CHOICES = [
+        (1, "1 - Poor"),
+        (2, "2 - Below Average"),
+        (3, "3 - Average"),
+        (4, "4 - Good"),
+        (5, "5 - Excellent"),
+    ]
+
+    rating = forms.ChoiceField(
+        choices=RATING_CHOICES, widget=forms.Select(attrs={"class": "form-control"})
+    )
+
+
+    class Meta:
+        model = Review
+        exclude = ("created_at",)
+        widgets = {
+            "product": forms.Select(attrs={"class": "form-control"}),
+            "fullname": forms.TextInput(
+                attrs={"class": "form-control", "placeholder": "Your Full Name"}
+            ),
+            "headline": forms.TextInput(
+                attrs={
+                    "class": "form-control",
+                    "placeholder": "What’s most important to know",
+                }
+            ),
+            "content": forms.Textarea(
+                attrs={
+                    "class": "form-control",
+                    "rows": 3,
+                    "placeholder": "What did you like or dislike? What did you use this product for?",
+                }
+            ),
         }

@@ -363,79 +363,40 @@
                         <!-- title -->
                         <h4 class="mb-3">Customer reviews</h4>
                         <span>
-                          <!-- rating --> <small class="text-warning"> <i class="bi bi-star-fill"></i>
-                            <i class="bi bi-star-fill"></i>
-                            <i class="bi bi-star-fill"></i>
-                            <i class="bi bi-star-fill"></i>
-                            <i class="bi bi-star-half"></i></small><span class="ms-3">4.1 out of 5</span><small
-                            class="ms-3">11,130 global ratings</small></span>
+                          <!-- rating --> <small class="text-warning"> 
+                            {% for star in "12345" %}
+                              {% if star|add:0 <= product.average_rating %}
+                              <i class="bi bi-star-fill"></i>
+                              {% else %}
+                              <i class="bi bi-star"></i>
+                              {% endif %}
+                            {% endfor %}
+                          </small>
+                          <span class="ms-3">{{product.average_rating|floatformat:1|default:0}} out of 5</span><small class="ms-3">{{product.num_of_reviews}} global ratings</small>
+                        </span>
                       </div>
                       <div class="mb-8">
                         <!-- progress -->
-                        <div class="d-flex align-items-center mb-2">
-                          <div class="text-nowrap me-3 text-muted"><span
-                              class="d-inline-block align-middle text-muted">5</span><i
-                              class="bi bi-star-fill ms-1 small text-warning"></i></div>
-                          <div class="w-100">
-                            <div class="progress" style="height: 6px;">
-                              <div class="progress-bar bg-warning" role="progressbar" style="width: 60%;"
-                                aria-valuenow="60" aria-valuemin="0" aria-valuemax="100"></div>
-                            </div>
-                          </div><span class="text-muted ms-3">53%</span>
-                        </div>
+                      {% for rating in product_ratings %} 
                         <!-- progress -->
                         <div class="d-flex align-items-center mb-2">
                           <div class="text-nowrap me-3 text-muted"><span
-                              class="d-inline-block align-middle text-muted">4</span><i
+                              class="d-inline-block align-middle text-muted">{{ rating.value }}</span><i
                               class="bi bi-star-fill ms-1 small text-warning"></i></div>
                           <div class="w-100">
                             <div class="progress" style="height: 6px;">
-                              <div class="progress-bar bg-warning" role="progressbar" style="width: 50%;"
-                                aria-valuenow="50" aria-valuemin="0" aria-valuemax="50"></div>
+                              <div class="progress-bar bg-warning" role="progressbar" style="width:{{ rating.percentage }}%;"
+                                aria-valuenow="{{ rating.percentage }}" aria-valuemin="0" aria-valuemax="100"></div>
                             </div>
-                          </div><span class="text-muted ms-3">22%</span>
+                          </div><span class="text-muted ms-3">{{ rating.percentage }}%</span>
                         </div>
-                        <!-- progress -->
-                        <div class="d-flex align-items-center mb-2">
-                          <div class="text-nowrap me-3 text-muted"><span
-                              class="d-inline-block align-middle text-muted">3</span><i
-                              class="bi bi-star-fill ms-1 small text-warning"></i></div>
-                          <div class="w-100">
-                            <div class="progress" style="height: 6px;">
-                              <div class="progress-bar bg-warning" role="progressbar" style="width: 35%;"
-                                aria-valuenow="35" aria-valuemin="0" aria-valuemax="35"></div>
-                            </div>
-                          </div><span class="text-muted ms-3">14%</span>
-                        </div>
-                        <!-- progress -->
-                        <div class="d-flex align-items-center mb-2">
-                          <div class="text-nowrap me-3 text-muted"><span
-                              class="d-inline-block align-middle text-muted">2</span><i
-                              class="bi bi-star-fill ms-1 small text-warning"></i></div>
-                          <div class="w-100">
-                            <div class="progress" style="height: 6px;">
-                              <div class="progress-bar bg-warning" role="progressbar" style="width: 22%;"
-                                aria-valuenow="22" aria-valuemin="0" aria-valuemax="22"></div>
-                            </div>
-                          </div><span class="text-muted ms-3">5%</span>
-                        </div>
-                        <!-- progress -->
-                        <div class="d-flex align-items-center mb-2">
-                          <div class="text-nowrap me-3 text-muted"><span
-                              class="d-inline-block align-middle text-muted">1</span><i
-                              class="bi bi-star-fill ms-1 small text-warning"></i></div>
-                          <div class="w-100">
-                            <div class="progress" style="height: 6px;">
-                              <div class="progress-bar bg-warning" role="progressbar" style="width: 14%;"
-                                aria-valuenow="14" aria-valuemin="0" aria-valuemax="14"></div>
-                            </div>
-                          </div><span class="text-muted ms-3">7%</span>
-                        </div>
+                      {% endfor %}
+
                       </div>
                       <div class="d-grid">
                         <h4>Review this product</h4>
                         <p class="mb-0">Share your thoughts with other customers.</p>
-                        <a href="#" class="btn btn-outline-gray-400 mt-4 text-muted">Write the Review</a>
+                        <a href="#"  data-bs-toggle="modal" data-bs-target="#addreviewModal" class="btn btn-outline-gray-400 mt-4 text-muted">Write the Review</a>
                       </div>
 
                     </div>
@@ -458,205 +419,89 @@
                         </div>
 
                       </div>
-                      <div class="d-flex border-bottom pb-6 mb-6">
-                        <!-- img -->
-                        <!-- img --><img src="../assets/images/avatar/avatar-10.jpg" alt=""
+                      {% for reviw in product.get_reviews %}
+                      <div class="d-flex border-bottom pb-6 mb-6 pt-4">
+                        <!-- img --><img src="https://ui-avatars.com/api/?name={{reviw.fullname}}&background=0aad0a&color=fff&size=128" alt=""
                           class="rounded-circle avatar-lg">
                         <div class="ms-5">
-                          <h6 class="mb-1">
-                            Shankar Subbaraman
-
-                          </h6>
-                          <!-- select option -->
+                          <h6 class="mb-1">{{reviw.fullname}}</h6>
                           <!-- content -->
-                          <p class="small"> <span class="text-muted">30 December 2022</span>
-                            <span class="text-primary ms-3 fw-bold">Verified Purchase</span></p>
+                          <p class="small"> 
+                            <span class="text-muted">{{reviw.created_at}}</span>
+                          </p>
                           <!-- rating -->
-                          <div class=" mb-2">
-                            <i class="bi bi-star-fill text-warning"></i>
-                            <i class="bi bi-star-fill text-warning"></i>
-                            <i class="bi bi-star-fill text-warning"></i>
-                            <i class="bi bi-star-fill text-warning"></i>
-                            <i class="bi bi-star-fill text-warning"></i>
-                            <span class="ms-3 text-dark fw-bold">Need to recheck the weight at delivery point</span>
+                          <div class="mb-2">
+                            {% for star in "12345" %}
+                              {% if star|add:0 <= reviw.rating %}
+                              <i class="bi bi-star-fill text-warning"></i>
+                              {% else %}
+                              <i class="bi bi-star text-warning"></i>
+                              {% endif %}
+                            {% endfor %}
+                            
                           </div>
-                          <!-- text-->
-                          <p>Product quality is good. But, weight seemed less than 1kg. Since it is being sent in open
-                            package, there is a possibility of pilferage in between. FreshCart sends the veggies and
-                            fruits through sealed plastic covers and Barcode on the weight etc. .</p>
-                          <div>
-                            <div class="border icon-shape icon-lg border-2 ">
-                              <!-- img --><img src="../assets/images/products/product-img-1.jpg" alt=""
-                                class="img-fluid ">
-                            </div>
-                            <div class="border icon-shape icon-lg border-2 ms-1 ">
-                              <!-- img --><img src="../assets/images/products/product-img-2.jpg" alt=""
-                                class="img-fluid ">
-                            </div>
-                            <div class="border icon-shape icon-lg border-2 ms-1 ">
-                              <!-- img --><img src="../assets/images/products/product-img-3.jpg" alt=""
-                                class="img-fluid ">
-                            </div>
 
-                          </div>
-                          <!-- icon -->
-                          <div class="d-flex justify-content-end mt-4">
-                            <a href="#" class="text-muted"><i class="feather-icon icon-thumbs-up me-1"></i>Helpful</a>
-                            <a href="#" class="text-muted ms-4"><i class="feather-icon icon-flag me-2"></i>Report
-                              abuse</a>
-                          </div>
+                          <span class=" text-primary fw-bold">{{reviw.headline}}</span>
+                          <p>
+                            {{reviw.content}}
+                           </p>
                         </div>
                       </div>
-                      <div class="d-flex border-bottom pb-6 mb-6 pt-4">
-                        <!-- img --><img src="../assets/images/avatar/avatar-12.jpg" alt=""
-                          class="rounded-circle avatar-lg">
-                        <div class="ms-5">
-                          <h6 class="mb-1">
-                            Robert Thomas
-
-                          </h6>
-                          <!-- content -->
-                          <p class="small"> <span class="text-muted">29 December 2022</span>
-                            <span class="text-primary ms-3 fw-bold">Verified Purchase</span></p>
-                          <!-- rating -->
-                          <div class=" mb-2">
-                            <i class="bi bi-star-fill text-warning"></i>
-                            <i class="bi bi-star-fill text-warning"></i>
-                            <i class="bi bi-star-fill text-warning"></i>
-                            <i class="bi bi-star-fill text-warning"></i>
-                            <i class="bi bi-star text-warning"></i>
-                            <span class="ms-3 text-dark fw-bold">Need to recheck the weight at delivery point</span>
-                          </div>
-
-                          <p>Product quality is good. But, weight seemed less than 1kg. Since it is being sent in open
-                            package, there is a possibility of pilferage in between. FreshCart sends the veggies and
-                            fruits through sealed plastic covers and Barcode on the weight etc. .</p>
-
-                          <!-- icon -->
-                          <div class="d-flex justify-content-end mt-4">
-                            <a href="#" class="text-muted"><i class="feather-icon icon-thumbs-up me-1"></i>Helpful</a>
-                            <a href="#" class="text-muted ms-4"><i class="feather-icon icon-flag me-2"></i>Report
-                              abuse</a>
-                          </div>
-                        </div>
-                      </div>
-                      <div class="d-flex border-bottom pb-6 mb-6 pt-4">
-                        <!-- img --><img src="../assets/images/avatar/avatar-9.jpg" alt=""
-                          class="rounded-circle avatar-lg">
-                        <div class="ms-5">
-                          <h6 class="mb-1">
-                            Barbara Tay
-
-                          </h6>
-                          <!-- content -->
-                          <p class="small"> <span class="text-muted">28 December 2022</span>
-                            <span class="text-danger ms-3 fw-bold">Unverified Purchase</span></p>
-                          <!-- rating -->
-                          <div class=" mb-2">
-                            <i class="bi bi-star-fill text-warning"></i>
-                            <i class="bi bi-star-fill text-warning"></i>
-                            <i class="bi bi-star-fill text-warning"></i>
-                            <i class="bi bi-star-fill text-warning"></i>
-                            <i class="bi bi-star text-warning"></i>
-                            <span class="ms-3 text-dark fw-bold">Need to recheck the weight at delivery point</span>
-                          </div>
-
-                          <p>Everytime i ordered from fresh i got greenish yellow bananas just like i wanted so go for
-                            it , its happens very rare that u get over riped ones.</p>
-
-                          <!-- icon -->
-                          <div class="d-flex justify-content-end mt-4">
-                            <a href="#" class="text-muted"><i class="feather-icon icon-thumbs-up me-1"></i>Helpful</a>
-                            <a href="#" class="text-muted ms-4"><i class="feather-icon icon-flag me-2"></i>Report
-                              abuse</a>
-                          </div>
-                        </div>
-                      </div>
-                      <div class="d-flex border-bottom pb-6 mb-6 pt-4">
-                        <!-- img --><img src="../assets/images/avatar/avatar-8.jpg" alt=""
-                          class="rounded-circle avatar-lg">
-                        <div class="ms-5 flex-grow-1">
-                          <h6 class="mb-1">
-                            Sandra Langevin
-
-                          </h6>
-                          <!-- content -->
-                          <p class="small"> <span class="text-muted">8 December 2022</span>
-                            <span class="text-danger ms-3 fw-bold">Unverified Purchase</span></p>
-                          <!-- rating -->
-                          <div class=" mb-2">
-                            <i class="bi bi-star-fill text-warning"></i>
-                            <i class="bi bi-star-fill text-warning"></i>
-                            <i class="bi bi-star-fill text-warning"></i>
-                            <i class="bi bi-star-fill text-warning"></i>
-                            <i class="bi bi-star text-warning"></i>
-                            <span class="ms-3 text-dark fw-bold">Great product</span>
-                          </div>
-
-                          <p>Great product & package. Delivery can be expedited. </p>
-
-                          <!-- icon -->
-                          <div class="d-flex justify-content-end mt-4">
-                            <a href="#" class="text-muted"><i class="feather-icon icon-thumbs-up me-1"></i>Helpful</a>
-                            <a href="#" class="text-muted ms-4"><i class="feather-icon icon-flag me-2"></i>Report
-                              abuse</a>
-                          </div>
-                        </div>
-                      </div>
+                      {% endfor %}
                       <div>
                         <a href="#" class="btn btn-outline-gray-400 text-muted">Read More Reviews</a>
                       </div>
                     </div>
-                    <div>
-                      <!-- rating -->
-                      <h3 class="mb-5">Create Review</h3>
-                      <div class="border-bottom py-4 mb-4">
-                        <h4 class="mb-3">Overall rating</h4>
-                        <div id="rater"></div>
-                      </div>
-                      <div class="border-bottom py-4 mb-4">
-                        <h4 class="mb-0">Rate Features</h4>
-                        <div class="my-5">
-                          <h5>Flavor</h5>
-                          <div id="rate-2"></div>
-                        </div>
-                        <div class="my-5">
-                          <h5>Value for money</h5>
-                          <div id="rate-3"></div>
-                        </div>
-                        <div class="my-5">
-                          <h5>Scent</h5>
-                          <div id="rate-4"></div>
-                        </div>
-
-
-                      </div>
-                      <!-- form control -->
-                      <div class="border-bottom py-4 mb-4">
-                        <h5>Add a headline</h5>
-                        <input type="text" class="form-control" placeholder="What’s most important to know">
-                      </div>
-                      <div class="border-bottom py-4 mb-4">
-                        <h5>Add a photo or video</h5>
-                        <p>Shoppers find images and videos more helpful than text alone.</p>
-                        <!-- form -->
-                        <form action="#" class=" dropzone profile-dropzone">
-                          <div class="fallback">
-                            <input name="file" type="file" multiple />
+                    <div class="modal fade" id="addreviewModal" tabindex="-1" aria-labelledby="addreviewModalLabel" aria-hidden="true">
+                      <div class="modal-dialog">
+                        <div class="modal-content">
+                          <!-- modal body -->
+                          <div class="modal-body p-6">
+                            <div class="d-flex justify-content-between mb-2 border-bottom">
+                              <!-- heading -->
+                              <div>
+                                <h4 class="modal-title mb-1" id="addreviewModalLabel">Create Review</h4>
+                              </div>
+                              <div>
+                                <!-- button -->
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                              </div>
+                            </div>
+                           
+                            <form action="{% url 'web:product_detail' product.slug %}" method="post" class="ajax reload">
+                              {% csrf_token %}
+                          
+                              <div class="py-2">
+                                <h5 class="mb-3">Overall rating</h5>
+                                <div id="rater"></div>
+                                <input type="hidden" name="rating" id="rating">
+                            </div>
+                            
+                              <div class=" py-2 ">
+                                <h5>Full Name</h5>
+                                {{ review_form.fullname }}
+                              </div>
+                              <div class=" py-2 ">
+                                <h5>Add a headline</h5>
+                                {{ review_form.headline }}
+                              </div>
+          
+                              <div class=" py-2 mb-4">
+                                <!-- heading -->
+                                <h5>Add a written review</h5>
+                                {{review_form.content}}
+          
+                              </div>
+                      
+                              <div class="col-12 text-end">
+                                  <button type="button" class="btn btn-outline-primary" data-bs-dismiss="modal">Cancel</button>
+                                  <button class="btn btn-primary" type="submit">Submit Review</button>
+                              </div>
+                            </form>
+                          
                           </div>
-                        </form>
-
-                      </div>
-                      <div class=" py-4 mb-4">
-                        <!-- heading -->
-                        <h5>Add a written review</h5>
-                        <textarea class="form-control" rows="3"
-                          placeholder="What did you like or dislike? What did you use this product for?"></textarea>
-
-                      </div>
-                      <!-- button -->
-                      <div class="d-flex justify-content-end">
-                        <a href="#" class="btn btn-primary">Submit Review</a>
+                    
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -689,6 +534,7 @@
       </div>
       <!-- row -->
       <div class="row g-4 row-cols-lg-5 row-cols-2 row-cols-md-2 mt-2">
+
         <!-- col -->
         <div class="col">
           <div class="card card-product">
@@ -741,197 +587,62 @@
           </div>
         </div>
         <!-- col -->
-        <div class="col">
-          <div class="card card-product">
-            <div class="card-body">
-              <!-- badge -->
-              <div class="text-center position-relative"> <a href="#!"><img
-                    src="../assets/images/products/product-img-2.jpg" alt="Grocery Ecommerce Template"
-                    class="mb-3 img-fluid"></a>
-                <!-- action btn -->
-                <div class="card-product-action">
-                  <a href="#!" class="btn-action" data-bs-toggle="modal" data-bs-target="#quickViewModal"><i
-                      class="bi bi-eye" data-bs-toggle="tooltip" data-bs-html="true" title="Quick View"></i></a>
-                  <a href="shop-wishlist.html" class="btn-action" data-bs-toggle="tooltip" data-bs-html="true" title="Wishlist"><i
-                      class="bi bi-heart"></i></a>
-                  <a href="#!" class="btn-action" data-bs-toggle="tooltip" data-bs-html="true" title="Compare"><i
-                      class="bi bi-arrow-left-right"></i></a>
-                </div>
-              </div>
-              <!-- heading -->
-              <div class="text-small mb-1"><a href="#!" class="text-decoration-none text-muted"><small>Bakery &
-                    Biscuits</small></a></div>
-              <h2 class="fs-6"><a href="#!" class="text-inherit text-decoration-none">NutriChoice Digestive </a></h2>
-              <div class="text-warning">
-
-                <small> <i class="bi bi-star-fill"></i>
-                  <i class="bi bi-star-fill"></i>
-                  <i class="bi bi-star-fill"></i>
-                  <i class="bi bi-star-fill"></i>
-                  <i class="bi bi-star-half"></i></small> <span class="text-muted small">4.5 (25)</span>
-              </div>
-              <!-- price -->
-              <div class="d-flex justify-content-between align-items-center mt-3">
-                <div><span class="text-dark">$24</span>
-                </div>
-                <!-- btn -->
-                <div><a href="#!" class="btn btn-primary btn-sm">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
-                      stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                      class="feather feather-plus">
-                      <line x1="12" y1="5" x2="12" y2="19"></line>
-                      <line x1="5" y1="12" x2="19" y2="12"></line>
-                    </svg> Add</a></div>
-              </div>
-            </div>
-          </div>
-        </div>
-        <!-- col -->
-        <div class="col">
-          <div class="card card-product">
-            <div class="card-body">
-              <!-- badge -->
-              <div class="text-center position-relative"> <a href="#!"><img
-                    src="../assets/images/products/product-img-3.jpg" alt="Grocery Ecommerce Template"
-                    class="mb-3 img-fluid"></a>
-                <!-- action btn -->
-                <div class="card-product-action">
-                  <a href="#!" class="btn-action" data-bs-toggle="modal" data-bs-target="#quickViewModal"><i
-                      class="bi bi-eye" data-bs-toggle="tooltip" data-bs-html="true" title="Quick View"></i></a>
-                  <a href="shop-wishlist.html" class="btn-action" data-bs-toggle="tooltip" data-bs-html="true" title="Wishlist"><i
-                      class="bi bi-heart"></i></a>
-                  <a href="#!" class="btn-action" data-bs-toggle="tooltip" data-bs-html="true" title="Compare"><i
-                      class="bi bi-arrow-left-right"></i></a>
-                </div>
-              </div>
-              <!-- heading -->
-              <div class="text-small mb-1"><a href="#!" class="text-decoration-none text-muted"><small>Bakery &
-                    Biscuits</small></a></div>
-              <h2 class="fs-6"><a href="#!" class="text-inherit text-decoration-none">Cadbury 5 Star Chocolate</a></h2>
-              <div class="text-warning">
-
-                <small> <i class="bi bi-star-fill"></i>
-                  <i class="bi bi-star-fill"></i>
-                  <i class="bi bi-star-fill"></i>
-                  <i class="bi bi-star-fill"></i>
-                  <i class="bi bi-star-fill"></i></small> <span class="text-muted small">5 (469)</span>
-              </div>
-              <!-- price -->
-              <div class="d-flex justify-content-between align-items-center mt-3">
-                <div><span class="text-dark">$32</span> <span class="text-decoration-line-through text-muted">$35</span>
-                </div>
-                <!-- btn -->
-                <div><a href="#!" class="btn btn-primary btn-sm">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
-                      stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                      class="feather feather-plus">
-                      <line x1="12" y1="5" x2="12" y2="19"></line>
-                      <line x1="5" y1="12" x2="19" y2="12"></line>
-                    </svg> Add</a></div>
-              </div>
-            </div>
-          </div>
-        </div>
-        <!-- col -->
-        <div class="col">
-          <div class="card card-product">
-            <div class="card-body">
-              <!-- badge -->
-              <div class="text-center position-relative"> <a href="#!"><img
-                    src="../assets/images/products/product-img-4.jpg" alt="Grocery Ecommerce Template"
-                    class="mb-3 img-fluid"></a>
-                <!-- action btn -->
-                <div class="card-product-action">
-                  <a href="#!" class="btn-action" data-bs-toggle="modal" data-bs-target="#quickViewModal"><i
-                      class="bi bi-eye" data-bs-toggle="tooltip" data-bs-html="true" title="Quick View"></i></a>
-                  <a href="shop-wishlist.html" class="btn-action" data-bs-toggle="tooltip" data-bs-html="true" title="Wishlist"><i
-                      class="bi bi-heart"></i></a>
-                  <a href="#!" class="btn-action" data-bs-toggle="tooltip" data-bs-html="true" title="Compare"><i
-                      class="bi bi-arrow-left-right"></i></a>
-                </div>
-              </div>
-              <!-- heading -->
-              <div class="text-small mb-1"><a href="#!" class="text-decoration-none text-muted"><small>Snack &
-                    Munchies</small></a></div>
-              <h2 class="fs-6"><a href="#!" class="text-inherit text-decoration-none">Onion Flavour Potato</a></h2>
-              <div class="text-warning">
-
-                <small> <i class="bi bi-star-fill"></i>
-                  <i class="bi bi-star-fill"></i>
-                  <i class="bi bi-star-fill"></i>
-                  <i class="bi bi-star-half"></i>
-                  <i class="bi bi-star"></i></small> <span class="text-muted small">3.5 (456)</span>
-              </div>
-              <!-- price -->
-              <div class="d-flex justify-content-between align-items-center mt-3">
-                <div><span class="text-dark">$3</span> <span class="text-decoration-line-through text-muted">$5</span>
-                </div>
-                <!-- btn -->
-                <div><a href="#!" class="btn btn-primary btn-sm">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
-                      stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                      class="feather feather-plus">
-                      <line x1="12" y1="5" x2="12" y2="19"></line>
-                      <line x1="5" y1="12" x2="19" y2="12"></line>
-                    </svg> Add</a></div>
-              </div>
-            </div>
-          </div>
-        </div>
-        <!-- col -->
-        <div class="col">
-          <div class="card card-product">
-            <div class="card-body">
-              <!-- badge -->
-              <div class="text-center position-relative"> <a href="#!"><img
-                    src="../assets/images/products/product-img-9.jpg" alt="Grocery Ecommerce Template"
-                    class="mb-3 img-fluid"></a>
-                <!-- action btn -->
-                <div class="card-product-action">
-                  <a href="#!" class="btn-action" data-bs-toggle="modal" data-bs-target="#quickViewModal"><i
-                      class="bi bi-eye" data-bs-toggle="tooltip" data-bs-html="true" title="Quick View"></i></a>
-                  <a href="shop-wishlist.html" class="btn-action" data-bs-toggle="tooltip" data-bs-html="true" title="Wishlist"><i
-                      class="bi bi-heart"></i></a>
-                  <a href="#!" class="btn-action" data-bs-toggle="tooltip" data-bs-html="true" title="Compare"><i
-                      class="bi bi-arrow-left-right"></i></a>
-                </div>
-              </div>
-              <!-- heading -->
-              <div class="text-small mb-1"><a href="#!" class="text-decoration-none text-muted"><small>Snack &
-                    Munchies</small></a></div>
-              <h2 class="fs-6"><a href="#!" class="text-inherit text-decoration-none">Slurrp Millet Chocolate </a></h2>
-              <div class="text-warning">
-
-                <small> <i class="bi bi-star-fill"></i>
-                  <i class="bi bi-star-fill"></i>
-                  <i class="bi bi-star-fill"></i>
-                  <i class="bi bi-star-fill"></i>
-                  <i class="bi bi-star-half"></i></small> <span class="text-muted small">4.5 (67)</span>
-              </div>
-              <!-- price -->
-              <div class="d-flex justify-content-between align-items-center mt-3">
-                <div><span class="text-dark">$6</span> <span class="text-decoration-line-through text-muted">$10</span>
-                </div>
-                <!-- btn -->
-                <div><a href="#!" class="btn btn-primary btn-sm">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
-                      stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                      class="feather feather-plus">
-                      <line x1="12" y1="5" x2="12" y2="19"></line>
-                      <line x1="5" y1="12" x2="19" y2="12"></line>
-                    </svg> Add</a></div>
-              </div>
-            </div>
-          </div>
-        </div>
+        
       </div>
     </div>
   </section>
 
 </main>
 {% endblock  %}
-{% block js %}
 
-{% endblock %}
 <script src="{% static 'web/assets/libs/rater-js/index.js' %}"></script>
 <script src="{% static 'web/assets/libs/dropzone/dist/min/dropzone.min.js' %}"></script>
+{% block js %}
+{% include 'web/include/form-ajax.html' %}
+<script src="{% static 'web/js/assets/vendors/tns-slider.js'  %}{{current_version}}"></script>
+<script src="{% static 'web/js/assets/product_detail.js'  %}{{current_version}}"></script>
+{% comment %} <script>
+  var rater = document.getElementById('rater');
+  var ratingInput = document.getElementById('rating');
+
+  // Function to update the hidden input field
+  function updateRating(value) {
+    ratingInput.value = value;
+    console.log('Updated rating value:', value);
+  }
+
+  // Event listener for mouseenter and click
+  function handleInteraction() {
+    var dataRating = rater.getAttribute('data-rating');
+    updateRating(dataRating);
+  }
+
+  rater.addEventListener('mouseenter', handleInteraction);
+  rater.addEventListener('click', handleInteraction);
+  
+</script> {% endcomment %}
+<script>
+  // Function to initialize the star rating
+  function initRater() {
+    var rater = new Rater({
+      element: document.getElementById('rater'),
+      rateCallback: function rateCallback(rating) {
+        updateRating(rating);
+      }
+    });
+    rater.setRating(0);  // Set an initial rating value, e.g., 0
+  }
+
+  // Function to update the hidden input field
+  function updateRating(value) {
+    var ratingInput = document.getElementById('rating');
+    ratingInput.value = value;
+    console.log('Updated rating value:', value);
+  }
+
+  // Initialize the star rating on document load
+  document.addEventListener('DOMContentLoaded', function() {
+    initRater();
+  });
+</script>
+{% endblock %}

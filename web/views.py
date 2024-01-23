@@ -165,11 +165,41 @@ class ProductDetailView(DetailView):
         related_products = Product.objects.filter(
             subcategory=current_product.subcategory
         ).exclude(pk=current_product.pk)[:12]
+        product_ratings = [
+            {"value": 5, "percentage": int(current_product.five_rating())},
+            {"value": 4, "percentage": int(current_product.four_rating())},
+            {"value": 3, "percentage": int(current_product.three_rating())},
+            {"value": 2, "percentage": int(current_product.two_rating())},
+            {"value": 1, "percentage": int(current_product.one_rating())},
+        ]
         context["related_products"] = related_products
         context["reviews"] = current_product.reviews.filter(approval=True)
         context["review_form"] = ReviewForm()
+        context["product_ratings"] = product_ratings
         return context
 
+    # def post(self, request, *args, **kwargs):
+    #     if request.user.is_authenticated:
+    #         product = self.get_object()
+    #         user = request.user
+    #         form = ReviewForm(request.POST, request.FILES)
+
+    #     if form.is_valid():
+    #         form.instance.product = product
+    #         form.save()
+    #         response_data = {
+    #             "status": "true",
+    #             "title": "Successfully Submitted",
+    #             "message": "Message successfully Submitted",
+    #         }
+    #     else:
+    #         print(form.errors)
+    #         response_data = {
+    #             "status": "false",
+    #             "title": "Form validation error",
+    #             "message": form.errors,
+    #         }
+    #     return JsonResponse(response_data)
     def post(self, request, *args, **kwargs):
         if request.user.is_authenticated:
             product = self.get_object()
@@ -183,6 +213,7 @@ class ProductDetailView(DetailView):
             else:
                 print(form.errors)
         return redirect("product:product_detail", slug=self.get_object().slug)
+
 
 
 class OfferedProductListView(View):

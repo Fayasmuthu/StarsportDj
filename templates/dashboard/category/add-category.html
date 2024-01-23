@@ -23,7 +23,7 @@
                                     </nav>
                                 </div>
                                 <div>
-                                    <a href="categories.html" class="btn btn-light">Back to Categories</a>
+                                    <a onclick="history.back()" class="btn btn-light">Back to Categories</a>
                                 </div>
                             </div>
                         </div>
@@ -34,51 +34,54 @@
                             <div class="card mb-6 shadow border-0">
                                 <!-- card body -->
                                 <div class="card-body p-6 ">
+                                    <form method="POST" enctype="multipart/form-data" class="ajax redirect" data-redirect="{% url 'main:categories' %}">
+                                        {% csrf_token %}                               
                                     <h4 class="mb-5 h5">Category Image</h4>
                                     <div class="mb-4 d-flex">
-                                        <div class="position-relative" >
-                                            <img class="image  icon-shape icon-xxxl bg-light rounded-4" src="../assets/images/icons/bakery.svg" alt="Image">
-
+                                        <div class="position-relative" >             
+                                            {% if is_edit %}
+                                            <img class="image  icon-shape icon-xxxl bg-light rounded-4" src="{{category.image.url}}" alt="Image">
+                                            {% else %}
+                                            <img class="image  icon-shape icon-xxxl bg-light rounded-4" src="{% static 'web/assets/images/icons/bakery.svg' %}" alt="Image">
+                                            {% endif %}
                                             <div class="file-upload position-absolute end-0 top-0 mt-n2 me-n1">
                                                 <input type="file" class="file-input ">
                                                 <span class="icon-shape icon-sm rounded-circle bg-white">
-                                                <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="currentColor" class="bi bi-pencil-fill text-muted" viewBox="0 0 16 16">
-                                                    <path d="M12.854.146a.5.5 0 0 0-.707 0L10.5 1.793 14.207 5.5l1.647-1.646a.5.5 0 0 0 0-.708l-3-3zm.646 6.061L9.793 2.5 3.293 9H3.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.207l6.5-6.5zm-7.468 7.468A.5.5 0 0 1 6 13.5V13h-.5a.5.5 0 0 1-.5-.5V12h-.5a.5.5 0 0 1-.5-.5V11h-.5a.5.5 0 0 1-.5-.5V10h-.5a.499.499 0 0 1-.175-.032l-.179.178a.5.5 0 0 0-.11.168l-2 5a.5.5 0 0 0 .65.65l5-2a.5.5 0 0 0 .168-.11l.178-.178z"/>
-                                                  </svg>
+                                                    <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="currentColor" class="bi bi-pencil-fill text-muted" viewBox="0 0 16 16">
+                                                        <path d="M12.854.146a.5.5 0 0 0-.707 0L10.5 1.793 14.207 5.5l1.647-1.646a.5.5 0 0 0 0-.708l-3-3zm.646 6.061L9.793 2.5 3.293 9H3.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.207l6.5-6.5zm-7.468 7.468A.5.5 0 0 1 6 13.5V13h-.5a.5.5 0 0 1-.5-.5V12h-.5a.5.5 0 0 1-.5-.5V11h-.5a.5.5 0 0 1-.5-.5V10h-.5a.499.499 0 0 1-.175-.032l-.179.178a.5.5 0 0 0-.11.168l-2 5a.5.5 0 0 0 .65.65l5-2a.5.5 0 0 0 .168-.11l.178-.178z"/>
+                                                    </svg>
                                                 </span>
-                                              </div>
+                                            </div>
                                         </div>
-
-
-
                                     </div>
+                                    {% if form.image.help_text %}
+                                    <span class="text-danger">{{form.image.help_text}}</span>
+                                    {% endif %} 
                                     <h4 class="mb-4 h5 mt-5">Category Information</h4>
 
                                     <div class="row">
                                         <!-- input -->
                                         <div class="mb-3 col-lg-6">
-                                            <label class="form-label">Category Name</label>
-                                            <input type="text" class="form-control" placeholder="Category Name"
-                                                required>
+                                            <label class="form-label">{{form.name.label}} {% if form.name.field.required %}<span class="text-danger">*</span>{% endif %} </label>
+                                            {{ form.name }}
                                         </div>
                                         <!-- input -->
                                         <div class="mb-3 col-lg-6">
-                                            <label class="form-label">Slug</label>
-                                            <input type="text" class="form-control" placeholder="Slug" required>
+                                            <label class="form-label">{{form.slug.label}} {% if form.slug.field.required %}<span class="text-danger">*</span>{% endif %}</label>
+                                            {{form.slug}}
                                         </div>
                                         <!-- input -->
-                                        <div class="mb-3 col-lg-6">
-                                            <label class="form-label">Parent Category</label>
-                                            <select class="form-select">
-                                                <option selected>Category Name</option>
-                                                <option value="Dairy, Bread & Eggs">Dairy, Bread & Eggs</option>
-                                                <option value="Snacks & Munchies">Snacks & Munchies</option>
-                                                <option value="Fruits & Vegetables">Fruits & Vegetables</option>
-                                            </select>
+                                        <div class="mb-3 col-lg-4">
+                                            <label class="form-label">{{form.maincategory.label}} {% if form.maincategory.field.required %}<span class="text-danger">*</span>{% endif %}</label>
+                                            {{form.maincategory}}
                                         </div>
-                                        <div class="mb-3 col-lg-6">
-                                            <label class="form-label">Date</label>
-                                            <input type="text" class="form-control flatpickr" placeholder="Select Date">
+                                        <div class="mb-3 col-lg-4">
+                                            <label class="form-label">{{form.icon.label}} {% if form.icon.field.required %}<span class="text-danger">*</span>{% endif %}</label>
+                                            {{form.icon}}
+                                        </div>
+                                        <div class="mb-3 col-lg-4">
+                                            <label class="form-label">{{form.status.label}} {% if form.status.field.required %}<span class="text-danger">*</span>{% endif %}</label>
+                                            {{form.status}}
                                         </div>
 
                                         <div>
@@ -132,6 +135,7 @@
                                               </a>
                                         </div>
                                     </div>
+                                    </form>
                                 </div>
                             </div>
 
@@ -145,3 +149,19 @@
         </div>
 
         {% endblock  %}
+        {% block js_plugins %}
+        {% include 'web/include/form-ajax.html' %}
+        <script>
+          $(document).ready(function () {
+            // Function to update the slug based on the name
+            function updateSlug() {
+                var name = $('#id_name').val();
+                var slug = name.toLowerCase().replace(/[^a-z0-9]+/g, '-');
+                $('#id_slug').val(slug);
+            }
+        
+            // Attach the function to the change event of the name field
+            $('#id_name').on('input', updateSlug);
+        });
+        </script>
+        {% endblock %}

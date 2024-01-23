@@ -6,12 +6,23 @@ from .models import Review
 class ReviewForm(forms.ModelForm):
     class Meta:
         model = Review
-        fields = [
-            "headline",
-            "content",
-        ]
+        fields = ["fullname", "headline", "content", "rating"]
         widgets = {
-            "headline": forms.TextInput(attrs={"class": "form-control"}),
-            "content": forms.Textarea(attrs={"class": "form-control", "rows": 3}),
+            "fullname": forms.TextInput(
+                attrs={"class": "form-control", "placeholder": "Your Full Name"}
+            ),
+            "headline": forms.TextInput(
+                attrs={
+                    "class": "form-control",
+                    "placeholder": "What’s most important to know",
+                }
+            ),
+            "content": forms.Textarea(
+                attrs={
+                    "class": "form-control",
+                    "rows": 3,
+                    "placeholder": "What did you like or dislike? What did you use this product for?",
+                }
+            ),
         }
 

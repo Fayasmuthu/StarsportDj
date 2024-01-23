@@ -225,6 +225,83 @@ class Product(models.Model):
         return None
 
 
+    def get_reviews(self):
+        return Review.objects.filter(product=self, approval=True)
+
+    def num_of_reviews(self):
+        return self.get_reviews().count()
+
+    def average_rating(self):
+        from django.db.models import Avg
+
+        return self.get_reviews().aggregate(Avg("rating"))["rating__avg"]
+
+    def five_rating(self):
+        return (
+            round(
+                (
+                    self.get_reviews().filter(rating=5).count()
+                    / self.get_reviews().count()
+                )
+                * 100
+            )
+            if self.get_reviews().filter(rating=5).count()
+            else 0
+        )
+
+    def four_rating(self):
+        return (
+            round(
+                (
+                    self.get_reviews().filter(rating=4).count()
+                    / self.get_reviews().count()
+                )
+                * 100
+            )
+            if self.get_reviews().filter(rating=4).count()
+            else 0
+        )
+
+    def three_rating(self):
+        return (
+            round(
+                (
+                    self.get_reviews().filter(rating=3).count()
+                    / self.get_reviews().count()
+                )
+                * 100
+            )
+            if self.get_reviews().filter(rating=3).count()
+            else 0
+        )
+
+    def two_rating(self):
+        return (
+            round(
+                (
+                    self.get_reviews().filter(rating=2).count()
+                    / self.get_reviews().count()
+                )
+                * 100
+            )
+            if self.get_reviews().filter(rating=2).count()
+            else 0
+        )
+
+    def one_rating(self):
+        return (
+            round(
+                (
+                    self.get_reviews().filter(rating=1).count()
+                    / self.get_reviews().count()
+                )
+                * 100
+            )
+            if self.get_reviews().filter(rating=1).count()
+            else 0
+        )
+
+
     def __str__(self):
         return self.name
     
@@ -316,6 +393,8 @@ class Review(models.Model):
     product = models.ForeignKey(
         Product, on_delete=models.CASCADE, related_name="reviews"
     )
+    rating = models.PositiveIntegerField(default=5)
+    fullname = models.CharField(max_length=255)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     headline = models.CharField(max_length=255)
     content = models.TextField()

@@ -286,7 +286,7 @@ class CategoryListView(SuperAdminLoginRequiredMixin,ListView):
 
 class CategoryCreateView(SuperAdminLoginRequiredMixin,CreateView):
     model = Category
-    template_name = "dashboard/category/entry.html"
+    template_name = "dashboard/category/add-category.html"
     form_class = CategoryForm
     success_url = reverse_lazy("main:categories")
     extra_context = {'is_category':True,'is_category_create':True,'title':'Add New Category'}
