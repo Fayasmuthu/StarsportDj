@@ -21,4 +21,15 @@ urlpatterns = [
     path('product/filter-data',views.filter_data, name="filter-data"),
     path('product/filter-range-price',views.filter_range_price, name="filter-range-price"),
 
+    #checkout
+    path("whatsapp-order/", views.order, name="order"),
+    path("checkout/", views.CheckoutView.as_view(), name="checkout"),
+    # path("get_shipping_fee/", views.get_shipping_fee, name="get_shipping_fee"),
+    # CART
+    path("shop/cart/", views.cart_view, name="cart"),
+    path("shop/cart/add/", views.cart_add, name="add_cart"),
+    path("shop/cart-item-clear/<str:item_id>/",views.clear_cart_item,name="clear_cart_item"),
+    path("shop/cart-minus/", views.minus_to_cart, name="minus_to_cart"),
+    path("shop/cart-clear/", views.clear_cart, name="clear_cart"),
+
 ]

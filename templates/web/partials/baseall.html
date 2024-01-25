@@ -50,9 +50,10 @@
 
 <body>
     {% include "web/partials/header.html" %}
+    <main>
     {% block contentall %}
     {% endblock  %}
-
+  </main>
   <!-- Footer -->
   <!-- footer -->
   <footer class="footer">
@@ -229,6 +230,19 @@
   
     <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/ion-rangeslider@2.3.1/js/ion.rangeSlider.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.1.0/dist/sweetalert2.all.min.js"></script>
+    <script src="{% static 'web/assets/js/vendors/modal.js'  %}"></script>
+    {% block js_plugins %}{% endblock %}
+    {% block modal %}{% endblock %} 
+    <script>
+      function redirectToLink() {
+          // Get the URL from the button's href attribute
+          var url = document.querySelector('.rediredt-url-btn').getAttribute('href');
+  
+          // Redirect to the specified URL
+          window.location.href = url;
+      }
+  </script>
     {% block js %}{% endblock %}
   
   </body>

@@ -17,21 +17,28 @@ from django.views.generic import ListView
 from django.views.generic import UpdateView
 from django.views.generic import TemplateView
 #forms
-from main.forms import CategoryForm
-from main.forms import  ProductImageForm
-from main.forms import AvailableSizeForm
-from main.forms import TagForm
-from main.forms import ProductForm
-from main.forms import StateForm
-from main.forms import DistrictForm
+from main.forms import(
+    CategoryForm, 
+    ProductImageForm, 
+    AvailableSizeForm,
+    TagForm, 
+    ProductForm, 
+    StateForm, 
+    DistrictForm,
+    ReviewForm,
+
+)
 #models
 from django.contrib.auth.models import User
-from products.models import Category, ProductImage
-from products.models import AvailableSize
-from products.models import Product 
-from products.models import Tag
-from main.models import State
-from main.models import District
+from products.models import(
+    Category, 
+    ProductImage,
+    AvailableSize,
+    Product ,
+    Tag,
+    Review
+) 
+from main.models import State,District
 from order.models import Order
 
 class IndexView(SuperAdminLoginRequiredMixin, TemplateView):
@@ -518,6 +525,64 @@ class CustomerListView(SuperAdminLoginRequiredMixin,ListView):
     
 # Review
 class ReviewListView(SuperAdminLoginRequiredMixin,ListView):
-    template_name = "dashboard/reviews.html"
-    model = User
-    extra_context = {'is_reviews':True} 
+    template_name = "dashboard/review/reviews.html"
+    model = Review
+    context_object_name = 'reviews'  # This is the variable you'll use in the template
+
+    def get_queryset(self):
+        # Customize the queryset as needed
+        return Review.objects.all()
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['is_reviews'] = True
+        return context
+    
+class ReviewCreateView(SuperAdminLoginRequiredMixin, CreateView):
+    model = Review
+    template_name = "dashboard/review/entry.html"
+    form_class = ReviewForm
+    success_url = reverse_lazy("main:Review")
+    extra_context = {"is_review": True, "title": "Add New Review"}
+
+    def form_valid(self, form):
+        form.instance.user = self.request.user
+        form.instance.product = form.cleaned_data['product']
+        response_data = super().form_valid(form)
+        response_data = {
+            "status": "true",
+            "title": "Successfully Submitted",
+            "message": "Review Created successfully.",
+        }
+        return JsonResponse(response_data)
+
+class ReviewUpdateView(SuperAdminLoginRequiredMixin, UpdateView):
+    model = Review
+    template_name = "dashboard/review/entry.html"
+    form_class = ReviewForm
+    success_url = reverse_lazy("main:Review")
+    extra_context = {"is_review": True, "title": "Edit Review"}
+
+    def form_valid(self, form):
+        response_data = super().form_valid(form)
+        response_data = {
+            "status": "true",
+            "title": "Successfully Submitted",
+            "message": "Review Updated successfully.",
+        }
+        return JsonResponse(response_data)
+
+    def form_invalid(self, form):
+        response_data = super().form_invalid(form)
+        response_data = {
+            "status": "false",
+            "title": "Form validation error",
+            "message": str(form.errors),
+        }
+        return JsonResponse(response_data)
+
+
+class ReviewDeleteView(SuperAdminLoginRequiredMixin, DeleteView):
+    model = Review
+    template_name = "dashboard/commen/delete.html"
+    success_url = reverse_lazy("main:Review")

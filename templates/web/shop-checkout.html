@@ -1,0 +1,453 @@
+{% extends 'web/partials/baseall.html' %}
+{% load static %} {% block title %}Shop Checkout{% endblock%}
+{% load crispy_forms_tags %}
+
+{% block contentall %}
+  <main>
+  <!-- section-->
+  <div class="mt-4">
+    <div class="container">
+      <!-- row -->
+      <div class="row ">
+        <!-- col -->
+        <div class="col-12">
+          <!-- breadcrumb -->
+          <nav aria-label="breadcrumb">
+            <ol class="breadcrumb mb-0">
+              <li class="breadcrumb-item"><a href="/">Home</a></li>
+              <li class="breadcrumb-item"><a href="{% url 'web:shop' %}">Shop</a></li>
+              <li class="breadcrumb-item active" aria-current="page">Shop Checkout</li>
+            </ol>
+          </nav>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- section -->
+  <section class="mb-lg-14 mb-8 mt-8">
+    <div class="container">
+      <!-- row -->
+      <div class="row">
+        <!-- col -->
+        <div class="col-12">
+          <div>
+            <div class="mb-8">
+              <!-- text -->
+              <h1 class="fw-bold mb-0">Checkout</h1>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div>
+        <!-- row -->
+        <div class="row">
+          <div class="col-lg-7 col-md-12">
+            <form action="" method="post" enctype="multipart/form-data"  >
+              {% csrf_token %}
+              {{ form.selected_dial_code_mobile }}
+              {{ form.selected_dial_code_alternative }}
+            <!-- accordion -->
+            <div class="accordion accordion-flush" id="accordionFlushExample">
+              <!-- accordion item -->
+              <div class="accordion-item py-4">
+                <div class="d-flex justify-content-between align-items-center">
+                  <!-- heading one -->
+                  <a href="#" class="fs-5 text-inherit collapsed h4"  >
+                    <i class="feather-icon icon-map-pin me-2 text-muted"></i>Add delivery address
+                  </a>
+                  
+                </div>
+                <div  class="accordion-collapse collapse show">
+                  <div class="mt-5">
+                    <div class="row">
+                      <div class="col-lg-6 col-12 mb-2">
+                        <label for="{{ form.full_name.id_for_label }}">
+                          {{ form.full_name.label }}
+                          {% if form.full_name.field.required %}
+                            <small class="text-danger">*</small>
+                          {% endif %}
+                        </label>
+                        {{ form.full_name }}
+                        
+                        {% if form.full_name.errors %}
+                          <label class="text-danger">{{ form.full_name.errors.as_text }}</label>
+                        {% endif %}
+                      </div>
+                      <div class="col-lg-6 col-12 mb-2">
+                        <label for="{{ form.email.id_for_label }}">
+                          {{ form.email.label }}
+                          {% if form.email.field.required %}
+                            <small class="text-danger">*</small>
+                          {% endif %}
+                        </label>
+                        {{ form.email }}
+                        
+                        {% if form.email.errors %}
+                          <label class="text-danger">{{ form.email.errors.as_text }}</label>
+                        {% endif %}
+                      </div>
+                      <div class="col-lg-6 col-12 mb-2">
+                        <label for="{{ form.mobile_no.id_for_label }}">
+                          {{ form.mobile_no.label }}
+                          {% if form.mobile_no.field.required %}
+                            <small class="text-danger">*</small>
+                          {% endif %}
+                        </label>
+                        {{ form.mobile_no }}
+                        
+                        {% if form.mobile_no.errors %}
+                          <label class="text-danger">{{ form.mobile_no.errors.as_text }}</label>
+                        {% endif %}
+                      </div>
+                      <div class="col-lg-6 col-12 mb-2">
+                        <label for="{{ form.alternative_no.id_for_label }}">
+                          {{ form.alternative_no.label }}
+                          {% if form.alternative_no.field.required %}
+                            <small class="text-danger">*</small>
+                          {% endif %}
+                        </label>
+                        {{ form.alternative_no }}
+                        
+                        {% if form.alternative_no.errors %}
+                          <label class="text-danger">{{ form.alternative_no.errors.as_text }}</label>
+                        {% endif %}
+                      </div>
+                      <div class=" col-12 mb-2">
+                        <label for="{{ form.address_line_1.id_for_label }}">
+                          {{ form.address_line_1.label }}
+                          {% if form.address_line_1.field.required %}
+                            <small class="text-danger">*</small>
+                          {% endif %}
+                        </label>
+                        {{ form.address_line_1 }}
+                        
+                        {% if form.address_line_1.errors %}
+                          <label class="text-danger">{{ form.address_line_1.errors.as_text }}</label>
+                        {% endif %}
+                      </div>
+                      <div class=" col-12 mb-2">
+                        <label for="{{ form.address_line_2.id_for_label }}">
+                          {{ form.address_line_2.label }}
+                          {% if form.address_line_2.field.required %}
+                            <small class="text-danger">*</small>
+                          {% endif %}
+                        </label>
+                        {{ form.address_line_2 }}
+                        
+                        {% if form.address_line_2.errors %}
+                          <label class="text-danger">{{ form.address_line_2.errors.as_text }}</label>
+                        {% endif %}
+                      </div>
+                      <div class="col-lg-6 col-12 mb-2">
+                        <label for="{{ form.state.id_for_label }}">
+                          {{ form.state.label }}
+                          {% if form.state.field.required %}
+                            <small class="text-danger">*</small>
+                          {% endif %}
+                        </label>
+                        {{ form.state }}
+                        
+                        {% if form.state.errors %}
+                          <label class="text-danger">{{ form.state.errors.as_text }}</label>
+                        {% endif %}
+                      </div>
+                      <div class="col-lg-6 col-12 mb-2">
+                        <label for="{{ form.district.id_for_label }}">
+                          {{ form.district.label }}
+                          {% if form.district.field.required %}
+                            <small class="text-danger">*</small>
+                          {% endif %}
+                        </label>
+                        {{ form.district }}
+                        
+                        {% if form.district.errors %}
+                          <label class="text-danger">{{ form.district.errors.as_text }}</label>
+                        {% endif %}
+                      </div>
+                      <div class="col-lg-6 col-12 mb-2">
+                        <label for="{{ form.city.id_for_label }}">
+                          {{ form.city.label }}
+                          {% if form.city.field.required %}
+                            <small class="text-danger">*</small>
+                          {% endif %}
+                        </label>
+                        {{ form.city }}
+                        
+                        {% if form.city.errors %}
+                          <label class="text-danger">{{ form.city.errors.as_text }}</label>
+                        {% endif %}
+                      </div>
+                      <div class="col-lg-6 col-12 mb-2">
+                        <label for="{{ form.pin_code.id_for_label }}">
+                          {{ form.pin_code.label }}
+                          {% if form.pin_code.field.required %}
+                            <small class="text-danger">*</small>
+                          {% endif %}
+                        </label>
+                        {{ form.pin_code }}
+                        
+                        {% if form.pin_code.errors %}
+                          <label class="text-danger">{{ form.pin_code.errors.as_text }}</label>
+                        {% endif %}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <!-- accordion item -->
+              <div class="accordion-item py-4">
+                <a href="#" class="text-inherit h5"  >
+                  <i class="feather-icon icon-credit-card me-2 text-muted"></i>Payment Method
+                </a>
+                <div id="flush-collapseFour" class="accordion-collapse collapse show" data-bs-parent="#accordionFlushExample">
+                  <div class="mt-5">
+                    <div class="card card-bordered shadow-none mb-2">
+                      <!-- card body -->
+                      <div class="card-body p-6">
+                        <div class="d-flex">
+                          <div class="form-check">
+                            <!-- checkbox -->
+                            <input class="form-check-input d-block" type="radio" name="payment_option" value="OP"  id="paypal">
+                            <label class="form-check-label ms-2" for="paypal">
+                              <h5 class="mb-1 h6"> Payment with Online</h5>
+                            <p class="mb-0 small text-success">You Save <span class="h6 text-success">₹25.00</span></p>
+                            </label>
+                          </div>
+                        </div>
+                      </div>
+                    </div> 
+                    <!-- card -->
+                    <div class="card card-bordered shadow-none">
+                      <div class="card-body p-6">
+                        <!-- check input -->
+                        <div class="d-flex">
+                          <div class="form-check">
+                            <input class="form-check-input d-block" type="radio" name="payment_option" value="COD" id="cashonDelivery">
+                            <label class="form-check-label ms-2" for="cashonDelivery">
+                              <h5 class="mb-1 h6"> Cash on Delivery</h5>
+                              <p class="mb-0 small">Pay with cash when your order is delivered.</p>
+                            </label>
+                          </div>
+                          
+                        </div>
+                      </div>
+                    </div>
+                    <div class="text-danger payment_span mt-4"> please select a payment method</div>
+                    <input type="hidden" id="id_selected_address" name="selected_address" value="">
+                    <input type="hidden" id="id_selected_payment" name="selected_payment" value="">
+                    <input type="hidden" id="id_payable" name="payable" value="">
+                    <input type="hidden" id="id_service_fee" name="service_fee" value="">
+                    <input type="hidden" id="id_shipping_fee" name="shipping_fee" value="">
+                    <input type="hidden" id="id_total_amt" name="total_amt" value="">
+                    <!-- Button -->
+                    <div class="mt-5 d-flex justify-content-end">
+                      <button type="submit" class="order-btn btn btn-primary ms-2">Place Order</button> 
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            </form>
+          </div>
+          <div class="col-12 col-md-12  col-lg-5">
+            <!-- products -->
+            <div class="mt-4 mt-lg-0">
+              <div class="card shadow-sm">
+                <h5 class="px-6 py-4 bg-transparent mb-0">Order Details</h5>
+                <ul class="list-group list-group-flush">
+                  <!-- list group item -->
+                  {% for item in cart_items %}
+
+                  <li class="list-group-item px-4 py-3">
+                    <div class="row align-items-center">
+                      
+                      <div class="col-6 " style="padding-right:0px">
+                        <h6 class="mb-0">{{item.variant}}</h6>
+                        {% if not item.variant.product.category.is_combo %}
+                      <span><small class="text-muted">{{ item.variant.weight }}  {{ item.variant.unit }} / ₹{{ item.variant.sale_price|floatformat:0 }}</small></span>
+                      {% endif %}
+                        
+                      </div>
+                      <div class="col-2  text-center text-muted p-0"> x 
+                        <span>{{item.quantity}}</span>
+                      </div>
+                      <div class="col-4  text-center  p-0">
+                        <span class="fw-bold">₹{{item.total_price|floatformat:2}}</span>
+                      </div>
+                    </div>
+                  </li>
+                  {% endfor %}
+  
+
+                </ul>
+
+              </div>
+
+
+            </div>
+            <!-- total summery -->
+            <div class="mb-5 card mt-6">
+              <div class="card-body p-6">
+                <!-- heading -->
+                <h2 class="h5 mb-4">Summary</h2>
+                <div class="card mb-2">
+                  <!-- list group -->
+                  <ul class="list-group list-group-flush">
+                    <!-- list group item -->
+                    <li class="list-group-item d-flex justify-content-between align-items-start">
+                      <div class="me-auto">
+                        <div>Item Subtotal</div>
+                      </div>
+                      <span id="cart_total">₹{{cart_total|floatformat:2}}</span>
+                    </li>
+                    <!-- list group item -->
+                    <li class="list-group-item d-flex justify-content-between align-items-start">
+                      <div class="me-auto">
+                        <div>Service Fee<i class="feather-icon icon-info text-muted" data-bs-toggle="tooltip" aria-label="Default tooltip" data-bs-original-title="Cash On Delivery Service Charge"></i></div>
+                      </div>
+                      <span id="service_fee">₹0.00</span>
+                    </li>
+                    <!-- list group item -->
+                    <li class="list-group-item d-flex justify-content-between align-items-start">
+                      <div class="me-auto">
+                        <div>Shipping Fee</div>
+                      </div>
+                      <span id="shipping_fee">₹0.00</span>
+                    </li>
+                    <!-- list group item -->
+                    <li class="list-group-item d-flex justify-content-between align-items-start">
+                      <div class="me-auto">
+                        <div class="fw-bold" >Subtotal</div>
+                      </div>
+                      <span class="fw-bold"id ="sub_total"></span>
+                    </li>
+                  </ul>
+                </div>
+                <!-- text -->
+                <p><small>By placing your order, you agree to be bound by the Tradoxi <a href="{% url 'web:terms_conditions' %}">Terms of Service</a>
+                    and <a href="{% url 'web:privacy_policy' %}">Privacy Policy.</a> </small>
+                </p>
+                <!-- heading -->
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+
+
+{% endblock %}
+
+{% block css %}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.13/css/intlTelInput.css">
+<style>
+  input[type="radio"]:checked + label {
+    background-color: inherit !important;
+    border-color: #0aad0a !important;
+    color: inherit !important;
+  }
+  .intl-tel-input,
+  .iti{
+      width: 100%;
+      margin-bottom: 15px;
+  }
+</style>
+
+{% endblock %}
+
+{% block js %}
+{% include 'web/includes/form-ajax.html' %}
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.13/js/intlTelInput-jquery.min.js"></script>
+<script>
+  $(document).ready(function() {
+    // Initialize the intlTelInput for the parent_phone_number input field
+    var mobileInput = $("#id_mobile_no");
+    mobileInput.intlTelInput({
+        initialCountry: "in",
+        separateDialCode: true
+    });
+    mobileInput.on("input", function() {
+        var selectedDialCode = mobileInput.intlTelInput("getSelectedCountryData").dialCode;
+        $("#id_selected_dial_code_mobile").val(selectedDialCode);
+    });
+    var alternativeInput = $("#id_alternative_no");
+    alternativeInput.intlTelInput({
+        initialCountry: "in",
+        separateDialCode: true
+    });
+    alternativeInput.on("input", function() {
+        var selectedDialCode2 = alternativeInput.intlTelInput("getSelectedCountryData").dialCode;
+        $("#id_selected_dial_code_alternative").val(selectedDialCode2);
+    });
+    document.getElementById("id_mobile_no").addEventListener("keyup", function() {
+      this.value = this.value.replace(/[^0-9]/g, "");
+    });
+    document.getElementById("id_alternative_no").addEventListener("keyup", function() {
+      this.value = this.value.replace(/[^0-9]/g, "");
+    });
+    document.getElementById("id_pin_code").addEventListener("keyup", function() {
+      this.value = this.value.replace(/[^0-9]/g, "");
+    });
+  });
+</script>
+<script>
+  // calculate total
+  var cart_total = $("#cart_total").text();
+  var cart_total = cart_total.replace('₹', '');
+  var service_fee = $("#service_fee").text();
+  var service_fee = service_fee.replace('₹', '');
+  var shipping_fee = $("#shipping_fee").text();
+  var shipping_fee = shipping_fee.replace('₹', '');
+  var sub_total = parseFloat(cart_total) + parseFloat(service_fee) + parseFloat(shipping_fee) + parseFloat(service_fee);
+  $("#sub_total").text("₹"+sub_total.toFixed(2));
+
+
+  $('.order-btn').hide();
+    $('input[name="payment_option"]').change(function(){
+      selectedpayment = $('input[name="payment_option"]:checked').val();
+      if (selectedpayment){
+        $('.order-btn').show();
+        if (selectedpayment == 'COD'){
+          var service_fee1 = $("#service_fee").text('₹'+25.00.toFixed(2));
+          var cart_total1 = $("#cart_total").text();
+          var cart_total1 = cart_total1.replace('₹', '');
+          var shipping_fee1 = $("#shipping_fee").text();
+          var shipping_fee1 = shipping_fee1.replace('₹', '');
+          var sub_total1 = parseFloat(cart_total1) + parseFloat(25) + parseFloat(shipping_fee1) ;
+          $("#sub_total").text("₹"+sub_total1.toFixed(2));
+
+        }else{
+          var service_fee1 = $("#service_fee").text('₹'+0.00.toFixed(2));
+          var cart_total1 = $("#cart_total").text();
+          var cart_total1 = cart_total1.replace('₹', '');
+          var shipping_fee1 = $("#shipping_fee").text();
+          var shipping_fee1 = shipping_fee1.replace('₹', '');
+          var sub_total1 = parseFloat(cart_total1) + parseFloat(0.00) + parseFloat(shipping_fee1) ;
+          $("#sub_total").text("₹"+sub_total1.toFixed(2));
+        }
+        $('.payment_span').hide()
+      }
+    })
+    
+  // order checkout
+  $('.order-btn').click(function(e){
+    
+    var shipping_fee = $("#shipping_fee").text();
+    var shipping_fee = shipping_fee.replace('₹', '');
+    var service_fee = $("#service_fee").text();
+    var service_fee = service_fee.replace('₹', '');
+    var sub_total = $("#sub_total").text();
+    var sub_total = sub_total.replace('₹', '');
+    $('#id_selected_payment').val(selectedpayment);
+    $('#id_payable').val(cart_total);
+    $('#id_shipping_fee').val(shipping_fee);
+    $('#id_service_fee').val(service_fee);
+    $('#id_total_amt').val(sub_total);
+
+  });
+</script>
+{% endblock js %}

@@ -117,12 +117,13 @@ class ReviewForm(forms.ModelForm):
     rating = forms.ChoiceField(
         choices=RATING_CHOICES, widget=forms.Select(attrs={"class": "form-control"})
     )
-
+    approval = forms.BooleanField(required=False)  # Ensure it's a BooleanField
 
     class Meta:
         model = Review
-        exclude = ("created_at",)
+        exclude = ("user","created_at",)
         widgets = {
+            "user": forms.HiddenInput(),
             "product": forms.Select(attrs={"class": "form-control"}),
             "fullname": forms.TextInput(
                 attrs={"class": "form-control", "placeholder": "Your Full Name"}

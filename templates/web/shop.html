@@ -1,7 +1,7 @@
 {% extends 'web/partials/baseall.html' %}
 {% load static %}
 {% block contentall %}
-  <main>
+  {% comment %} <main> {% endcomment %}
     <!-- section -->
     <div class="mt-4">
       <div class="container">
@@ -565,6 +565,9 @@
     </div>
   </div>
   {% endfor %}
+{% endblock %}
+{% block modal %}
+  {% include 'web/include/modal/quickview.html' %}
 {% endblock %}
 {% block js %}
   <script src="{% static 'web/assets/js/index.js' %}"></script>

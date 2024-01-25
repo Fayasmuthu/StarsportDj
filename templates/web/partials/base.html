@@ -22,6 +22,7 @@
 
 <!-- CDNjs -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.1.0/dist/sweetalert2.all.min.js"></script>
 
 <!-- Theme CSS -->
 <link rel="stylesheet" href="{% static 'web/assets/css/theme.min.css' %}">
@@ -40,9 +41,13 @@
 <body>
 
    {% include "web/partials/header.html" %}
+   <main>
     {% block content %}
     {% endblock  %}
-   {% include "web/partials/footer.html" %} 
+    <div id="alert-container">  </div>
+    <a href="https://wa.me/916282134481/" class="whatsapp_link"><img src="{% static 'web/images/whatsapp.png' %}" alt=""></a>
+  </main>
+    {% include "web/partials/footer.html" %} 
    
 
 
@@ -51,7 +56,9 @@
   <script src="{% static 'web/assets/libs/jquery/dist/jquery.min.js' %}"></script>
   <script src="{% static 'web/assets/libs/bootstrap/dist/js/bootstrap.bundle.min.js' %}"></script>
   <script src="{% static 'web/assets/libs/simplebar/dist/simplebar.min.js' %}"></script>
-  
+  <script src="{% static 'web/assets/libs/rater-js/index.js'  %}{{current_version}}"></script>
+  <script src="{% static 'web/assets/libs/nouislider/dist/nouislider.min.js'  %}{{current_version}}"></script>
+  <script src="{% static 'web/assets/libs/wnumb/wNumb.min.js'  %}{{current_version}}"></script>
   <!-- Theme JS -->
     <script src="{% static 'web/assets/js/theme.min.js' %}"></script>
     <script src="{% static 'web/assets/libs/slick-carousel/slick/slick.min.js' %}"></script>
@@ -65,7 +72,18 @@
     <script src="{% static 'web/assets/libs/sticky-sidebar/dist/sticky-sidebar.min.js' %}"></script>
     <script src="{% static 'web/assets/js/vendors/sticky.js' %}"></script>
     <script src="{% static 'web/assets/js/vendors/modal.js' %}"></script>
+    {% block js_plugins %}{% endblock %}
+    {% block modal %}{% endblock %} 
+    <script>
+      function redirectToLink() {
+          // Get the URL from the button's href attribute
+          var url = document.querySelector('.rediredt-url-btn').getAttribute('href');
   
+          // Redirect to the specified URL
+          window.location.href = url;
+      }
+  </script>
+    {% block js %}{% endblock %}
   
   </body>
   

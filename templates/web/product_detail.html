@@ -106,9 +106,10 @@
             </div>
             <!-- hr -->
             <hr class="my-6">
-            {% if get_sizes %}
+  
             <div class="mb-4">
               <div class="d-flex flex-wrap">
+                {% if not product.category.is_combo %}
               {% for item in product.get_sizes %}
                 <div class="form-check" style="{% if forloop.first %} margin-left: -20px; {% endif %}">
                   <input class="form-check-input product-size " value="{{item.id}}" type="radio" name="product_size"  id="flexRadioDefault{{item.id}}"
@@ -121,10 +122,11 @@
                   </label>
                 </div>
               {% endfor %}
+              {% endif %}
               </div>
             </div>
-            {% endif %}
-            <div class="mb-5 d-none">
+
+            <div class="mb-5 ">
               <button type="button" class="btn btn-outline-secondary">250g</button>
               <button type="button" class="btn btn-outline-secondary">500g</button>
               <button type="button" class="btn btn-outline-secondary">1kg</button></div>
@@ -143,8 +145,16 @@
 
               <div class="col-xxl-4 col-lg-4 col-md-5 col-5 d-grid">
                 <!-- button -->
-                <!-- btn --> <button type="button" class="btn btn-primary"><i class="feather-icon icon-shopping-bag me-2"></i>Add to
-                  cart</button>
+                <!-- btn -->
+                {% if not product.category.is_combo %}
+                <button type="button" class="btn btn-primary " id="cart-add-btn">
+                  <i class="feather-icon icon-shopping-bag me-2"></i>Add to Cart
+                </button>
+                {% else %}
+                <button type="button" class="btn btn-primary cart-add-btn-combo"  data-product-id="{{product.get_sizes.first.id}}">
+                  <i class="feather-icon icon-shopping-bag me-2"></i>Add to Cart
+                </button>
+                {% endif %}
               </div>
               <div class="col-md-4 col-4">
                 <!-- btn -->
@@ -473,9 +483,9 @@
                           
                               <div class="py-2">
                                 <h5 class="mb-3">Overall rating</h5>
-                                <div id="rater"></div>
+                                <div id="rater" onclick="updateRatingInput(this.value)"></div>
                                 <input type="hidden" name="rating" id="rating">
-                            </div>
+                              </div>
                             
                               <div class=" py-2 ">
                                 <h5>Full Name</h5>
@@ -599,9 +609,9 @@
 <script src="{% static 'web/assets/libs/dropzone/dist/min/dropzone.min.js' %}"></script>
 {% block js %}
 {% include 'web/include/form-ajax.html' %}
-<script src="{% static 'web/js/assets/vendors/tns-slider.js'  %}{{current_version}}"></script>
-<script src="{% static 'web/js/assets/product_detail.js'  %}{{current_version}}"></script>
-{% comment %} <script>
+<script src="{% static 'web/assets/js/vendors/tns-slider.js'  %}"></script>
+<script src="{% static 'web/assets/js/product_detail.js'  %}"></script>
+<script>
   var rater = document.getElementById('rater');
   var ratingInput = document.getElementById('rating');
 
@@ -620,29 +630,5 @@
   rater.addEventListener('mouseenter', handleInteraction);
   rater.addEventListener('click', handleInteraction);
   
-</script> {% endcomment %}
-<script>
-  // Function to initialize the star rating
-  function initRater() {
-    var rater = new Rater({
-      element: document.getElementById('rater'),
-      rateCallback: function rateCallback(rating) {
-        updateRating(rating);
-      }
-    });
-    rater.setRating(0);  // Set an initial rating value, e.g., 0
-  }
-
-  // Function to update the hidden input field
-  function updateRating(value) {
-    var ratingInput = document.getElementById('rating');
-    ratingInput.value = value;
-    console.log('Updated rating value:', value);
-  }
-
-  // Initialize the star rating on document load
-  document.addEventListener('DOMContentLoaded', function() {
-    initRater();
-  });
 </script>
 {% endblock %}

@@ -155,7 +155,7 @@ class OfferProductAdmin(admin.ModelAdmin):
 
 @admin.register(Review)
 class ReviewAdmin(admin.ModelAdmin):
-    list_display = ["product", "headline", "approval", "created_at"]
+    list_display = ["fullname","product", "rating", "approval", "created_at"]
     list_filter = ["approval", "created_at"]
     search_fields = ["headline", "content", "user__username", "product__title"]
     actions = ["approve_comments"]

@@ -1,7 +1,7 @@
 {% extends 'web/partials/base.html' %}
 {% load static %}
 {% block content %}
-  <main>
+  {% comment %} <main> {% endcomment %}
     <section class="mt-8">
       <div class="container">
         <div class="hero-slider">
@@ -300,7 +300,7 @@
         </div>
       </div>
     </div>
-  </main>
+ 
 
   <!-- Modal -->
   {% for product in popular_products %}
@@ -422,4 +422,12 @@
     </div>
   </div>
   {% endfor %}
+{% endblock %}
+
+{% block js %}
+  <script src="{% static 'web/assets/js/index.js' %}"></script>
+{% endblock %}
+
+{% block modal %}
+  {% include 'web/include/modal/quickview.html' %}
 {% endblock %}

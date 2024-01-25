@@ -2,13 +2,15 @@ from django.db.models import Min, Q
 from django.shortcuts import get_object_or_404
 from django.http import JsonResponse
 from django.shortcuts import render,redirect
+from django.urls import reverse
+
 from django.views import View
 from django.views.generic import ListView
 from django.views.generic import TemplateView
 from django.views.generic.detail import DetailView
 # model
 from products.models import Category,Subcategory, Offer,Brand
-from products.models import Product
+from products.models import Product, AvailableSize
 from products.models import Slider
 from products.models import Tag
 # form
@@ -21,11 +23,16 @@ from django.db.models import Count
 from django.db.models import Min, Max
 from django.db.models.functions import Coalesce
 
+# CART
+from web.cart import Cart
+
 class IndexView(TemplateView):
     template_name = "web/index-5.html"
-
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        cart = Cart(self.request)
+        cart_instance = cart.cart
+        context["cart_count"] = len(cart_instance)
         context["categories"] = Category.objects.filter(status='Published')
         context["subcategories"] = Subcategory.objects.all()
         products = Product.objects.filter(is_active=True)
@@ -33,10 +40,10 @@ class IndexView(TemplateView):
         context["best_seller_products"] = products.filter(is_best_seller=True)
         context["offers"] = Offer.objects.all()
         context["sliders"] = Slider.objects.all()
+
         context["products"] = Product.objects.all()
 
-
-         # Check for subcategory and filter products accordingly
+                 # Check for subcategory and filter products accordingly
         subcategory = self.request.GET.get("subcategory")
         if subcategory:
             subcategory_title = get_object_or_404(Subcategory, slug=subcategory)
@@ -44,6 +51,33 @@ class IndexView(TemplateView):
             context["products"] = products
            
         return context
+
+# class IndexView(TemplateView):
+#     template_name = "web/index-5.html"
+#     def get_context_data(self, **kwargs):
+#         context = super().get_context_data(**kwargs)
+#         # cart = Cart(self.request)
+#         # cart_instance = cart.cart
+#         # context["cart_count"] = len(cart_instance)
+#         context["categories"] = Category.objects.filter(status='Published')
+#         context["subcategories"] = Subcategory.objects.all()
+#         products = Product.objects.filter(is_active=True)
+#         context["popular_products"] = products.filter(is_popular=True)
+#         context["best_seller_products"] = products.filter(is_best_seller=True)
+#         context["offers"] = Offer.objects.all()
+#         context["sliders"] = Slider.objects.all()
+#         context["products"] = Product.objects.all()
+
+
+
+         # Check for subcategory and filter products accordingly
+        # subcategory = self.request.GET.get("subcategory")
+        # if subcategory:
+        #     subcategory_title = get_object_or_404(Subcategory, slug=subcategory)
+        #     products = products.filter(subcategory=subcategory_title)               
+        #     context["products"] = products
+           
+        # return context
 
 
 class ShopView(ListView):
@@ -116,6 +150,9 @@ class ShopView(ListView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        cart = Cart(self.request)
+        cart_instance = cart.cart
+        context["cart_count"] = len(cart_instance)
         context["categories"] = Category.objects.filter(status='Published')
         context["subcategories"] = Subcategory.objects.all()
         context["brands"] = Brand.objects.annotate(store_count=Count('title'))
@@ -161,6 +198,9 @@ class ProductDetailView(DetailView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        cart = Cart(self.request)
+        cart_instance = cart.cart
+        context["cart_count"] = len(cart_instance)
         current_product = self.get_object()
         related_products = Product.objects.filter(
             subcategory=current_product.subcategory
@@ -177,29 +217,7 @@ class ProductDetailView(DetailView):
         context["review_form"] = ReviewForm()
         context["product_ratings"] = product_ratings
         return context
-
-    # def post(self, request, *args, **kwargs):
-    #     if request.user.is_authenticated:
-    #         product = self.get_object()
-    #         user = request.user
-    #         form = ReviewForm(request.POST, request.FILES)
-
-    #     if form.is_valid():
-    #         form.instance.product = product
-    #         form.save()
-    #         response_data = {
-    #             "status": "true",
-    #             "title": "Successfully Submitted",
-    #             "message": "Message successfully Submitted",
-    #         }
-    #     else:
-    #         print(form.errors)
-    #         response_data = {
-    #             "status": "false",
-    #             "title": "Form validation error",
-    #             "message": form.errors,
-    #         }
-    #     return JsonResponse(response_data)
+    
     def post(self, request, *args, **kwargs):
         if request.user.is_authenticated:
             product = self.get_object()
@@ -207,12 +225,53 @@ class ProductDetailView(DetailView):
             form = ReviewForm(request.POST, request.FILES)
 
             if form.is_valid():
-                form.instance.user = user
-                form.instance.product = product
-                form.save()
+                review = form.save(commit=False)  # Use commit=False to create a Review instance but not save it yet
+                review.product = product
+                review.user = user  # Set the user for the review
+                review.save()
+                
+                response_data = {
+                    "status": "true",
+                    "title": "Successfully Submitted",
+                    "message": "Message successfully Submitted",
+                }
+                # if form.is_valid():
+                #     form.instance.product = product
+                #     form.save()
+                #     response_data = {
+                #         "status": "true",
+                #         "title": "Successfully Submitted",
+                #         "message": "Message successfully Submitted",
+                #     }
             else:
                 print(form.errors)
-        return redirect("product:product_detail", slug=self.get_object().slug)
+                response_data = {
+                    "status": "false",
+                    "title": "Form validation error",
+                    "message": form.errors,
+                }
+        else:
+            response_data = {
+                "status": "false",
+                "title": "User not authenticated",
+                "message": "User must be authenticated to submit a review.",
+            }
+        
+        return JsonResponse(response_data)
+
+    # def post(self, request, *args, **kwargs):
+    #     if request.user.is_authenticated:
+    #         product = self.get_object()
+    #         user = request.user
+    #         form = ReviewForm(request.POST, request.FILES)
+
+    #         if form.is_valid():
+    #             form.instance.user = user
+    #             form.instance.product = product
+    #             form.save()
+    #         else:
+    #             print(form.errors)
+    #     return redirect("product:product_detail", slug=self.get_object().slug)
 
 
 
@@ -256,3 +315,204 @@ class ContactView(View):
                 "title": "Form validation error",
             }
         return JsonResponse(response_data)
+
+
+
+# CART
+def cart_view(request):
+    cart = Cart(request)
+    cart_items = []
+    cart_instance = cart.cart
+
+
+    for item_id, item_data in cart.get_cart():
+        variant = get_object_or_404(AvailableSize, id=item_id)
+        quantity = item_data["quantity"]
+        total_price = Decimal(item_data["sale_price"]) * quantity
+        cart_items.append(
+            {
+                "product": variant,
+                "quantity": quantity,
+                "total_price": total_price,
+            }
+        )
+    context = {
+        "cart_items": cart_items,
+        "cart_total": sum(
+            Decimal(item[1]["quantity"]) * Decimal(item[1]["sale_price"])
+            for item in cart.get_cart()
+        ),
+        'cart_count':len(cart_instance)
+
+    }
+    return render(request, "web/cart.html", context)
+
+
+def cart_add(request):
+    cart = Cart(request)
+    cart_instance = cart.cart
+    quantity = request.GET.get("quantity", 1)
+    product_id = request.GET.get("product_id", "")
+    variant = get_object_or_404(AvailableSize, pk=product_id)
+    cart.add(variant, quantity=int(quantity))
+    return JsonResponse(
+        {
+            "message": "Product Quantity Added from cart successfully",
+            "quantity": cart.get_product_quantity(variant),
+            "total_price": cart.get_total_price(cart_instance[product_id]),
+            "cart_total": cart.cart_total(),
+            "cart_count": len(cart_instance),
+        }
+    )
+
+
+def clear_cart_item(request, item_id):
+    cart = Cart(request)
+    variant = get_object_or_404(AvailableSize, id=item_id)
+    cart.remove(variant)
+    return redirect(reverse("web:cart"))
+
+
+def minus_to_cart(request):
+    cart = Cart(request)
+    cart_instance = cart.cart
+    item_id = request.GET.get("item_id")
+    variant = get_object_or_404(AvailableSize, id=item_id)
+    cart.decrease_quantity(variant)
+    return JsonResponse(
+        {
+            "message": "Product Quantity decreased from cart successfully",
+            "quantity": cart.get_product_quantity(variant),
+            "total_price": cart.get_total_price(cart_instance[item_id]),
+            "cart_total": cart.cart_total(),
+        }
+    )
+
+
+def clear_cart(request):
+    cart = Cart(request)
+    cart.clear()
+    return redirect(reverse("web:shop"))
+
+
+def order(request):
+    if request.method == "POST":
+        cart = Cart(request)
+        products = ""
+        total = 0
+        counter = 1
+        for item_id, item_data in cart.get_cart():
+            variant = get_object_or_404(AvailableSize, id=item_id)
+            quantity = item_data["quantity"]
+            price = Decimal(item_data["sale_price"])
+            if variant.product.category.is_combo:
+                products += f"{counter}.{variant.product.name} ({quantity}x{price}) ₹ {variant.weight*quantity} \n ----------------------- \n"
+            else:
+                products += f"{counter}.{variant.product.name}-{variant.weight} {variant.unit} ({quantity}x{price}) ₹ {variant.sale_price*quantity} \n ----------------------- \n"
+            total += quantity * variant.sale_price
+            counter += 1
+
+        message = (
+            f"============================\n"
+            f"Welcome to TRADOXI.\n"
+            f"============================\n\n"
+            f'Name: {request.POST.get("name")}\n'
+            f'Phone: {request.POST.get("phone")}\n'
+            f'Address: {request.POST.get("address")}\n'
+            f"----------------------------\n\n"
+            f"Products:\n"
+            f"{products}\n\n"
+            f"Grand Total: {total}\n"
+            f"============================\n"
+            f"Final bill will be based on the product availability and amount derived there upon.\n\n"
+            f"Thank you for shopping with us.\n "
+        )
+
+        whatsapp_api_url = "https://api.whatsapp.com/send"
+        phone_number = "918714193921"
+        encoded_message = urllib.parse.quote(message)
+        whatsapp_url = f"{whatsapp_api_url}?phone={phone_number}&text={encoded_message}"
+        cart.clear()
+        return redirect(whatsapp_url)
+
+
+
+class CheckoutView(View):
+    template_name = "web/shop-checkout.html"
+
+    def get(self, request, *args, **kwargs):
+        cart = Cart(request)
+        cart_items = self.get_cart_items(cart)
+        form = OrderForm()
+
+        context = {
+            "cart_items": cart_items,
+            "cart_total": sum(item["total_price"] for item in cart_items),
+            "form": form,
+        }
+
+        return render(request, self.template_name, context)
+
+    def post(self, request, *args, **kwargs):
+        form = OrderForm(request.POST)
+        cart = Cart(request)
+        cart_items = self.get_cart_items(cart)
+        if form.is_valid():
+            selected_dial_code_mobile = form.cleaned_data.get(
+                "selected_dial_code_mobile"
+            )
+            selected_dial_code_alternative = form.cleaned_data.get(
+                "selected_dial_code_alternative"
+            )
+            m_n = form.cleaned_data.get("mobile_no")
+            a_n = form.cleaned_data.get("alternative_no")
+            mobile_no = f"{selected_dial_code_mobile}{m_n}"
+            alternative_no = f"{selected_dial_code_alternative}{a_n}"
+
+            data = form.save(commit=False)
+            data.subtotal = request.POST.get("payable")
+            data.service_fee = request.POST.get("service_fee")
+            data.shipping_fee = request.POST.get("shipping_fee")
+            data.payable = request.POST.get("total_amt")
+            data.payment_method = request.POST.get("selected_payment")
+            data.mobile_no = mobile_no
+            data.alternative_no = alternative_no
+            data.save()
+            for item_id, item_data in cart.get_cart():
+                variant = get_object_or_404(AvailableSize, id=item_id)
+                quantity = item_data["quantity"]
+                price = Decimal(item_data["sale_price"])
+                order_item = OrderItem.objects.create(
+                    order=data,
+                    product=variant,
+                    price=price,
+                    quantity=quantity,
+                )
+                order_item.save()
+            if data.payment_method == "OP":
+                return redirect("web:payment", pk=data.pk)
+            else:
+                return redirect("web:complete_order", pk=data.pk)
+        else:
+            context = {
+                "cart_items": cart_items,
+                "cart_total": sum(item["total_price"] for item in cart_items),
+                "form": form,
+            }
+            return render(request, self.template_name, context)
+
+    def get_cart_items(self, cart):
+        cart_items = []
+        for item_id, item_data in cart.get_cart():
+            variant = get_object_or_404(AvailableSize, id=item_id)
+            quantity = item_data["quantity"]
+            total_price = Decimal(item_data["sale_price"]) * quantity
+            cart_items.append(
+                {
+                    "variant": variant,
+                    "quantity": quantity,
+                    "total_price": total_price,
+                }
+            )
+        return cart_items
+

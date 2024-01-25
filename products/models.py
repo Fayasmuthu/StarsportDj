@@ -80,6 +80,7 @@ class Subcategory(models.Model):
     category =models.ForeignKey("products.Category" , on_delete=models.CASCADE)
     name= models.CharField(max_length=100)
     slug = models.SlugField()
+    is_combo = models.BooleanField(default=False)
 
     class Meta:
         verbose_name = _("Subcategory")
@@ -399,7 +400,7 @@ class Review(models.Model):
     headline = models.CharField(max_length=255)
     content = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
-    approval = models.BooleanField(default=False)
+    approval = models.BooleanField(default=True)
 
     def __str__(self):
         return f"{self.headline} - {self.product.name}"

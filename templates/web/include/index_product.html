@@ -35,6 +35,20 @@
               {% endif %}
             {% endfor %}
           </small>
+          {% if product.get_sizes %}
+          <select name="product_size" class="d-none" style="padding:5px;border-radius: 10px; background-color: #fff;border-color: #0aad0a;">
+            {% for item in product.get_sizes %}
+            <option 
+              value="{{item.id}}"
+              data-original_price="{{item.regular_price|floatformat:0}}"
+              data-sale_price="{{item.sale_price|floatformat:0 }}" 
+              data-offer_percent="{{item.offer_percent|floatformat:2 }}" 
+              {% if forloop.first %} selected {% endif %} >
+              {{item.weight}} {{item.unit}}
+            </option>
+            {% endfor %}
+          </select>
+          {% endif %}
         </div>
         <!-- price -->
         <div class="d-flex justify-content-between align-items-center mt-3">
@@ -60,12 +74,15 @@
           </div>
           <!-- btn -->
           <div>
-            <a href="#!" class="btn btn-primary btn-sm">
-              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-plus">
+            {% comment %} <button class="btn btn-primary btn-sm cart-add-btn" data-product_Id="{{ product.id }}" > {% endcomment %}
+            <button class="btn btn-primary btn-sm cart-add-btn" data-product_id="{{ product.id }}">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" 
+              stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" 
+              class="feather feather-plus">
                 <line x1="12" y1="5" x2="12" y2="19"></line>
                 <line x1="5" y1="12" x2="19" y2="12"></line>
               </svg>Add
-            </a>
+            </button>
           </div>
         </div>
       </div>

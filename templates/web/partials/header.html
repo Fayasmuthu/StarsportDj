@@ -85,10 +85,14 @@
 
           
           <div class="text-center ms-6">
-            <a data-bs-toggle="offcanvas" data-bs-target="#offcanvasRight" href="#offcanvasExample" role="button" aria-controls="offcanvasRight" class="text-reset">
+            <a href="{% url 'web:cart' %}" class="text-reset">
               <div class="text-center">
                 <div class="">
                   <i class="bi bi-cart2 fs-4"></i>
+                  <span class="position-absolute  translate-middle badge rounded-pill bg-danger mt-2 cart_count header_cart_count" >
+                    {{ cart_count }}
+                    <span class="visually-hidden">unread messages</span>
+                  </span>
                 </div>
                 <p class="mb-0 d-none d-xl-block small">Shopping Cart</p>
               </div>
