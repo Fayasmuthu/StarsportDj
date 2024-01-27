@@ -1,45 +1,67 @@
-{% extends "registration/registration_base.html" %}
+{% extends 'registration/registration_base.html' %}
 {% load i18n %}
-
-{% block title %}{% trans "Log in" %}{% endblock %}
-
-{% block contentall %}
-<form method="post" action="">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <input type="submit" value="{% trans 'Log in' %}" />
-    <input type="hidden" name="next" value="{{ next }}" />
-</form>
-
-<p>{% trans "Forgot your password?" %} <a href="{% url 'auth_password_reset' %}">{% trans "Reset it" %}</a>.</p>
-<p>{% trans "Not a member?" %} <a href="{% url 'registration_register' %}">{% trans "Register" %}</a>.</p>
+{% load static %}
+{% load i18n crispy_forms_tags %}
+{% load socialaccount %}
+{% block title %}
+  {% trans 'Log in' %}
 {% endblock %}
 
+{% block contentall %}
+  <section class="my-lg-14 my-8">
+    <div class="container">
+      <!-- row -->
+      <div class="row justify-content-center align-items-center">
+        <div class="col-12 col-md-6 col-lg-4 order-lg-1 order-2">
+          <!-- img -->
+          <img src="{% static 'web/assets/images/svg-graphics/signin-g.svg' %}" alt="" class="img-fluid" />
+        </div>
+        <!-- col -->
+        <div class="col-12 col-md-6 offset-lg-1 col-lg-4 order-lg-2 order-1">
+          <div class="mb-lg-9 mb-5">
+            <h1 class="mb-1 h2 fw-bold">Sign in to FreshCart</h1>
+            <p>Welcome back to FreshCart! Enter your email to get started.</p>
+          </div>
 
-{% comment %}
-**registration/login.html**
+          <form method="post" action="">
+            {% csrf_token %}
+            {{ form|crispy }}
+            <div class="d-flex justify-content-between">
+                <!-- form check -->
+                <div class="form-check">
+                  <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault">
+                  <!-- label --> <label class="form-check-label" for="flexCheckDefault">
+                    Remember me
+                  </label>
+                </div>
+                <div>{% trans 'Forgot your password?' %}<a href="{% url 'auth_password_reset' %}">{% trans 'Reset it' %}</a></div>
+              </div>
+            <div class="col-12 d-grid"> 
+                <button type="submit" class="btn btn-primary">{% trans 'Log in' %}</button>
+            </div>
+            <input type="hidden" name="next" value="{{ next }}" />
+            <p>Or</p>
+        </form>
+        <div class="col-12 d-grid"> 
+            <a class="btn btn-primary" href="{% provider_login_url 'google' %}">Login With Google</a>
+        </div>
+        <div>
+          {% trans 'Not a member?' %} <a href="{% url 'registration_register' %}">{% trans 'Register' %}</a>
+      </div>
+        </div>
+      </div>
+    </div>
+  </section>
+{% endblock %}
 
-It's your responsibility to provide the login form in a template called
-registration/login.html by default. This template gets passed four
-template context variables:
+{% comment %}**registration/login.html**
 
-``form``
-    A Form object representing the login form. See the forms
-    documentation for more on Form objects.
+It's your responsibility to provide the login form in a template called registration/login.html by default. This template gets passed four template context variables:
 
-``next``
-    The URL to redirect to after successful login. This may contain a
-    query string, too.
+``form`` A Form object representing the login form. See the forms documentation for more on Form objects.
 
-``site``
-    The current Site, according to the SITE_ID setting. If you don't
-    have the site framework installed, this will be set to an instance
-    of RequestSite, which derives the site name and domain from the
-    current HttpRequest.
+``next`` The URL to redirect to after successful login. This may contain a query string, too.
 
-``site_name``
-    An alias for site.name. If you don't have the site framework
-    installed, this will be set to the value of
-    request.META['SERVER_NAME']. For more on sites, see The
-    "sites" framework.
-{% endcomment %}
+``site`` The current Site, according to the SITE_ID setting. If you don't have the site framework installed, this will be set to an instance of RequestSite, which derives the site name and domain from the current HttpRequest.
+
+``site_name`` An alias for site.name. If you don't have the site framework installed, this will be set to the value of request.META['SERVER_NAME']. For more on sites, see The "sites" framework.{% endcomment %}

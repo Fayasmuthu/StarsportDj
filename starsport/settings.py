@@ -27,6 +27,13 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
+AUTHENTICATION_BACKENDS = [
+    # Needed to login by username in Django admin, regardless of `allauth`
+    'django.contrib.auth.backends.ModelBackend',
+
+    # `allauth` specific authentication methods, such as login by email
+    'allauth.account.auth_backends.AuthenticationBackend',
+]
 
 # Application definition
 
@@ -35,6 +42,9 @@ INSTALLED_PLUGINS = [
     "admin_interface",
     "colorfield",
     'registration',
+    "crispy_forms",
+    "crispy_bootstrap5",
+
 
 
 ]
@@ -45,6 +55,10 @@ DJANGO_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'allauth',
+    'allauth.account',
+    'allauth.socialaccount',
+    'allauth.socialaccount.providers.google',
 
 ]
 
@@ -57,7 +71,9 @@ MODULES = [
 ]
 
 INSTALLED_APPS = INSTALLED_PLUGINS + DJANGO_APPS + MODULES
+CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap5"
 
+CRISPY_TEMPLATE_PACK = "bootstrap5"
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -67,6 +83,9 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+        # Add the account middleware:
+    "allauth.account.middleware.AccountMiddleware",
+
 ]
 
 ROOT_URLCONF = 'starsport.urls'
@@ -82,6 +101,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+
             ],
         },
     },
@@ -154,8 +174,8 @@ SEND_ACTIVATION_EMAIL = False
 REGISTRATION_EMAIL_SUBJECT_PREFIX = ''
 
 REGISTRATION_OPEN = True
-LOGIN_URL = 'accounts/login/'
-LOGOUT_URL = 'accounts/logout/'
+LOGIN_URL = '/accounts/login/'
+LOGOUT_URL = '/accounts/logout/'
 LOGIN_REDIRECT_URL = '/'
 
 # EMAIL_BACKEND = config('EMAIL_BACKEND')
@@ -170,3 +190,11 @@ LOGIN_REDIRECT_URL = '/'
 # DEFAULT_REPLY_TO_EMAIL = config("DEFAULT_REPLY_TO_EMAIL", default=EMAIL_HOST_USER)
 # SERVER_EMAIL = config("SERVER_EMAIL", default=EMAIL_HOST_USER)
 # ADMIN_EMAIL = config("ADMIN_EMAIL", default=EMAIL_HOST_USER)
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp-relay.brevo.com'
+EMAIL_PORT = '587'
+EMAIL_HOST_USER = 'fayasmuthu45@gmail.com'
+EMAIL_HOST_PASSWORD =  'jm2Tk4QHDVdy7aMh'
+EMAIL_USE_TLS = True
+
+SOCIALACCOUNT_LOGIN_ON_GET = True
