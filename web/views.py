@@ -1,4 +1,5 @@
 from django.db.models import Min, Q
+import urllib.parse
 from django.shortcuts import get_object_or_404
 from django.http import JsonResponse
 from django.shortcuts import render,redirect
@@ -13,6 +14,10 @@ from products.models import Category,Subcategory, Offer,Brand
 from products.models import Product, AvailableSize
 from products.models import Slider
 from products.models import Tag
+from order.models import Order, OrderItem
+from main.models import District
+
+
 # form
 from web.forms import ContactForm
 from products.forms import ReviewForm
@@ -22,9 +27,15 @@ from decimal import Decimal
 from django.db.models import Count
 from django.db.models import Min, Max
 from django.db.models.functions import Coalesce
+from order.forms import OrderForm
+
 
 # CART
 from web.cart import Cart
+
+import razorpay
+from django.views.decorators.csrf import csrf_exempt
+from django.core.mail import send_mail
 
 class IndexView(TemplateView):
     template_name = "web/index-5.html"
@@ -405,7 +416,7 @@ def order(request):
             variant = get_object_or_404(AvailableSize, id=item_id)
             quantity = item_data["quantity"]
             price = Decimal(item_data["sale_price"])
-            if variant.product.category.is_combo:
+            if variant.product.subcategory.is_combo:
                 products += f"{counter}.{variant.product.name} ({quantity}x{price}) ₹ {variant.weight*quantity} \n ----------------------- \n"
             else:
                 products += f"{counter}.{variant.product.name}-{variant.weight} {variant.unit} ({quantity}x{price}) ₹ {variant.sale_price*quantity} \n ----------------------- \n"
@@ -429,7 +440,7 @@ def order(request):
         )
 
         whatsapp_api_url = "https://api.whatsapp.com/send"
-        phone_number = "918714193921"
+        phone_number = "916282134481"
         encoded_message = urllib.parse.quote(message)
         whatsapp_url = f"{whatsapp_api_url}?phone={phone_number}&text={encoded_message}"
         cart.clear()
@@ -515,4 +526,234 @@ class CheckoutView(View):
                 }
             )
         return cart_items
+from django.conf import settings
 
+client = razorpay.Client(auth=(settings.RAZOR_PAY_KEY, settings.RAZOR_PAY_SECRET))
+
+class PaymentView(View):
+    def get(self, request, pk, *args, **kwargs):
+        order = get_object_or_404(Order, pk=pk)
+        currency = "INR"
+        amount = float(order.payable) * 100
+        razorpay_order = client.order.create(
+            {"amount": amount, "currency": currency, "payment_capture": "1"}
+        )
+        razorpay_order_id = razorpay_order["id"]
+        order.razorpay_order_id = razorpay_order_id
+        order.save()
+        context = {
+            "object": order,
+            "amount": amount,
+            "razorpay_key": settings.RAZOR_PAY_KEY,
+            "razorpay_order_id": razorpay_order_id,
+            "callback_url": f"{settings.DOMAIN}/callback/{order.pk}/",
+        }
+        return render(request, "web/payment.html", context=context)
+
+
+@csrf_exempt
+def callback(request, pk):
+    order = get_object_or_404(Order, pk=pk)
+    if "razorpay_signature" in request.POST:
+        payment_id = request.POST.get("razorpay_payment_id", "")
+        provider_order_id = request.POST.get("razorpay_order_id", "")
+        signature_id = request.POST.get("razorpay_signature", "")
+        response_data = {
+            "razorpay_order_id": provider_order_id,
+            "razorpay_payment_id": payment_id,
+            "razorpay_signature": signature_id,
+        }
+
+        order = Order.objects.get(razorpay_order_id=provider_order_id)
+        order.razorpay_payment_id = payment_id
+        order.razorpay_signature = signature_id
+        client = razorpay.Client(
+            auth=(settings.RAZOR_PAY_KEY, settings.RAZOR_PAY_SECRET)
+        )
+        result = client.utility.verify_payment_signature(response_data)
+
+        if result is not None:
+            print("Signature verification successful")
+            order.is_ordered = True
+            order.order_status = "Placed"
+            order.payment_status = "Success"
+            order.save()
+
+            products = ""
+            total = 0
+            counter = 1
+            for item in order.get_items():
+                if item.product.product.category.is_combo:
+                    products += f"{counter}.{item.product.product.name} ({item.quantity}x{item.price}) ₹ {item.subtotal()} \n ----------------------- \n"
+                else:
+                    products += f"{counter}.{item.product.product.name}-{item.product.weight} {item.product.unit} ({item.quantity}x{item.price}) ₹ {item.subtotal()} \n ----------------------- \n"
+                total += item.subtotal()
+                counter += 1
+
+            message = (
+                f"============================\n"
+                f"Order Confirmed\n"
+                f"============================\n\n"
+                f"Order ID: {order.order_id}\n"
+                f"Order Date: {order.created}\n"
+                f"Order Status: Placed\n"
+                f"Payment Method: Online Payment\n"
+                f"Payment Status: Success\n"
+                f"----------------------------\n\n"
+                f"Products:\n\n"
+                f"{products}\n\n"
+                f"----------------------------\n\n"
+                f"Order Summary:\n\n"
+                f"Subtotal: {order.subtotal} \n"
+                f"service fee: {order.service_fee} \n"
+                f"shipping fee: {order.shipping_fee} \n\n"
+                f"Total Payble: {order.payable} \n\n"
+                f"----------------------------\n\n"
+                f"Shipping Address:\n\n"
+                f"Name: {order.full_name}\n"
+                f"Address: {order.address_line_1}\n"
+                f"Landmark: {order.address_line_2}\n"
+                f"State: {order.state}\n"
+                f"District: {order.district}\n"
+                f"City: {order.city}\n"
+                f"Pincode: {order.pin_code}\n"
+                f"Mobile: {order.mobile_no}\n"
+                f"Email: {order.email}\n\n"
+                f"Thank you for placing your order with TRADOXI. Your order has been confirmed.\n\n"
+            )
+
+            email = order.email
+            subject = "Order Confirmation - TRADOXI"
+            message = message
+            send_mail(
+                subject,
+                message,
+                "tradoxiprivatelimited@gmail.com",
+                [email,"tradoxiprivatelimited@gmail.com"],
+                fail_silently=False,
+            )
+            
+            print("email sent successfully")
+            cart = Cart(request)
+            cart.clear()
+            
+        else:
+            print("Signature verification failed, please check the secret key")
+            order.payment_status = "Failed"
+            order.save()
+        return render(request, "web/callback.html", {"object": order})
+    else:
+        print("Razorpay payment failed")
+        return redirect("web:payment", pk=order.pk)
+
+
+class CompleteOrderView(DetailView):
+    model = Order
+    template_name = "web/complete-order.html"
+
+    def get_object(self):
+        return get_object_or_404(Order, pk=self.kwargs["pk"])
+
+    def get(self, request, *args, **kwargs):
+        order = self.get_object()
+        order.is_ordered = True
+        order.order_status = "Placed"
+        order.save()
+        products = ""
+        total = 0
+        counter = 1
+        for item in order.get_items():
+            if item.product.product.subcategory.is_combo:
+                products += f"{counter}.{item.product.product.name} ({item.quantity}x{item.price}) ₹ {item.subtotal()} \n ----------------------- \n"
+            else:
+                products += f"{counter}.{item.product.product.name}-{item.product.weight} {item.product.unit} ({item.quantity}x{item.price}) ₹ {item.subtotal()} \n ----------------------- \n"
+            total += item.subtotal()
+            counter += 1
+
+        message = (
+            f"============================\n"
+            f"Order Confirmed\n"
+            f"============================\n\n"
+            f"Order ID: {order.order_id}\n"
+            f"Order Date: {order.created}\n"
+            f"Order Status: Placed\n"
+            f"Payment Method: Cash On Delivery\n"
+            f"Payment Status: Pending\n"
+            f"----------------------------\n"
+            f"Products:\n\n"
+            f"{products}\n"
+            f"----------------------------\n"
+            f"Order Summary:\n\n"
+            f"Subtotal: {order.subtotal} \n"
+            f"service fee: {order.service_fee} \n"
+            f"shipping fee: {order.shipping_fee} \n\n"
+            f"Total Payble: {order.payable} \n\n"
+            f"----------------------------\n"
+            f"Shipping Address:\n\n"
+            f"Name: {order.full_name}\n"
+            f"Address: {order.address_line_1}\n"
+            f"Landmark: {order.address_line_2}\n"
+            f"State: {order.state}\n"
+            f"District: {order.district}\n"
+            f"City: {order.city}\n"
+            f"Pincode: {order.pin_code}\n"
+            f"Mobile: {order.mobile_no}\n"
+            f"Email: {order.email}\n\n"
+            f"Thank you for placing your order with TRADOXI. Your order has been confirmed.\n\n"
+        )
+
+        email = order.email
+        subject = "Order Confirmation - TRADOXI"
+        message = message
+        send_mail(
+            subject,
+            message,
+            "tradoxiprivatelimited@gmail.com",
+            [email,"tradoxiprivatelimited@gmail.com"],
+            fail_silently=False,
+        )
+        
+        cart = Cart(request)
+        cart.clear()
+        context = {
+            "object": order,
+        }
+        return render(request, self.template_name, context)
+
+
+class UserOrderDetailView(DetailView):
+    model = Order
+    template_name = "accounts/order_single.html"
+    context_object_name = "order"
+    slug_field = "order_id"
+    slug_url_kwarg = "order_id"
+    extra_context = {"my_order": True}
+
+
+def get_shipping_fee(request):
+    district_id = request.GET.get("district", None)
+    data = District.objects.get(id=district_id).delivery_charge
+    return JsonResponse({"charge": data})
+
+
+# class OfferDetailView(DetailView):
+#     model = OfferProduct
+#     context_object_name = "product"
+#     template_name = "web/offer_detail.html"
+
+#     def get_context_data(self, **kwargs):
+#         context = super().get_context_data(**kwargs)
+#         current_product = self.get_object()
+        
+#         product_ratings = [
+#             {"value": 5, "percentage": int(current_product.product.product.five_rating())},
+#             {"value": 4, "percentage": int(current_product.product.product.four_rating())},
+#             {"value": 3, "percentage": int(current_product.product.product.three_rating())},
+#             {"value": 2, "percentage": int(current_product.product.product.two_rating())},
+#             {"value": 1, "percentage": int(current_product.product.product.one_rating())},
+#         ]
+        
+#         context["reviews"] = (current_product.product.product.reviews.filter(approval=True),)
+#         context["review_form"] = ReviewForm()
+#         context["product_ratings"] = product_ratings
+#         return context

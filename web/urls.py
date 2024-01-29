@@ -24,7 +24,7 @@ urlpatterns = [
     #checkout
     path("whatsapp-order/", views.order, name="order"),
     path("checkout/", views.CheckoutView.as_view(), name="checkout"),
-    # path("get_shipping_fee/", views.get_shipping_fee, name="get_shipping_fee"),
+    path("get_shipping_fee/", views.get_shipping_fee, name="get_shipping_fee"),
     # CART
     path("shop/cart/", views.cart_view, name="cart"),
     path("shop/cart/add/", views.cart_add, name="add_cart"),
@@ -32,4 +32,24 @@ urlpatterns = [
     path("shop/cart-minus/", views.minus_to_cart, name="minus_to_cart"),
     path("shop/cart-clear/", views.clear_cart, name="clear_cart"),
 
+    # payment
+    path("payment/<str:pk>/", views.PaymentView.as_view(), name="payment"),
+    path("callback/<str:pk>/", views.callback, name="callback"),
+    path(
+        "complete-order/<str:pk>/",
+        views.CompleteOrderView.as_view(),
+        name="complete_order",
+    ),
+    path(
+        "user/order/<str:order_id>/detail/",
+        views.UserOrderDetailView.as_view(),
+        name="order_detail",
+    ),
+    # path(
+    #     "offer-detail/<pk>/",
+    #     views.OfferDetailView.as_view(),
+    #     name="offer_details",
+    # ),
 ]
+
+

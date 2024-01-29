@@ -47,7 +47,7 @@ class IndexView(SuperAdminLoginRequiredMixin, TemplateView):
 
 #order
 class OrderView(SuperAdminLoginRequiredMixin, ListView):
-    template_name = "dashboard/order/order-list.html"
+    template_name = "dashboard/order/list.html"
     model = Order
     extra_context = {'is_order':True}
 

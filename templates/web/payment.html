@@ -1,0 +1,95 @@
+{% extends 'web/partials/baseall.html' %}
+{% load static %}
+{% block title %}Payment{%endblock%} 
+
+
+
+{% block contentall %}
+
+<section class="my-lg-14 my-8">
+	<!-- container -->
+	<div class="container">
+	  <div class="row justify-content-center">
+		<!-- col -->
+		<div class="col-md-8">
+			<div class="mb-5 card mt-6">
+				<div class="card-body p-6">
+				  <!-- heading -->
+				  <h2 class="h5 mb-4">Payment Summary</h2>
+				  <div class="card mb-2">
+					<!-- list group -->
+					<ul class="list-group list-group-flush">
+					  <!-- list group item -->
+					  <li class="list-group-item d-flex justify-content-between align-items-start">
+						<div class="me-auto">
+						  <div>Item Subtotal</div>
+						</div>
+						<span id="cart_total">₹{{object.subtotal|floatformat:2}}</span>
+					  </li>
+					  <!-- list group item -->
+					  <li class="list-group-item d-flex justify-content-between align-items-start">
+						<div class="me-auto">
+						  <div>Service Fee</div>
+						</div>
+						<span id="service_fee">₹{{object.service_fee|floatformat:2}}</span>
+					  </li>
+					  <!-- list group item -->
+					  <li class="list-group-item d-flex justify-content-between align-items-start">
+						<div class="me-auto">
+						  <div>Shipping Fee</div>
+						</div>
+						<span id="shipping_fee">₹{{object.shipping_fee|floatformat:2}}</span>
+					  </li>
+					  <!-- list group item -->
+					  <li class="list-group-item d-flex justify-content-between align-items-start">
+						<div class="me-auto">
+						  <div class="fw-bold" >Subtotal</div>
+						</div>
+						<span class="fw-bold"id ="sub_total"> {{object.payable|floatformat:2}}</span>
+					  </li>
+					</ul>
+				  </div>
+				  {% if object.payment_method == "OP" %}
+				  <div class="text-center py-3">
+					<button class="btn btn-primary" id="payButton">Make Payment</button>
+				  </div>
+				  {% else %}
+				  <div class="text-center py-3">
+					<a class="btn btn-primary" href="{% url 'web:complete_order' object.id %}">Place Order</a>
+				  </div>
+				  {% endif %}
+				  <!-- text -->
+				  <p><small>By placing your order, you agree to be bound by the Tradoxi <a href="{% url 'web:terms_conditions' %}">Terms of Service</a>
+					  and <a href="{% url 'web:privacy_policy' %}">Privacy Policy.</a> </small>
+				  </p>
+				  <!-- heading -->
+				</div>
+			  </div>
+		</div>
+		
+	  </div>
+	</div>
+  </section>
+{% endblock %}
+
+{% block js %}
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+<script>
+	var options = {
+		key: "{{ RAZOR_PAY_KEY }}",
+		amount: "{{ amount }}",
+		currency: "INR",
+		name: "Tradoxi",
+		order_id: "{{razorpay_order_id}}",
+		callback_url: "{{ callback_url }}",
+	};
+
+	// initialise razorpay with the options.
+	var rzp1 = new Razorpay(options);
+	// add event listener to the payment button.
+	document.getElementById("payButton").onclick = function (e) {
+		rzp1.open();
+		e.preventDefault();
+	};
+</script>
+{% endblock %}

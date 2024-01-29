@@ -262,10 +262,12 @@
                     <div class="row align-items-center">
                       
                       <div class="col-6 " style="padding-right:0px">
-                        <h6 class="mb-0">{{item.variant}}</h6>
-                        {% if not item.variant.product.category.is_combo %}
-                      <span><small class="text-muted">{{ item.variant.weight }}  {{ item.variant.unit }} / ₹{{ item.variant.sale_price|floatformat:0 }}</small></span>
-                      {% endif %}
+                        <h6 class="mb-0">{{item.variant|truncatechars:20}}</h6>
+                        {% if not item.variant.product.subcategory.is_combo %}
+                          <span>
+                            <small class="text-muted">{{ item.variant.weight }}  {{ item.variant.unit }} / ₹{{ item.variant.sale_price|floatformat:0 }}</small>
+                          </span>
+                        {% endif %}
                         
                       </div>
                       <div class="col-2  text-center text-muted p-0"> x 
@@ -359,7 +361,7 @@
 {% endblock %}
 
 {% block js %}
-{% include 'web/includes/form-ajax.html' %}
+{% include 'web/include/form-ajax.html' %}
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.13/js/intlTelInput-jquery.min.js"></script>
 <script>

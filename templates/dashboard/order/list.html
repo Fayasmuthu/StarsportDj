@@ -1,0 +1,151 @@
+{% extends "dashboard/base.html" %}
+{% load static %} 
+{% block title %}Order List{% endblock%} 
+{% block content %}
+    <!-- row -->
+    <div class="row mb-8">
+        <div class="col-md-12">
+          <!-- page header -->
+          <div>
+            <h2 class="m-0">Order List</h2>
+          </div>
+        </div>
+      </div>
+      <!-- row -->
+      <div class="row">
+        <div class="col-xl-12 col-12 mb-5">
+          <!-- card -->
+          <div class="card h-100 card-lg">
+            <!-- card body -->
+            <div class="card-body p-0">
+              <!-- table responsive -->
+              <div class="table-responsive">
+                <table id="myTable" class="table myTable table-centered table-hover text-nowrap table-borderless mb-0 table-with-checkbox">
+                  <thead class="bg-light">
+                    <tr>
+                      <th>#</th>
+                      <th>Order ID</th>
+                      <th>Customer</th>
+                      <th>Date & TIme</th>
+                      <th>Payment</th>
+                      <th>Status</th>
+                      <th>Amount</th>
+                      <th>Action</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {% for order in order_list %}
+                    <tr>
+                      <td>{{forloop.counter}}</td>
+                      <td><a href="{% url 'main:order_detail' order.order_id %}" class="text-reset">{{ order.order_id }}</a></td>
+                      <td>{{ order.full_name }}</td>
+
+                      <td>{{ order.created }}</td>
+                      <td>{{ order.get_payment_method_display }}</td>
+                      <td>
+                        {% if order.order_status == 'Delivered' %}
+                        <span class="badge bg-light-primary text-dark-primary">{{ order.order_status }}</span>
+                        {% elif order.order_status == 'Pending' %}
+                        <span class="badge bg-light-warning text-dark-warning">{{ order.order_status }}</span>
+                        {% elif order.order_status == 'Shipped' %}
+                        <span class="badge bg-light-info text-dark-info">{{ order.order_status }}</span>
+                        {% elif order.order_status == 'Cancelled' %}
+                        <span class="badge bg-light-danger text-dark-danger">{{ order.order_status }}</span>
+                        {% endif %}
+                      </td>
+                      <td>₹ {{ order.get_grand_total }}</td>
+                      <td>
+                        <div class="dropdown">
+                          <a href="#" class="text-reset" data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="feather-icon icon-more-vertical fs-5"></i>
+                          </a>
+                          <ul class="dropdown-menu">
+                            <li><a class="dropdown-item action-button " data-status="Pending" data-text="Confirm Order Status Pending" data-id="{{ order.id }}"  href="{% url 'main:order_update' %}"><i class=" me-3"></i>Pending</a></li>
+                            <li><a class="dropdown-item action-button " data-status="Shipped" data-text="Confirm Order Status Shipped" data-id="{{ order.id }}" href="{% url 'main:order_update' %}"><i class=" me-3"></i>Shipped</a></li>
+                            <li><a class="dropdown-item action-button " data-status="Delivered" data-text="Confirm Order Status Delivered" data-id="{{ order.id }}" href="{% url 'main:order_update' %}"><i class=" me-3 "></i>Delivered</a></li>
+                            <li><a class="dropdown-item action-button " data-status="Cancelled" data-text="Confirm Order Status Canceled" data-id="{{ order.id }}" href="{% url 'main:order_update' %}"><i class=" me-3"></i>Canceled</a></li>
+                          </ul>
+                        </div>
+                      </td>
+                    </tr>
+                    {% endfor %}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+{% endblock content %}
+
+{% block css %}
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@9.15.3/dist/sweetalert2.all.min.js"></script>
+<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.13.7/css/jquery.dataTables.min.css">
+<link rel="stylesheet" href="{% static 'web/css/dataTable.css' %}{{current_version}}">
+{% endblock %}
+
+{% block js %}
+<script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>
+<script>
+    let table = new DataTable('#myTable', {
+        responsive: true
+    });
+</script>
+<script>
+  $(document).on("click", ".action-button", function (e) {
+        e.preventDefault();
+        $this = $(this);
+        var html = $this.attr("data-text");
+        var icon = "question";
+        var id = $this.attr("data-id");
+        var status = $this.attr("data-status");
+        var url = $this.attr("href");
+        var title = $this.attr("data-title");
+        if (!title) {
+            title = "Are you sure?";
+        }
+
+        Swal.fire({
+            title: title,
+            html: html,
+            icon: icon,
+            showCancelButton: true,
+        }).then((result) => {
+            if (result.value) {
+                window.setTimeout(function () {
+                    $.ajax({
+                        type: "GET",
+                        url: url,
+                        dataType: "json",
+                        data: { pk: id , status: status},
+
+                        success: function (data) {
+                            var message = data.message;
+                            var status = data.status;
+                            var reload = data.reload;
+                            var redirect = data.redirect;
+                            var redirect_url = data.redirect_url;
+                            var title = data.title;
+
+                            if (status == "true") {
+                                title?title=title:title="Success";
+                                Swal.fire({title:title,html:message,icon:"success"}).then(function(){"true"==redirect&&(window.location.href=redirect_url),"true"==reload&&window.location.reload()});
+                            } else {
+                                title?title=title:title="An Error Occurred";
+                                Swal.fire({ title: title, html: message, icon: "error" });
+                            }
+                        },
+                        error: function (data) {
+                            var title = "An error occurred";
+                            var message = "An error occurred. Please try again later.";
+                            Swal.fire({ title: title, html: message, icon: "error" });
+                        },
+                    });
+                }, 100);
+            } else {
+                console.log("action cancelled");
+            }
+        });
+    });
+</script>
+{% endblock  %}

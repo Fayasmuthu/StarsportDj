@@ -1,0 +1,134 @@
+{% extends 'web/partials/baseall.html' %}
+ {% load static %}
+  {% block title %}order{%endblock%}
+
+{% block contentall %}
+
+<!-- row -->
+<div class="row ">
+    <div class="col-xl-12 col-12 mb-5">
+        <!-- card -->
+        <div class="card h-100 card-lg">
+            <div class="card-body p-6">
+                <div class="d-md-flex justify-content-between">
+                    <div class="d-flex align-items-center mb-2 mb-md-0">
+                        <h2 class="mb-0">Order ID: #{{order.order_id}}</h2>
+                        <span class="badge bg-light-warning text-dark-warning ms-2">{{order.order_status}}</span>
+                    </div>
+                    
+                </div>
+                <div class="mt-8 row">
+                    <div class="col-lg-6 col-md-6 col-12 mb-6">
+                        <h6>Shipping Address</h6>
+                        <p class="mb-1 lh-lg">{{order.full_name}}<br>
+                        {{order.address_line_1}} <br>
+                        {{order.address_line_2}} <br>
+                        {{order.city}},{{order.district}},{{order.state}} <br>
+                        Pin Code : {{order.pin_code}} <br>
+                        Contact No. {{order.mobile_no}}</p>
+                    </div>
+                    <!-- address -->
+                    <div class="col-lg-6 col-md-6 col-12 mb-6">
+                        <h6>Order Details</h6>
+                        <p class="mb-1 lh-lg">Order ID: <span class="text-dark">{{order.order_id}}</span><br>
+                            Order Date: <span class="text-dark">{{order.created}}</span><br>
+                            Order Total: <span class="text-dark">₹{{order.payable}}</span><br>
+                            Order Status: <span class="text-dark">{{order.get_order_status_display}}</span><br>
+                            Payment Method: <span class="text-dark">{{order.get_payment_method_display}}</span><br>
+                            Payment Status: <span class="text-dark">{{order.get_payment_status_display}}</span><br>
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <!-- <div class="row"> -->
+                <div class=" table-responsive">
+                    <!-- Table -->
+                    <table class="table mb-0 text-nowrap table-centered">
+                    <!-- Table Head -->
+                        <thead class="bg-light">
+                            <tr>
+                                <th>Products</th>
+                                <th>Price</th>
+                                <th>Quantity</th>
+                                <th>Total</th>
+                            </tr>
+                        </thead>
+                        <!-- tbody -->
+                        <tbody>
+                            {% for i in order.get_items %}
+                            <tr>
+                                <td>
+                                    <a href="{{i.product.get_absolute_url}}" class="text-inherit">
+                                        <div class="ms-lg-4 mt-2 mt-lg-0">
+                                            <h5 class="mb-0 h6">
+                                                {% if i.product.product.category.is_combo %}
+                                                {{i.product.product.name|truncatechars:20}}
+                                                {% else %}
+                                                {{i.product|truncatechars:20}}
+                                                {% endif %}
+                                            </h5>
+                                        </div>
+                                    </a>
+                                </td>
+                                <td><span class="text-body">₹ {{i.price}}</span></td>
+                                <td>{{i.quantity}}</td>
+                                <td>₹ {{i.subtotal}}</td>
+                            </tr>
+                            {% endfor %}
+                            <tr>
+                                <td class="border-bottom-0 pb-0"></td>
+                                <td class="border-bottom-0 pb-0"></td>
+                                <td colspan="1" class="fw-medium text-dark ">
+                                  <!-- text -->
+                                  Sub Total :
+                                </td>
+                                <td class="fw-medium text-dark ">
+                                  <!-- text -->
+                                  ₹{{order.subtotal}}
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="border-bottom-0 pb-0"></td>
+                                <td class="border-bottom-0 pb-0"></td>
+                                <td colspan="1" class="fw-medium text-dark ">
+                                  <!-- text -->
+                                  Service Cost :
+                                </td>
+                                <td class="fw-medium text-dark ">
+                                  <!-- text -->
+                                  ₹{{order.service_fee}}
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="border-bottom-0 pb-0"></td>
+                                <td class="border-bottom-0 pb-0"></td>
+                                <td colspan="1" class="fw-medium text-dark ">
+                                  <!-- text -->
+                                  Shipping Cost :
+                                </td>
+                                <td class="fw-medium text-dark ">
+                                  <!-- text -->
+                                  ₹{{order.shipping_fee}}
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="border-bottom-0 pb-0"></td>
+                                <td class="border-bottom-0 pb-0"></td>
+                                <td colspan="1" class="fw-medium text-dark ">
+                                  <!-- text -->
+                                  Grand Total :
+                                </td>
+                                <td class="fw-medium text-dark ">
+                                  <!-- text -->
+                                  ₹{{order.payable}}
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            <!-- </div> -->
+        </div>
+    </div>
+</div>
+  
+{% endblock %}

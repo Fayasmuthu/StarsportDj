@@ -6,109 +6,135 @@ from django.contrib.auth.models import User
 from django.db import models
 
 
-class CartItem(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-    product = models.ForeignKey("products.AvailableSize", on_delete=models.CASCADE)
-    quantity = models.PositiveIntegerField(default=1)
+# class CartItem(models.Model):
+#     user = models.ForeignKey(User, on_delete=models.CASCADE)
+#     product = models.ForeignKey("products.AvailableSize", on_delete=models.CASCADE)
+#     quantity = models.PositiveIntegerField(default=1)
 
-    class Meta:
-        verbose_name = _("Cart Item")
-        verbose_name_plural = _("Cart Items")
+#     class Meta:
+#         verbose_name = _("Cart Item")
+#         verbose_name_plural = _("Cart Items")
 
-    def get_product_name(self):
-        return self.product.name
+#     def get_product_name(self):
+#         return self.product.name
 
-    def get_total_price(self):
-        return self.quantity * self.product.regular_price
+#     def get_total_price(self):
+#         return self.quantity * self.product.regular_price
     
-    def cart_total(self):
-        return float(sum(item.get_total_price() for item in CartItem.objects.filter(user=self.user)))
+#     def cart_total(self):
+#         return float(sum(item.get_total_price() for item in CartItem.objects.filter(user=self.user)))
 
-    def __str__(self):
-        return f"{self.product} - {self.quantity}"
+#     def __str__(self):
+#         return f"{self.product} - {self.quantity}"
 
 
-class Wishlist(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-    product = models.ForeignKey("products.AvailableSize", on_delete=models.CASCADE)
+# class Wishlist(models.Model):
+#     user = models.ForeignKey(User, on_delete=models.CASCADE)
+#     product = models.ForeignKey("products.AvailableSize", on_delete=models.CASCADE)
     
-    class Meta:
-        # unique_together = ("user", "product")
-        verbose_name = _("Wishlist Item")
-        verbose_name_plural = _("Wishlist Items")
+#     class Meta:
+#         # unique_together = ("user", "product")
+#         verbose_name = _("Wishlist Item")
+#         verbose_name_plural = _("Wishlist Items")
 
-    def __str__(self):
-        return f"{self.product.product.name}"
+#     def __str__(self):
+#         return f"{self.product.product.name}"
  
 
-class Notification(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-    title = models.CharField(max_length=255)
-    description = models.CharField(max_length=255)
+# class Notification(models.Model):
+#     user = models.ForeignKey(User, on_delete=models.CASCADE)
+#     title = models.CharField(max_length=255)
+#     description = models.CharField(max_length=255)
 
-    class Meta:
-        verbose_name = _("Notification")
-        verbose_name_plural = _("Notifications")
+#     class Meta:
+#         verbose_name = _("Notification")
+#         verbose_name_plural = _("Notifications")
 
-    def __str__(self):
-        return f"{self.title}"
+#     def __str__(self):
+#         return f"{self.title}"
 
 def generate_order_id():
     timestamp = timezone.now().strftime("%y%m%d")
-    unique_id = uuid.uuid4().hex[:6]  # Generate a random 8-character string
-    # yymm + unique_id upper
+    unique_id = uuid.uuid4().hex[:6]
     return f"{timestamp}{unique_id.upper()}"
 
 class Order(models.Model):
-    unique_transaction_id = models.UUIDField(unique=True,  editable=False, blank=True, null=True)
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-    address = models.ForeignKey("accounts.CustomerAddress", verbose_name="Shipping Address", on_delete=models.CASCADE)
-    order_id = models.CharField(max_length=255, blank=True, null=True)
-    item_subtotal = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
+    unique_transaction_id = models.UUIDField(
+        unique=True, editable=False, blank=True, null=True
+    )
+    razorpay_payment_id = models.CharField(max_length=200, blank=True, null=True)
+    razorpay_order_id = models.CharField(max_length=200, blank=True, null=True)
+    razorpay_signature = models.CharField(max_length=200, blank=True, null=True)
+    created = models.DateTimeField(db_index=True, auto_now_add=True)
+    updated = models.DateTimeField(auto_now=True)
+    payable = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
+    order_id = models.CharField(max_length=255, default=generate_order_id)
+    is_ordered = models.BooleanField(default=False)
+    completed_at = models.DateTimeField(blank=True, null=True)
+    payment_method = models.CharField(
+        max_length=20,
+        choices=(("COD", "Cash On Delivery"), ("OP", "Online Payment")),
+        default="COD",
+    )
+
+    full_name = models.CharField(max_length=100)
+    address_line_1 = models.CharField("Complete Address", max_length=100)
+    address_line_2 = models.CharField("Landmark", max_length=100)
+    state = models.CharField(max_length=200, null=True)
+    district = models.CharField(max_length=200, null=True)
+    city = models.CharField(max_length=100)
+    pin_code = models.IntegerField()
+    mobile_no = models.CharField(max_length=15)
+    alternative_no = models.CharField(max_length=15, blank=True, null=True)
+    email = models.EmailField()
+
+    subtotal = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
     service_fee = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
     shipping_fee = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
-    timestamp = models.DateTimeField(auto_now_add=True)
-    delivered_date = models.DateTimeField(blank=True, null=True)
-    status = models.CharField(
+    order_status = models.CharField(
         max_length=50,
         default="Pending",
         choices=(
-            ("Pending", "Placed"),
-            ("Processing", "Confirmed"),
-            ("Shipped", "Shipped"),
-            ("Delivered", "Delivered"),
+            ("Pending", "Pending"),
+            ("Placed", "Order Placed"),
+            ("Shipped", "Order Shipped"),
+            ("InTransit", "In Transit"),
+            ("Delivered", "Order Delivered"),
+            ("Cancelled", "Order Cancelled"),
+        ),
+    )
+    payment_status = models.CharField(
+        max_length=50,
+        default="Pending",
+        choices=(
+            ("Pending", "Pending"),
+            ("Failed", "Failed"),
+            ("Success", "Success"),
             ("Cancelled", "Cancelled"),
         ),
     )
+
     class Meta:
         verbose_name = _("Order")
         verbose_name_plural = _("Orders")
         ordering = ("-id",)
 
-    def save(self, *args, **kwargs):
-        self.order_id = '#'+ generate_order_id()
-        # Call the original save method
-        super().save(*args, **kwargs)
-
-    def get_updates(self):
-        return OrderUpdate.objects.filter(order=self)
-
     def get_items(self):
         return OrderItem.objects.filter(order=self)
 
-    def get_payment(self):
-        return Payment.objects.filter(order=self).last()
     def get_grand_total(self):
-        total = self.item_subtotal + self.service_fee + self.shipping_fee
+        total = self.payable + self.service_fee + self.shipping_fee
         return total
+
     def order_total(self):
         return float(sum([item.subtotal for item in self.get_items()]))
-    
+
     def get_user_absolute_url(self):
-        return reverse("accounts:order_detail", kwargs={"order_id": self.order_id})
-    
+        return reverse("web:order_detail", kwargs={"order_id": self.order_id})
+
     def __str__(self):
-       return f"{self.order_id}"
+        return f"{self.order_id}"
+
 
 
 class OrderItem(models.Model):
@@ -117,7 +143,6 @@ class OrderItem(models.Model):
     price = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
     quantity = models.PositiveIntegerField(default=1)
 
-
     class Meta:
         verbose_name = _("Order Item")
         verbose_name_plural = _("Order Items")
@@ -125,7 +150,6 @@ class OrderItem(models.Model):
     def __str__(self):
         return f"{self.order} - {self.product}"
 
-   
     def subtotal(self):
         return self.price * self.quantity
 
