@@ -6,52 +6,30 @@ from django.contrib.auth.models import User
 from django.db import models
 
 
-# class CartItem(models.Model):
-#     user = models.ForeignKey(User, on_delete=models.CASCADE)
-#     product = models.ForeignKey("products.AvailableSize", on_delete=models.CASCADE)
-#     quantity = models.PositiveIntegerField(default=1)
-
-#     class Meta:
-#         verbose_name = _("Cart Item")
-#         verbose_name_plural = _("Cart Items")
-
-#     def get_product_name(self):
-#         return self.product.name
-
-#     def get_total_price(self):
-#         return self.quantity * self.product.regular_price
+class Wishlist(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    product = models.ForeignKey("products.AvailableSize", on_delete=models.CASCADE)
     
-#     def cart_total(self):
-#         return float(sum(item.get_total_price() for item in CartItem.objects.filter(user=self.user)))
+    class Meta:
+        # unique_together = ("user", "product")
+        verbose_name = _("Wishlist Item")
+        verbose_name_plural = _("Wishlist Items")
 
-#     def __str__(self):
-#         return f"{self.product} - {self.quantity}"
-
-
-# class Wishlist(models.Model):
-#     user = models.ForeignKey(User, on_delete=models.CASCADE)
-#     product = models.ForeignKey("products.AvailableSize", on_delete=models.CASCADE)
-    
-#     class Meta:
-#         # unique_together = ("user", "product")
-#         verbose_name = _("Wishlist Item")
-#         verbose_name_plural = _("Wishlist Items")
-
-#     def __str__(self):
-#         return f"{self.product.product.name}"
+    def __str__(self):
+        return f"{self.product.product.name}"
  
 
-# class Notification(models.Model):
-#     user = models.ForeignKey(User, on_delete=models.CASCADE)
-#     title = models.CharField(max_length=255)
-#     description = models.CharField(max_length=255)
+class Notification(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    title = models.CharField(max_length=255)
+    description = models.CharField(max_length=255)
 
-#     class Meta:
-#         verbose_name = _("Notification")
-#         verbose_name_plural = _("Notifications")
+    class Meta:
+        verbose_name = _("Notification")
+        verbose_name_plural = _("Notifications")
 
-#     def __str__(self):
-#         return f"{self.title}"
+    def __str__(self):
+        return f"{self.title}"
 
 def generate_order_id():
     timestamp = timezone.now().strftime("%y%m%d")

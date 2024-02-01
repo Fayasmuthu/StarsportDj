@@ -83,6 +83,23 @@
           <a href=""><div class="navbar-tool-text ms-n3"><small>Hello, Login</small>My Account</div> </a>
           {% endif %} {% endcomment %}
 
+          <div class="w-25 ms-2 py-4  icon-hover">
+            <a href="{% url 'order:wishlist' %}" class="text-inherit">
+              <div class="text-center">
+                <div class="">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-heart">
+                    <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z">
+                    </path>
+                  </svg>
+                  <span class="position-absolute translate-middle badge rounded-pill bg-danger"id="header_wishlist_count">
+                     {{ wishlist_count }}
+                    <span class="visually-hidden">unread messages</span>
+                  </span>
+                </div>
+                <p class="mb-0 d-none d-xl-block small">Wishlist</p>
+              </div>
+            </a>
+          </div>
           
           <div class="text-center ms-6">
             <a href="{% url 'web:cart' %}" class="text-reset">

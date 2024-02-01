@@ -119,9 +119,6 @@ class Product(models.Model):
     image = models.ImageField(
         upload_to="products/img", help_text=" The recommended size is 120x120 pixels."
     )
-    image_p = models.ImageField(
-        upload_to="products/img", help_text=" The recommended size is 220x220 pixels."
-    )
     is_popular = models.BooleanField(default=False)
     is_best_seller = models.BooleanField(default=False)
     is_offer = models.BooleanField(default=False)
@@ -338,7 +335,7 @@ class ProductImage(models.Model):
 
 class AvailableSize(models.Model):
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
-    weight = models.IntegerField(blank=True, null=True)
+    # weight = models.IntegerField(blank=True, null=True)
     unit = models.CharField(max_length=10, choices=UNIT_CHOICES,blank=True, null=True)
     sale_price = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
     regular_price  = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
@@ -361,7 +358,7 @@ class AvailableSize(models.Model):
         super().save(*args, **kwargs)
 
     def __str__(self):
-        return f"{self.product} - {self.weight} {self.unit} "
+        return f"{self.product} - {self.unit} "
 
 
 class Offer(models.Model):
@@ -372,7 +369,13 @@ class Offer(models.Model):
         upload_to="Offers/",
         help_text=" The recommended size is 780x300 pixels.",
     )
-    offer = models.PositiveIntegerField()
+    offer_price = models.DecimalField(max_digits=6, decimal_places=2)  
+    regular_price = models.DecimalField(max_digits=6, decimal_places=2)
+    units_sold = models.PositiveIntegerField(default=0)   
+    units_available = models.PositiveIntegerField(default=0)
+    offer_start_date = models.DateTimeField()   
+    offer_end_date = models.DateTimeField()
+
 
     def __str__(self):
         return str(self.title)

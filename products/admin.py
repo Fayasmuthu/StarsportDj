@@ -147,7 +147,7 @@ class AvailableSizeAdmin(admin.ModelAdmin):
 
 @admin.register(Offer)
 class OfferAdmin(admin.ModelAdmin):
-    list_display = ("title", "offer")
+    list_display = ("title", "offer_price")
 
 @admin.register(OfferProduct)
 class OfferProductAdmin(admin.ModelAdmin):

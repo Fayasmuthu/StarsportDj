@@ -57,7 +57,7 @@
                 <!-- product variants -->
                 <div class="mb-4">
                   <div class="d-flex flex-wrap">
-                    {% if not product.category.is_combo %}
+                    {% if not product.subcategory.is_combo %}
                   {% for item in product.get_sizes %}
                     <div class="form-check" style="{% if forloop.first %} margin-left: -20px; {% endif %}">
                       <input class="form-check-input product-size " value="{{item.id}}" type="radio" name="product_size"  id="flexRadioDefault{{item.id}}"
@@ -327,7 +327,7 @@
                 <!-- product variants -->
                 <div class="mb-4">
                   <div class="d-flex flex-wrap">
-                    {% if not product.category.is_combo %}
+                    {% if not product.subcategory.is_combo %}
                   {% for item in product.get_sizes %}
                     <div class="form-check" style="{% if forloop.first %} margin-left: -20px; {% endif %}">
                       <input class="form-check-input product-size " value="{{item.id}}" type="radio" name="product_size"  id="flexRadioDefault{{item.id}}"
@@ -406,5 +406,5 @@
 {% endfor %}
 
 {% block js%}
-<script src="{% static 'web/js/quickview.js'  %}{{current_version}}"></script>
+<script src="{% static 'web/assets/js/quickview.js'  %}{{current_version}}"></script>
 {% endblock %}

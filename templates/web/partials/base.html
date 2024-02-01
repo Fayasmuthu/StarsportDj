@@ -19,7 +19,10 @@
 <link href="{% static 'web/assets/libs/bootstrap-icons/font/bootstrap-icons.min.css' %}" rel="stylesheet">
 <link href="{% static 'web/assets/libs/feather-webfont/dist/feather-icons.css' %}" rel="stylesheet">
 <link href="{% static 'web/assets/libs/simplebar/dist/simplebar.min.css' %}" rel="stylesheet">
+<link rel="stylesheet" href="{% static 'web/assets/css/style.css' %}" />
 
+{% block css_plugins %}{% endblock %}
+{% block css %}{% endblock %}
 <!-- CDNjs -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.1.0/dist/sweetalert2.all.min.js"></script>

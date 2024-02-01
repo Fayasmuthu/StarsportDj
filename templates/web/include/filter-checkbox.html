@@ -1,0 +1,57 @@
+<script>
+    $(document).ready(function () {
+      // Function to set checkboxes based on URL parameters
+      function setCheckboxesFromUrlParams() {
+        var urlParams = new URLSearchParams(window.location.search);
+  
+        $(".filter-checkbox").each(function () {
+          var filter_key = $(this).data('filter');
+          var filter_values = urlParams.getAll(filter_key);
+  
+          if (filter_values.length > 0 && filter_values.includes($(this).val())) {
+            $(this).prop('checked', true);
+          }
+        });
+      }
+  
+      // Set checkboxes based on URL parameters on page load
+      setCheckboxesFromUrlParams();
+  
+      $(".filter-checkbox").on('click', function () {
+        var filter_object = {};
+  
+        $(".filter-checkbox").each(function (index, ele) {
+          var filter_value = $(this).val();
+          var filter_key = $(this).data('filter');
+          filter_object[filter_key] = Array.from(document.querySelectorAll('input[data-filter=' + filter_key + ']:checked')).map(function (el) {
+            return el.value;
+          });
+        });
+  
+        var brandIds = filter_object['brands'];
+  
+        // Use URLSearchParams to handle URL parameters
+        var url = new URL(window.location.href);
+  
+        // Remove all existing parameters
+        url.search = '';
+  
+        if (brandIds && brandIds.length > 0) {
+          // Add 'brand' parameter
+          url.searchParams.set('brands', brandIds.join(','));
+        }
+  
+        // Fetch updated content using AJAX
+        $.ajax({
+          url: '{% url "web:filter-data" %}',
+          data: filter_object,
+          dataType: 'json',
+          success: function (res) {
+            $("#filteredStore").html(res.data);
+            // Update the browser URL without reloading the page
+            history.pushState({}, '', url.toString());
+          }
+        });
+      });
+    });
+  </script>

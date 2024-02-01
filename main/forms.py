@@ -85,9 +85,9 @@ class DistrictForm(forms.ModelForm):
 class AvailableSizeForm(forms.ModelForm):
     class Meta:
         model = AvailableSize
-        fields = ('weight', 'unit', 'sale_price', 'regular_price', 'is_stock',)
+        fields = ('unit', 'sale_price', 'regular_price', 'is_stock',)
         widgets = {
-            "weight": forms.TextInput(attrs={'required': True,"placeholder": "Weight","class": "required form-control",'type':'number'}),
+            # "weight": forms.TextInput(attrs={'required': True,"placeholder": "Weight","class": "required form-control",'type':'number'}),
             "unit": forms.Select(attrs={"class": "required form-select",'required': True}),
             "sale_price": forms.TextInput(attrs={"placeholder": "Sale Price ","class": "required form-control",'type':'number','required': True}),
             "regular_price": forms.TextInput(attrs={"placeholder": "Regular Price ","class": "required form-control",'type':'number','required': True}),

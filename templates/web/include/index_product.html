@@ -14,8 +14,10 @@
         </a>
           <!-- action btn -->
           <div class="card-product-action">
-            <a href="#!" class="btn-action" data-bs-toggle="modal" data-bs-target="#quickViewModal"><i class="bi bi-eye" data-bs-toggle="tooltip" data-bs-html="true" title="Quick View"></i></a>
-            <a href="shop-wishlist.html" class="btn-action" data-bs-toggle="tooltip" data-bs-html="true" title="Wishlist"><i class="bi bi-heart"></i></a>
+            <a href="#!" class="btn-action" data-bs-toggle="modal" data-bs-target="#quickViewModal-{{ product.id }}"><i class="bi bi-eye" data-bs-toggle="tooltip" data-bs-html="true" title="Quick View"></i></a>
+            <buttun class="btn-action btn-action-wishlist" data-bs-toggle="tooltip" data-bs-html="true" title="Wishlist">
+              <i class="bi bi-heart"></i>
+            </buttun>
             <a href="#!" class="btn-action" data-bs-toggle="tooltip" data-bs-html="true" title="Compare"><i class="bi bi-arrow-left-right"></i></a>
           </div>
         </div>
@@ -36,7 +38,7 @@
             {% endfor %}
           </small>
           {% if product.get_sizes %}
-          <select name="product_size" class="d-none" style="padding:5px;border-radius: 10px; background-color: #fff;border-color: #0aad0a;">
+          <select name="product_size" style="padding:5px;border-radius: 10px; background-color: #fff;border-color: #0aad0a;">
             {% for item in product.get_sizes %}
             <option 
               value="{{item.id}}"
@@ -44,7 +46,7 @@
               data-sale_price="{{item.sale_price|floatformat:0 }}" 
               data-offer_percent="{{item.offer_percent|floatformat:2 }}" 
               {% if forloop.first %} selected {% endif %} >
-              {{item.weight}} {{item.unit}}
+              {{item.unit}}
             </option>
             {% endfor %}
           </select>

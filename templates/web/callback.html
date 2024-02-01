@@ -1,0 +1,62 @@
+{% extends 'web/partials/baseall.html' %}
+
+{% block title %}Payment Callback{%endblock%}
+{% load static  %}
+
+{% block contentall %}
+<!-- ======== Top Breadcrubms ========= -->
+<div class="gray py-3">
+	<div class="container">
+		<div class="row">
+			<div class="colxl-12 col-lg-12 col-md-12">
+				<nav aria-label="breadcrumb">
+					<ol class="breadcrumb">
+						<li class="breadcrumb-item"><a href="/">Home</a></li>
+						<li class="breadcrumb-item active" aria-current="page">Payment Callback</li>
+					</ol>
+				</nav>
+			</div>
+		</div>
+	</div>
+</div>
+<!-- ======== Top Breadcrubms ========= -->
+
+<!-- ======== About Us Detail ========= -->
+<section class="my-lg-14 my-8">
+	<!-- container -->
+	<div class="container">
+	  	<div class="row justify-content-center">
+		<!-- col -->
+			{% if object.is_ordered %}
+			<div class="col-12 col-md-10 col-lg-8 col-xl-6 text-center">
+				<div class="text-success mx-auto mb-4">
+					<i class="bi bi-check2-circle text-success fs-1"></i>
+				</div>
+				<h2 class="mb-2 ft-bold">Your Order is Completed!</h2>
+				<p class="ft-regular fs-md mb-5">
+					Your order 
+					<span class="text-bold text-dark"> {{object.order_id}}  </span>
+					has been completed.
+				</p>
+				<a class="btn btn-dark mt-2" href="/">Go back to Home</a>
+				<a class="btn btn-dark mt-2" href="{{object.get_user_absolute_url}}">Order Detail</a>
+			</div>
+
+			{% else %}
+
+			<div class="col-12 col-md-10 col-lg-8 col-xl-6 text-center">
+				<h2 class="mb-2 ft-bold">Your Order is Not Completed!</h2>
+				<p class="ft-regular fs-md mb-5">
+					Your order 
+					<span class="text-bold text-dark">{{object.order_id}} </span>
+					has not been completed.
+				</p>
+				<a class="btn btn-dark" href="{% url 'web:checkout' %}">Go back to Checkout</a>
+			</div>
+
+			{% endif %}
+		</div>
+	</div>
+</section>
+
+{% endblock %}

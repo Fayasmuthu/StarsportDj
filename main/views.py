@@ -507,7 +507,7 @@ def edit_product(request, pk):
             "product_image_formset":product_image_formset,
             "available_size_formset":available_size_formset,
         }
-        return render(request, 'dashboard/product/entry.html', context)
+        return render(request, 'dashboard/products/entry.html', context)
 
 
 class ProductDelete(SuperAdminLoginRequiredMixin,DeleteView):

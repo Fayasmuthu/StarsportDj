@@ -173,63 +173,7 @@
                 {% endfor %} 
               </div> 
 
-<script>
-  $(document).ready(function () {
-    // Function to set checkboxes based on URL parameters
-    function setCheckboxesFromUrlParams() {
-      var urlParams = new URLSearchParams(window.location.search);
 
-      $(".filter-checkbox").each(function () {
-        var filter_key = $(this).data('filter');
-        var filter_values = urlParams.getAll(filter_key);
-
-        if (filter_values.length > 0 && filter_values.includes($(this).val())) {
-          $(this).prop('checked', true);
-        }
-      });
-    }
-
-    // Set checkboxes based on URL parameters on page load
-    setCheckboxesFromUrlParams();
-
-    $(".filter-checkbox").on('click', function () {
-      var filter_object = {};
-
-      $(".filter-checkbox").each(function (index, ele) {
-        var filter_value = $(this).val();
-        var filter_key = $(this).data('filter');
-        filter_object[filter_key] = Array.from(document.querySelectorAll('input[data-filter=' + filter_key + ']:checked')).map(function (el) {
-          return el.value;
-        });
-      });
-
-      var brandIds = filter_object['brands'];
-
-      // Use URLSearchParams to handle URL parameters
-      var url = new URL(window.location.href);
-
-      // Remove all existing parameters
-      url.search = '';
-
-      if (brandIds && brandIds.length > 0) {
-        // Add 'brand' parameter
-        url.searchParams.set('brands', brandIds.join(','));
-      }
-
-      // Fetch updated content using AJAX
-      $.ajax({
-        url: '{% url "web:filter-data" %}',
-        data: filter_object,
-        dataType: 'json',
-        success: function (res) {
-          $("#filteredStore").html(res.data);
-          // Update the browser URL without reloading the page
-          history.pushState({}, '', url.toString());
-        }
-      });
-    });
-  });
-</script>
 
                 <!-- rating -->
                 <div class="mb-8 ">
@@ -428,37 +372,26 @@
           </div>
           <div class="row">
             <div class="col-lg-6">
-              <!-- img slide -->
-              <div class="product productModal" id="productModal">
-
-                {% for i in product.get_images %}
-                <div class="zoom" onmousemove="zoom(event)"
-                  style="background-image: url({{i.image.url}})">
-                  <!-- img -->
-                  <img src="{{i.image.url}}" alt="{{product.name}}">
-                </div>
-                {% endfor %}
-                  
-                </div>
-              <!-- product tools -->
-              <div class="product-tools">
-                <div class="thumbnails row g-3" id="productModalThumbnails">
-                  {% comment %} <div class="col-3" class="tns-nav-active">
-                    <div class="thumbnails-img">
-                      <!-- img -->
-                      <img src="../assets/images/products/product-single-img-1.jpg" alt="" />
-                    </div>
-                  </div> {% endcomment %}
-                  {% for i in product.get_images %}              
-                  <div class="col-3">
-                    <div class="thumbnails-img">
-                      <!-- img -->
-                      <img src="{{i.image.url}}" alt="">
-                    </div>
-                  </div>
-                  {% endfor %} 
+              <div class="product  product-modal">
+                <div class="zoom"onmousemove="zoom(event)" style="background-image: url({{product.get_image.image.url}});">
+                  <img class="change-img" src="{{product.get_image.image.url}}"alt="{{product.title}}">
                 </div>
               </div>
+              <!-- img slide -->
+              <!-- product tools --> 
+              {% if product.get_images %}
+              <div class="product-tools">
+                <div class="thumbnails row g-3" id="productModalThumbnails">
+                  {% for i in product.get_images|slice:"4" %}
+                  <div class="col-3" class="tns-nav-active">
+                    <div class="thumbnails-img" data-image-url="{{ i.image.url }}">
+                      <img src="{{i.image.url}}" alt="Tradoxi">
+                    </div>
+                  </div>
+                  {% endfor %}
+                </div>
+              </div>
+              {% endif %}
             </div>
             <div class="col-lg-6">
               <div class="ps-lg-8 mt-6 mt-lg-0">
@@ -565,10 +498,12 @@
     </div>
   </div>
   {% endfor %}
+  {% include "web/include/filter-checkbox.html" %}
 {% endblock %}
 {% block modal %}
   {% include 'web/include/modal/quickview.html' %}
 {% endblock %}
 {% block js %}
   <script src="{% static 'web/assets/js/index.js' %}"></script>
+  <script src="{% static 'web/assets/js/filter-checkout.js' %}"></script>
 {% endblock %}

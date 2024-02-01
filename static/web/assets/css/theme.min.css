@@ -759,7 +759,7 @@ progress {
 }
 
 .lead {
-    font-size: 1.09375rem;
+    font-size: 13px;
     font-weight: 500
 }
 
@@ -3634,8 +3634,9 @@ textarea.form-control-lg {
 }
 
 .form-check-input:checked {
-    background-color: #0aad0a;
-    border-color: #0aad0a
+    background-color: #0aad0a !important;
+    border-color: #0aad0a !important;
+    color: #fff;
 }
 
 .form-check-input:checked[type=checkbox] {
@@ -3960,7 +3961,7 @@ textarea.form-control-lg {
 .input-group {
     align-items: stretch;
     display: flex;
-    flex-wrap: wrap;
+    /* flex-wrap: wrap; */
     position: relative;
     width: 100%
 }
@@ -4645,7 +4646,7 @@ fieldset:disabled .btn {
     --fc-btn-border-color: #044504;
     --fc-btn-hover-color: #fff;
     --fc-btn-hover-bg: #033b03;
-    --fc-btn-hover-border-color: hsl(120, 90%, 11%);
+    --fc-btn-hover-border-color: #033703;
     --fc-btn-focus-shadow-rgb: 42, 97, 42;
     --fc-btn-active-color: #fff;
     --fc-btn-active-bg: #033703;
@@ -6114,7 +6115,9 @@ fieldset:disabled .btn {
     padding-top: .5rem
 }
 
-.navbar-text a,
+.asteriskField{
+    color: red;
+}
 .navbar-text a:focus,
 .navbar-text a:hover {
     color: var(--fc-navbar-active-color)
@@ -6911,7 +6914,7 @@ fieldset:disabled .btn {
 
 .breadcrumb-item+.breadcrumb-item:before {
     color: var(--fc-breadcrumb-divider-color);
-    content: var(--fc-breadcrumb-divider, "-->");
+    content: var(--fc-breadcrumb-divider, "/");
     float: left;
     padding-right: var(--fc-breadcrumb-item-padding-x)
 }
@@ -9622,7 +9625,7 @@ fieldset:disabled .btn {
 
 .offcanvas-body {
     flex-grow: 1;
-    /* overflow-y: auto; */
+    overflow-y: auto;
     padding: var(--fc-offcanvas-padding-y) var(--fc-offcanvas-padding-x)
 }
 
@@ -26719,7 +26722,8 @@ h3 {
     transition: .2s;
     -moz-transition: .2s;
     -webkit-transition: .2s;
-    -o-transition: .2s
+    -o-transition: .2s;
+    box-shadow: rgba(50, 50, 93, 0.25) 0px 2px 5px -1px, rgba(0, 0, 0, 0.3) 0px 1px 3px -1px;
 }
 
 .card-product .card-hidden {
@@ -26772,7 +26776,6 @@ h3 {
     -webkit-transition: .2s;
     -o-transition: .2s
 }
-
 .card-product:hover .card-hidden,
 .card-product:hover .card-product-action {
     opacity: 1;
@@ -26937,7 +26940,7 @@ h3 {
 
 .footer {
     background-color: var(--fc-light);
-    padding: 4rem 0
+    padding: 2rem 0
 }
 
 .footer .nav .nav-item .nav-link {
@@ -27388,7 +27391,21 @@ input::-webkit-outer-spin-button {
         right: 0;
         width: 100%
     }
-
+    .contact-info-item{
+        margin-bottom: 15px  !important;
+    }
+    .contact-info-icon {
+        height: 50px !important;
+        width: 50px !important;
+    }
+    
+    .contact-info-item:nth-last-child(1){
+        margin-bottom: 0 !important;
+    }
+    .contact-info-icon i {
+        font-size: 25px !important;
+        line-height: 50px !important;
+    }
     .docs-nav-sidebar .top-search-bar {
         border-bottom: 1px solid var(--fc-gray-300);
         margin-top: 2.875rem;
@@ -28156,14 +28173,14 @@ input::-webkit-outer-spin-button {
 }
 
 .deals-countdown .countdown-section {
-    border: 1px solid var(--fc-gray-300);
+    border: 1px solid var(--fc-red);
     border-radius: 8px;
-    font-size: 13px;
+    font-size: 10px;
     font-weight: 400;
     line-height: 1;
     margin-left: 3px;
     margin-right: 3px;
-    padding: 14px 5px 26px;
+    padding: 12px 4px 20px;
     position: relative
 }
 
@@ -28171,12 +28188,12 @@ input::-webkit-outer-spin-button {
     color: var(--fc-dark);
     display: inline-block;
     font-weight: 500;
-    height: 50px;
+    height: 45px;
     line-height: 1;
-    line-height: 50px;
+    line-height: 45px;
     margin-bottom: 15px;
     max-width: 100%;
-    width: 50px
+    width: 40px
 }
 
 .deals-countdown .countdown-section .countdown-period {
@@ -28521,9 +28538,14 @@ table tr:last-child td {
 }
 
 .slick-slider img {
-    display: inline-block
+    display: inline-block;
+    overflow: hidden;
+    border-radius: 12px;
+   
 }
-
+.product-card a >img {
+    border-radius: 6px 6px 0px 0px;
+}
 .slick-slider .slick-next:before,
 .slick-slider .slick-prev:before {
     -webkit-font-smoothing: antialiased;
@@ -28890,7 +28912,8 @@ div.code-toolbar>.toolbar>.toolbar-item>span:hover {
 .thumbnails .tns-nav-active .thumbnails-img {
     background: none;
     border: 2px solid var(--fc-primary);
-    border-radius: .5rem
+    border-radius: .5rem;
+    cursor: pointer;
 }
 
 @keyframes fpFadeInDown {
@@ -31125,3 +31148,26 @@ span.flatpickr-weekday {
     fill: var(--fc-gray-500)
 }
 
+
+img.nav-logo.d-inline-block.align-text-top{
+    width: 120px !important;
+    height: 60px !important;
+}
+.img-logo{
+    width: 180px !important;
+    height: 50px !important;
+}
+
+.product-card .card-body{
+    padding: 0 !important;
+}
+.card-body-p{
+    padding: 0px 10px 10px 10px !important;
+}
+.card-product button.btn-action{
+    line-height: 30px;
+    height: 30px;
+    border: 1px solid green;
+    width: auto;
+
+}

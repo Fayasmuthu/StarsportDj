@@ -14,8 +14,9 @@ from products.models import Category,Subcategory, Offer,Brand
 from products.models import Product, AvailableSize
 from products.models import Slider
 from products.models import Tag
-from order.models import Order, OrderItem
+from order.models import Order, OrderItem,Wishlist
 from main.models import District
+
 
 
 # form
@@ -41,9 +42,7 @@ class IndexView(TemplateView):
     template_name = "web/index-5.html"
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        cart = Cart(self.request)
-        cart_instance = cart.cart
-        context["cart_count"] = len(cart_instance)
+
         context["categories"] = Category.objects.filter(status='Published')
         context["subcategories"] = Subcategory.objects.all()
         products = Product.objects.filter(is_active=True)
@@ -51,7 +50,8 @@ class IndexView(TemplateView):
         context["best_seller_products"] = products.filter(is_best_seller=True)
         context["offers"] = Offer.objects.all()
         context["sliders"] = Slider.objects.all()
-
+        wishlist_count = Wishlist.objects.filter(user=self.request.user.id).count()
+        context["wishlist_count"] = wishlist_count
         context["products"] = Product.objects.all()
 
                  # Check for subcategory and filter products accordingly
@@ -62,33 +62,6 @@ class IndexView(TemplateView):
             context["products"] = products
            
         return context
-
-# class IndexView(TemplateView):
-#     template_name = "web/index-5.html"
-#     def get_context_data(self, **kwargs):
-#         context = super().get_context_data(**kwargs)
-#         # cart = Cart(self.request)
-#         # cart_instance = cart.cart
-#         # context["cart_count"] = len(cart_instance)
-#         context["categories"] = Category.objects.filter(status='Published')
-#         context["subcategories"] = Subcategory.objects.all()
-#         products = Product.objects.filter(is_active=True)
-#         context["popular_products"] = products.filter(is_popular=True)
-#         context["best_seller_products"] = products.filter(is_best_seller=True)
-#         context["offers"] = Offer.objects.all()
-#         context["sliders"] = Slider.objects.all()
-#         context["products"] = Product.objects.all()
-
-
-
-         # Check for subcategory and filter products accordingly
-        # subcategory = self.request.GET.get("subcategory")
-        # if subcategory:
-        #     subcategory_title = get_object_or_404(Subcategory, slug=subcategory)
-        #     products = products.filter(subcategory=subcategory_title)               
-        #     context["products"] = products
-           
-        # return context
 
 
 class ShopView(ListView):
@@ -109,11 +82,12 @@ class ShopView(ListView):
         category_title = None
         subcategory_title = None
 
+
         if min_price and max_price:
             products = products.filter(
                 Q(availablesize__sale_price__range=(min_price, max_price)) |
                 Q(available__sale_price__range=(min_price, max_price))
-    )
+            )
         if search_query:
             products = products.filter(Q(name__icontains=search_query))
         if category:
@@ -161,9 +135,6 @@ class ShopView(ListView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        cart = Cart(self.request)
-        cart_instance = cart.cart
-        context["cart_count"] = len(cart_instance)
         context["categories"] = Category.objects.filter(status='Published')
         context["subcategories"] = Subcategory.objects.all()
         context["brands"] = Brand.objects.annotate(store_count=Count('title'))
@@ -227,6 +198,7 @@ class ProductDetailView(DetailView):
         context["reviews"] = current_product.reviews.filter(approval=True)
         context["review_form"] = ReviewForm()
         context["product_ratings"] = product_ratings
+
         return context
     
     def post(self, request, *args, **kwargs):
@@ -333,7 +305,6 @@ class ContactView(View):
 def cart_view(request):
     cart = Cart(request)
     cart_items = []
-    cart_instance = cart.cart
 
 
     for item_id, item_data in cart.get_cart():
@@ -353,13 +324,14 @@ def cart_view(request):
             Decimal(item[1]["quantity"]) * Decimal(item[1]["sale_price"])
             for item in cart.get_cart()
         ),
-        'cart_count':len(cart_instance)
 
     }
     return render(request, "web/cart.html", context)
 
 
 def cart_add(request):
+    if not request.user.is_authenticated:
+        return JsonResponse({'message': 'User not authenticated'}, status=401)
     cart = Cart(request)
     cart_instance = cart.cart
     quantity = request.GET.get("quantity", 1)
@@ -455,7 +427,6 @@ class CheckoutView(View):
         cart = Cart(request)
         cart_items = self.get_cart_items(cart)
         form = OrderForm()
-
         context = {
             "cart_items": cart_items,
             "cart_total": sum(item["total_price"] for item in cart_items),
@@ -583,10 +554,10 @@ def callback(request, pk):
             total = 0
             counter = 1
             for item in order.get_items():
-                if item.product.product.category.is_combo:
+                if item.product.product.subcategory.is_combo:
                     products += f"{counter}.{item.product.product.name} ({item.quantity}x{item.price}) ₹ {item.subtotal()} \n ----------------------- \n"
                 else:
-                    products += f"{counter}.{item.product.product.name}-{item.product.weight} {item.product.unit} ({item.quantity}x{item.price}) ₹ {item.subtotal()} \n ----------------------- \n"
+                    products += f"{counter}.{item.product.product.name}- {item.product.unit} ({item.quantity}x{item.price}) ₹ {item.subtotal()} \n ----------------------- \n"
                 total += item.subtotal()
                 counter += 1
 
