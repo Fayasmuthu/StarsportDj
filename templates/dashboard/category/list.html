@@ -100,8 +100,10 @@
                               <i class="feather-icon icon-more-vertical fs-5"></i>
                             </a>
                             <ul class="dropdown-menu">
-                              <li><a class="dropdown-item" href="#"><i class="bi bi-trash me-3"></i>Delete</a></li>
-                              <li><a class="dropdown-item" href="#"><i class="bi bi-pencil-square me-3 "></i>Edit</a>
+                              <li>
+                                <a class="dropdown-item" href="{{subcategory.get_delete_url}}"><i class="bi bi-trash me-3"></i>Delete</a>
+                              </li>
+                              <li><a class="dropdown-item" href="{{subcategory.get_update_url}}"><i class="bi bi-pencil-square me-3 "></i>Edit</a>
                               </li>
                             </ul>
                           </div>

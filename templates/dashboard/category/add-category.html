@@ -17,7 +17,7 @@
                                     <nav aria-label="breadcrumb">
                                         <ol class="breadcrumb mb-0">
                                             <li class="breadcrumb-item"><a href="#" class="text-inherit">Dashboard</a></li>
-                                            <li class="breadcrumb-item"><a href="#" class="text-inherit">Categories</a></li>
+                                            <li class="breadcrumb-item"><a onclick="history.back()" class="text-inherit">Categories</a></li>
                                             <li class="breadcrumb-item active" aria-current="page">Add New Category</li>
                                         </ol>
                                     </nav>
@@ -39,11 +39,47 @@
                                     <h4 class="mb-5 h5">Category Image</h4>
                                     <div class="mb-4 d-flex">
                                         <div class="position-relative" >             
-                                            {% if is_edit %}
-                                            <img class="image  icon-shape icon-xxxl bg-light rounded-4" src="{{category.image.url}}" alt="Image">
+                                            {% comment %} {% if is_edit %}
+                                                {% if form.instance.image %} 
+                                                    <img class="image icon-shape icon-xxxl bg-light rounded-4" src="{{ form.instance.image.url }}" alt="Image">
+                                                {% else %}
+                                                    <img class="image icon-shape icon-xxxl bg-light rounded-4" src="{% static 'web/assets/images/icons/bakery.svg' %}" alt="Image">
+                                                {% endif %}
                                             {% else %}
-                                            <img class="image  icon-shape icon-xxxl bg-light rounded-4" src="{% static 'web/assets/images/icons/bakery.svg' %}" alt="Image">
-                                            {% endif %}
+                                                <img class="image icon-shape icon-xxxl bg-light rounded-4" src="{% static 'web/assets/images/icons/bakery.svg' %}" alt="Image">
+                                            {% endif %} {% endcomment %}
+                                                    <!-- Image Preview -->
+
+                                            <!-- Image Preview -->
+                                            {% comment %} <div>
+                                                <label for="id_image"></label><br>
+                                                <input type="file" class="image icon-shape icon-xxxl bg-light rounded-4" id="id_image" name="image" accept="image/*" onchange="previewImage(event)">
+                                                <div class="image-preview" id="imagePreview"></div>
+                                            </div> {% endcomment %}
+
+                                            <div>
+                                                <label for="id_image">Category Image:</label><br>
+                                                <input type="file" id="id_image" name="image" accept="image/*" onchange="previewImage(event)">
+                                            </div>
+                                            {% comment %} <script>
+                                                function previewImage(event) {
+                                                    const fileInput = event.target;
+                                                    const file = fileInput.files[0];
+                                                    const imagePreview = document.getElementById('imagePreview');
+                                            
+                                                    if (file) {
+                                                        const reader = new FileReader();
+                                                        reader.onload = function(event) {
+                                                            const imageUrl = event.target.result;
+                                                            imagePreview.innerHTML = `<img src="${imageUrl}" alt="Category Image" class="preview-image">`;
+                                                        }
+                                                        reader.readAsDataURL(file);
+                                                    } else {
+                                                        imagePreview.innerHTML = `<img src="{% static 'web/assets/images/icons/bakery.svg' %}" alt="Default Image" class="default-image icon-shape icon-xxxl bg-light rounded-4">`;
+                                                    }
+                                                }
+                                            </script> {% endcomment %}
+                                            
                                             <div class="file-upload position-absolute end-0 top-0 mt-n2 me-n1">
                                                 <input type="file" class="file-input ">
                                                 <span class="icon-shape icon-sm rounded-circle bg-white">
@@ -111,29 +147,17 @@
                                             <!-- input -->
 
                                         </div>
-                                        <div class="mb-3 col-lg-12 mt-5 ">
-                                            <h4 class="mb-4 h5">Meta Data</h4>
-                                            <!-- input -->
-                                            <div class="mb-3">
-                                                <label class="form-label">Meta Title</label>
-                                                <input type="text" class="form-control" placeholder="Title">
-                                            </div>
-
-                                            <!-- input -->
-                                            <div class="mb-3">
-                                                <label class="form-label">Meta Description</label>
-                                                <textarea class="form-control" rows="3"
-                                                    placeholder="Meta Description"></textarea>
-                                            </div>
-                                        </div>
-                                        <div class="col-lg-12">
+                                        <!-- <div class="col-lg-12">
                                             <a href="#" class="btn btn-primary">
                                                 Create Product
                                               </a>
                                               <a href="#" class="btn btn-secondary ms-2">
                                                 Save
                                               </a>
-                                        </div>
+                                        </div> -->
+                                        <div class="col-lg-12">
+                                            <button type="submit" class="btn btn-primary">Submit</button>
+                                          </div>
                                     </div>
                                     </form>
                                 </div>
@@ -147,6 +171,25 @@
             </main>
 
         </div>
+
+        <script>
+            function previewImage(event) {
+                const fileInput = event.target;
+                const file = fileInput.files[0];
+                const imagePreview = document.getElementById('imagePreview');
+    
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = function(event) {
+                        const imageUrl = event.target.result;
+                        imagePreview.innerHTML = `<img src="${imageUrl}" alt="Image Preview" style="max-width: 100%; max-height: 100%;">`;
+                    }
+                    reader.readAsDataURL(file);
+                } else {
+                    imagePreview.innerHTML = '';
+                }
+            }
+        </script>
 
         {% endblock  %}
         {% block js_plugins %}

@@ -319,7 +319,7 @@ class CategoryCreateView(SuperAdminLoginRequiredMixin,CreateView):
     
 class CategoryUpdate(SuperAdminLoginRequiredMixin,UpdateView):
     model = Category
-    template_name = "dashboard/category/entry.html"
+    template_name = "dashboard/category/add-category.html"
     form_class = CategoryForm
     success_url = reverse_lazy("main:categories")
     extra_context = {'is_category':True,'is_edit':True,'title':'Edit Category'}

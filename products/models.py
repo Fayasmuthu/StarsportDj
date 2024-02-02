@@ -59,7 +59,7 @@ class Category(models.Model):
     name = models.CharField(max_length=100)
     slug =models.SlugField()
     icon =models.CharField(max_length=100, choices=ICON_CHOICES)
-    image=models.ImageField(upload_to="Catrgory/img" ,null=True, blank=True)
+    image=models.ImageField(upload_to="Catrgory/img" ,null=True, blank=True, help_text=" The recommended size is 120x120 pixels.")
     status=models.CharField(max_length=100, choices=STATUS_CHOICES,default="Published")
 
     class Meta:
@@ -72,6 +72,12 @@ class Category(models.Model):
     
     def get_cate_product_count(self):
         return self.category.count() 
+    
+    def get_update_url(self):
+        return reverse_lazy("main:category_update", kwargs={"pk": self.pk})
+
+    def get_delete_url(self):
+        return reverse_lazy("main:category_delete", kwargs={"pk": self.pk})
 
     def __str__(self):
         return f"{self.maincategory}--{self.name}" if self.maincategory else self.name
@@ -95,6 +101,12 @@ class Subcategory(models.Model):
 
     # def __str__(self):
     #     return f"{self.category.maincategory}--{self.category}--{self.name}" if self.category else self.name
+
+    def get_update_url(self):
+        return reverse_lazy("main:product_update", kwargs={"pk": self.pk})
+
+    def get_delete_url(self):
+        return reverse_lazy("main:product_delete", kwargs={"pk": self.pk})
 
     def __str__(self):
         return self.name

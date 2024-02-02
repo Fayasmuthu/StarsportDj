@@ -68,14 +68,14 @@
                       <th>Proudct Name</th>
                       <th>Category</th>
                       <th>Status</th>
-                      <th>Price</th>
+                      <th>Price {{product_list.counter}}</th>
                       <th>Create at</th>
                       <th></th>
                     </tr>
                   </thead>
                   <tbody>
-                    {% for product in is_product_list %}
-
+                    {% for product in product_list %}
+                   
                     <tr>
                       <td>
                         <div class="form-check">
