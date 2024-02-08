@@ -68,10 +68,10 @@ class Category(models.Model):
         ordering = ("name",)
 
     def get_cate_products(self):
-        return Product.objects.filter(category=self)
+        return Subcategory.objects.filter(category=self)
     
     def get_cate_product_count(self):
-        return self.category.count() 
+        return self.get_cate_products().count() 
     
     def get_update_url(self):
         return reverse_lazy("main:category_update", kwargs={"pk": self.pk})
@@ -97,7 +97,7 @@ class Subcategory(models.Model):
         return Product.objects.filter(subcategory=self)
     
     def get_sub_product_count(self):
-        return self.subcategory.count()
+        return self.get_sub_products().count()
 
     # def __str__(self):
     #     return f"{self.category.maincategory}--{self.category}--{self.name}" if self.category else self.name

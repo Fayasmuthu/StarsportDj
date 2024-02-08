@@ -120,6 +120,8 @@ class OrderItem(models.Model):
     product = models.ForeignKey("products.AvailableSize", on_delete=models.CASCADE)
     price = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
     quantity = models.PositiveIntegerField(default=1)
+    image =models.ImageField()
+
 
     class Meta:
         verbose_name = _("Order Item")

@@ -18,7 +18,6 @@ from order.models import Order, OrderItem,Wishlist
 from main.models import District
 
 
-
 # form
 from web.forms import ContactForm
 from products.forms import ReviewForm
@@ -438,7 +437,13 @@ class CheckoutView(View):
     def post(self, request, *args, **kwargs):
         form = OrderForm(request.POST)
         cart = Cart(request)
-        cart_items = self.get_cart_items(cart)
+        if cart is not None:
+            cart_items = self.get_cart_items(cart)
+            # Continue processing cart_items
+        else:
+            # Handle the case where cart is None
+            # You might want to set cart_items to an empty list or handle it differently
+            cart_items = []
         if form.is_valid():
             selected_dial_code_mobile = form.cleaned_data.get(
                 "selected_dial_code_mobile"
@@ -464,12 +469,29 @@ class CheckoutView(View):
                 variant = get_object_or_404(AvailableSize, id=item_id)
                 quantity = item_data["quantity"]
                 price = Decimal(item_data["sale_price"])
+                product = Product.objects.get(id=item_id) 
+                image = str(product.image)
+                
                 order_item = OrderItem.objects.create(
                     order=data,
                     product=variant,
                     price=price,
                     quantity=quantity,
+                    image = image,
                 )
+
+                # Handle image upload for the order item
+                if 'image' in request.FILES:
+                    image_file = request.FILES['image']
+                    # Ensure the uploaded file is an image
+                    if image_file.content_type.startswith('image'):
+                        order_item.image = image_file
+                        order_item.save()
+                    else:
+                        # Handle invalid image file
+                        order_item.delete()
+                        raise ValidationError("Invalid image file format.")
+
                 order_item.save()
             if data.payment_method == "OP":
                 return redirect("web:payment", pk=data.pk)
@@ -494,6 +516,7 @@ class CheckoutView(View):
                     "variant": variant,
                     "quantity": quantity,
                     "total_price": total_price,
+                    
                 }
             )
         return cart_items
@@ -637,7 +660,7 @@ class CompleteOrderView(DetailView):
             if item.product.product.subcategory.is_combo:
                 products += f"{counter}.{item.product.product.name} ({item.quantity}x{item.price}) ₹ {item.subtotal()} \n ----------------------- \n"
             else:
-                products += f"{counter}.{item.product.product.name}-{item.product.weight} {item.product.unit} ({item.quantity}x{item.price}) ₹ {item.subtotal()} \n ----------------------- \n"
+                products += f"{counter}.{item.product.product.name}- {item.product.unit} ({item.quantity}x{item.price}) ₹ {item.subtotal()} \n ----------------------- \n"
             total += item.subtotal()
             counter += 1
 

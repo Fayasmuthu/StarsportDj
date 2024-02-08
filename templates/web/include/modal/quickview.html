@@ -146,23 +146,28 @@
           <div class="row ">
             <div class="col-lg-6">
               <div class="product  product-modal">
-                <div class="zoom"onmousemove="zoom(event)" style="background-image: url({{product.get_image.image.url}});">
-                  <img class="change-img" src="{{product.get_image.image.url}}"alt="{{product.title}}">
+              {% if product.get_image.image %}
+                <div class="zoom" onmousemove="zoom(event)" style="background-image: url({{ product.get_image.image.url }});">
+                    <img class="change-img" src="{{ product.get_image.image.url }}" alt="{{ product.title }}">
                 </div>
+              {% else %}
+                  <p>No image available</p>
+              {% endif %}
               </div>
-              {% if product.get_images %}
+              {% comment %} {% if product.get_images %} {% endcomment %}
               <div class="product-tools">
                 <div class="thumbnails row g-3" id="productModalThumbnails">
-                  {% for i in product.get_images|slice:"4" %}
+                  {% comment %} {% for i in product.get_images|slice:"4" %} {% endcomment %}
+                  {% if product.get_image.image %}
                   <div class="col-3" class="tns-nav-active">
-                    <div class="thumbnails-img" data-image-url="{{ i.image.url }}">
-                      <img src="{{i.image.url}}" alt="Tradoxi">
+                    <div class="thumbnails-img" data-image-url="{{ product.get_image.image.url }}">
+                      <img src="{{ product.get_image.image.url }}" alt="Tradoxi">
                     </div>
                   </div>
-                  {% endfor %}
+                  {% endif %}
                 </div>
               </div>
-              {% endif %}
+              {% comment %} {% endif %} {% endcomment %}
             </div>
             <div class="col-lg-6">
               <div class="ps-lg-8 mt-6 mt-lg-0 cart-div">

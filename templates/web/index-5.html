@@ -65,7 +65,7 @@
                                 <ul class="nav flex-column ms-8">
                                   {% for subcategory in category.subcategory_set.all %}
                                   <li class="nav-item">
-                                    <a href="{% url "web:shop" %}?subcategory={{ subcategory.slug }}" class="nav-link">{{ subcategory.name }}</a>
+                                    <a href="{% url "web:shop" %}?subcategory={{ subcategory.slug }}" class="nav-link">{{ subcategory.name }} ({{subcategory.get_sub_product_count}}) </a>
                                   </li>
                                   {% endfor %}
                                 </ul>

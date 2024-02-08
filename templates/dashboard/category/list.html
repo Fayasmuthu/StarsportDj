@@ -87,9 +87,15 @@
                           <a href="#!"> <img src="{{subcategory.image.url}}" alt=""
                               class="icon-shape icon-sm"></a>
                         </td> {% endcomment %}
-                        <td><a href="#" class="text-reset">{{subcategory.icon}}</a></td>
+                        {% comment %} <td><a href="#" class="text-reset">fas {{subcategory.icon}}</a></td> {% endcomment %}
+                        <td><i class="{{ subcategory.icon }}" style="color: #1d8500;"></i>
+                        </td>
+
                         <td>{{subcategory.name}}</td>
 
+                        <td>
+                          <span class="badge bg-light-primary text-dark-primary">{{subcategory.get_cate_product_count}}</span>
+                        </td>
                         <td>
                           <span class="badge bg-light-primary text-dark-primary">{{subcategory.status}}</span>
                         </td>

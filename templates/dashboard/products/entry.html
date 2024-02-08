@@ -227,8 +227,7 @@
                   <td>
                     <div class="mb-4 d-flex">
                       <div class="position-relative" >
-                        {% if is_edit %}
-                        {{form.id}}
+                        {% if form.instance.image %}
                         <img class="image  icon-shape icon-xxxl bg-light rounded-4" src="{{ form.instance.image.url }}" alt="Image">
                         {% else %}
                         <img class="image  icon-shape icon-xxxl bg-light rounded-4" src="{% static 'web/assets/images/products/upload.png' %}" alt="Image">

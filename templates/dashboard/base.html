@@ -17,7 +17,8 @@
 <link href="{% static 'web/assets/libs/feather-webfont/dist/feather-icons.css' %}" rel="stylesheet">
 <link href="{% static 'web/assets/libs/simplebar/dist/simplebar.min.css' %}" rel="stylesheet">
 
-
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.1.0/dist/sweetalert2.all.min.js"></script>
 <!-- Theme CSS -->
 <link rel="stylesheet" href="{% static 'web/assets/css/theme.min.css' %}">
 {% block css_plugins %}{% endblock %}
@@ -59,9 +60,11 @@
     <script src="{% static 'web/assets/libs/apexcharts/dist/apexcharts.min.js' %}"></script>
     <script src="{% static 'web/assets/js/vendors/chart.js' %}"></script>
        <!-- Theme JS -->
-       <script src="{% static 'web/assets/js/theme.min.js' %}"></script>
+       {% comment %} <script src="{% static 'web/assets/js/theme.min.js' %}"></script> {% endcomment %}
        {% block js_plugins %}{% endblock %}
        {% block js %}{% endblock %}
+
+
 </body>
 
 </html>

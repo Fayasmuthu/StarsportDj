@@ -41,7 +41,6 @@
                       <td>{{forloop.counter}}</td>
                       <td><a href="{% url 'main:order_detail' order.order_id %}" class="text-reset">{{ order.order_id }}</a></td>
                       <td>{{ order.full_name }}</td>
-
                       <td>{{ order.created }}</td>
                       <td>{{ order.get_payment_method_display }}</td>
                       <td>

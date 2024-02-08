@@ -5,11 +5,11 @@
 {% block contentall %}
 
 <!-- row -->
-<div class="row ">
+<div class="row  ">
     <div class="col-xl-12 col-12 mb-5">
         <!-- card -->
         <div class="card h-100 card-lg">
-            <div class="card-body p-6">
+            <div class="card-body p-6 container">
                 <div class="d-md-flex justify-content-between">
                     <div class="d-flex align-items-center mb-2 mb-md-0">
                         <h2 class="mb-0">Order ID: #{{order.order_id}}</h2>
@@ -41,12 +41,13 @@
                 </div>
             </div>
             <!-- <div class="row"> -->
-                <div class=" table-responsive">
+                <div class=" table-responsive container">
                     <!-- Table -->
                     <table class="table mb-0 text-nowrap table-centered">
                     <!-- Table Head -->
                         <thead class="bg-light">
                             <tr>
+                                <th>Image</th>
                                 <th>Products</th>
                                 <th>Price</th>
                                 <th>Quantity</th>
@@ -57,6 +58,7 @@
                         <tbody>
                             {% for i in order.get_items %}
                             <tr>
+                                <td><img src="{{ i.product.product.image.url }}" alt="Product Image" class="icon-shape icon-lg"></td>
                                 <td>
                                     <a href="{{i.product.get_absolute_url}}" class="text-inherit">
                                         <div class="ms-lg-4 mt-2 mt-lg-0">
@@ -75,7 +77,9 @@
                                 <td>₹ {{i.subtotal}}</td>
                             </tr>
                             {% endfor %}
+                            <tbody>
                             <tr>
+                                <td class="border-bottom-0 pb-0"></td>
                                 <td class="border-bottom-0 pb-0"></td>
                                 <td class="border-bottom-0 pb-0"></td>
                                 <td colspan="1" class="fw-medium text-dark ">
@@ -90,6 +94,7 @@
                             <tr>
                                 <td class="border-bottom-0 pb-0"></td>
                                 <td class="border-bottom-0 pb-0"></td>
+                                <td class="border-bottom-0 pb-0"></td>
                                 <td colspan="1" class="fw-medium text-dark ">
                                   <!-- text -->
                                   Service Cost :
@@ -100,6 +105,7 @@
                                 </td>
                             </tr>
                             <tr>
+                                <td class="border-bottom-0 pb-0"></td>  
                                 <td class="border-bottom-0 pb-0"></td>
                                 <td class="border-bottom-0 pb-0"></td>
                                 <td colspan="1" class="fw-medium text-dark ">
@@ -114,6 +120,7 @@
                             <tr>
                                 <td class="border-bottom-0 pb-0"></td>
                                 <td class="border-bottom-0 pb-0"></td>
+                                <td class="border-bottom-0 pb-0"></td>
                                 <td colspan="1" class="fw-medium text-dark ">
                                   <!-- text -->
                                   Grand Total :
@@ -124,11 +131,12 @@
                                 </td>
                             </tr>
                         </tbody>
+                        </tbody>
                     </table>
                 </div>
             <!-- </div> -->
         </div>
     </div>
 </div>
-  
+ 
 {% endblock %}

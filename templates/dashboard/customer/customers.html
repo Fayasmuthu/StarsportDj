@@ -79,11 +79,11 @@
                           <td>
                             <div class="d-flex align-items-center">
                                 {% if customer.avatar %}
-                                <img src="{{ customer.avatar.url }}" alt="{{ customer.username }} Avatar"
+                                <img src="{{ customer.avatar.url }}" alt="{{ customer.profile }} Avatar"
                                     class="avatar avatar-xs rounded-circle">
                                 {% else %}
-                                    <img src="{% static 'web/assets/images/avatar/avatar-1.jpg' %}" alt="Default Avatar"
-                                        class="avatar avatar-xs rounded-circle">
+                                  <img src="https://ui-avatars.com/api/?name={{customer.username}}&background=0aad0a&color=fff&size=128" alt="Starsport"
+                                  class="rounded-circle avatar-xs" />
                                 {% endif %}
                               <div class="ms-2">
                                 <a href="#" class="text-inherit">{{ customer.username }}</a>

@@ -23,7 +23,7 @@
               </div>
               <!-- button -->
               <div>
-                <a href="#" class="btn btn-primary">Back to all orders</a>
+                <a  onclick="history.back()" class="btn btn-primary">Back to all orders</a>
               </div>
 
             </div>
@@ -37,8 +37,8 @@
               <div class="card-body p-6">
                 <div class="d-md-flex justify-content-between">
                   <div class="d-flex align-items-center mb-2 mb-md-0">
-                    <h2 class="mb-0">Order ID: #FC001</h2>
-                    <span class="badge bg-light-warning text-dark-warning ms-2">Pending</span>
+                    <h2 class="mb-0">Order ID: #{{ order.order_id }}</h2>
+                    <span class="badge bg-light-warning text-dark-warning ms-2">{{order.status}}</span>
                   </div>
                   <!-- select option -->
                   <div class="d-md-flex">
@@ -60,35 +60,27 @@
                 <div class="mt-8">
                   <div class="row">
                     <!-- address -->
-                    <div class="col-lg-4 col-md-4 col-12">
-                      <div class="mb-6">
-                        <h6>Customer Details</h6>
-                        <p class="mb-1 lh-lg">John Alex<br>
-                          anderalex@example.com<br>
-                          +998 99 22123456</p>
-                        <a href="#">View Profile</a>
-                      </div>
-                    </div>
+                    <div class="col-lg-6 col-md-6 col-12 mb-6">
+                      <h6>Shipping Address</h6>
+                      <p class="mb-1 lh-lg">{{order.full_name}}<br>
+                      {{order.address_line_1}} <br>
+                      {{order.address_line_2}} <br>
+                      {{order.city}},{{order.district}} <br>
+                      Pin Code : {{order.pin_code}} <br>
+                      Contact No. {{order.mobile_no}}</p>
+                  </div>
                     <!-- address -->
-                    <div class="col-lg-4 col-md-4 col-12">
-                      <div class="mb-6">
-                        <h6>Shipping Address</h6>
-                        <p class="mb-1 lh-lg">Gerg Harvell<br>
-                          568, Suite Ave.<br>
-                          Austrlia, 235153 <br>
-                          Contact No. +91 99999 12345</p>
-
-                      </div>
-                    </div>
-                    <!-- address -->
-                    <div class="col-lg-4 col-md-4 col-12">
-                      <div class="mb-6">
-                        <h6>Order Details</h6>
-                        <p class="mb-1 lh-lg">Order ID: <span class="text-dark">FC001</span><br>
-                          Order Date: <span class="text-dark">October 22, 2023</span><br>
-                          Order Total: <span class="text-dark">$734.28</span></p>
-                      </div>
-                    </div>
+                    <div class="col-lg-6 col-md-6 col-12 mb-6">
+                      <h6>Order Details</h6>
+                      <p class="mb-1 lh-lg">Order ID: <span class="text-dark">{{order.order_id}}</span><br>
+                          Order Date: <span class="text-dark">{{order.created}}</span><br>
+                          Order Total: <span class="text-dark">₹{{order.payable}}</span><br>
+                          Order Status: <span class="text-dark">{{order.get_order_status_display}}</span><br>
+                          Payment Method: <span class="text-dark">{{order.get_payment_method_display}}</span><br>
+                          Payment Status: <span class="text-dark">{{order.get_payment_status_display}}</span><br>
+                      </p>
+                  </div>
+  
                   </div>
                 </div>
               </div>
@@ -108,114 +100,32 @@
                       </thead>
                       <!-- tbody -->
                       <tbody>
+                        {% for i in order.get_items %}
                         <tr>
                           <td>
                             <a href="#" class="text-inherit">
                               <div class="d-flex align-items-center">
-                                <div>
-                                  <img src="../assets/images/products/product-img-1.jpg" alt=""
-                                    class="icon-shape icon-lg">
-                                </div>
+                               <div>
+                                  {% if i.product.product.image %}
+                                    <img src="{{ i.product.product.image.url }}" alt="Product Image" class="icon-shape icon-lg">
+                                  {% else %}
+                                      <span>No Image Available</span>
+                                  {% endif %}
+                                </div> 
                                 <div class="ms-lg-4 mt-2 mt-lg-0">
                                   <h5 class="mb-0 h6">
-                                    Haldiram's Sev Bhujia
+                                    {{i.product}}
                                   </h5>
 
                                 </div>
                               </div>
                             </a>
                           </td>
-                          <td><span class="text-body">$18.0</span></td>
-                          <td>1</td>
-                          <td>$18.00</td>
+                          <td><span class="text-body">${{i.price}}</span></td>
+                          <td>{{i.quantity}}</td>
+                          <td>$ {{i.subtotal}}</td>
                         </tr>
-                        <tr>
-                          <td>
-                            <a href="#" class="text-inherit">
-                              <div class="d-flex align-items-center">
-                                <div>
-                                  <img src="../assets/images/products/product-img-2.jpg" alt=""
-                                    class="icon-shape icon-lg">
-                                </div>
-                                <div class="ms-lg-4 mt-2 mt-lg-0">
-                                  <h5 class="mb-0 h6">
-                                    NutriChoice Digestive
-                                  </h5>
-
-                                </div>
-                              </div>
-                            </a>
-                          </td>
-                          <td><span class="text-body">$24.0</span></td>
-                          <td>1</td>
-                          <td>$24.00</td>
-                        </tr>
-                        <tr>
-                          <td>
-                            <a href="#" class="text-inherit">
-                              <div class="d-flex align-items-center">
-                                <div>
-                                  <img src="../assets/images/products/product-img-3.jpg" alt=""
-                                    class="icon-shape icon-lg">
-                                </div>
-                                <div class="ms-lg-4 mt-2 mt-lg-0">
-                                  <h5 class="mb-0 h6">
-                                    Cadbury 5 Star Chocolate
-                                  </h5>
-
-                                </div>
-                              </div>
-                            </a>
-                          </td>
-                          <td><span class="text-body">$32.0</span></td>
-                          <td>1</td>
-                          <td>$32.0</td>
-                        </tr>
-                        <tr>
-                          <td>
-                            <a href="#" class="text-inherit">
-                              <div class="d-flex align-items-center">
-                                <div>
-                                  <img src="../assets/images/products/product-img-4.jpg" alt=""
-                                    class="icon-shape icon-lg">
-                                </div>
-                                <div class="ms-lg-4 mt-2 mt-lg-0">
-                                  <h5 class="mb-0 h6">
-                                    Onion Flavour Potato
-                                  </h5>
-
-                                </div>
-                              </div>
-                            </a>
-                          </td>
-                          <td><span class="text-body">$3.0</span></td>
-                          <td>2</td>
-                          <td>$6.0</td>
-                        </tr>
-                        <tr>
-                          <td class="border-bottom-0 pb-0"></td>
-                          <td class="border-bottom-0 pb-0"></td>
-                          <td colspan="1" class="fw-medium text-dark ">
-                            <!-- text -->
-                            Sub Total :
-                          </td>
-                          <td class="fw-medium text-dark ">
-                            <!-- text -->
-                            $80.00
-                          </td>
-                        </tr>
-                        <tr>
-                          <td class="border-bottom-0 pb-0"></td>
-                          <td class="border-bottom-0 pb-0"></td>
-                          <td colspan="1" class="fw-medium text-dark ">
-                            <!-- text -->
-                            Shipping Cost
-                          </td>
-                          <td class="fw-medium text-dark  ">
-                            <!-- text -->
-                            $10.00
-                          </td>
-                        </tr>
+                        {% endfor %}
 
                         <tr>
                           <td></td>
@@ -226,10 +136,45 @@
                           </td>
                           <td class="fw-semi-bold text-dark ">
                             <!-- text -->
-                            $90.00
+                            ₹{{order.payable}}
                           </td>
                         </tr>
-
+                        <tr>
+                          <td class="border-bottom-0 pb-0"></td>
+                          <td class="border-bottom-0 pb-0"></td>
+                          <td colspan="1" class="fw-medium text-dark ">
+                            <!-- text -->
+                            Service Cost :
+                          </td>
+                          <td class="fw-medium text-dark ">
+                            <!-- text -->
+                            ₹{{order.service_fee}}
+                          </td>
+                      </tr>
+                      <tr>
+                          <td class="border-bottom-0 pb-0"></td>
+                          <td class="border-bottom-0 pb-0"></td>
+                          <td colspan="1" class="fw-medium text-dark ">
+                            <!-- text -->
+                            Shipping Cost :
+                          </td>
+                          <td class="fw-medium text-dark ">
+                            <!-- text -->
+                            ₹{{order.shipping_fee}}
+                          </td>
+                      </tr>
+                      <tr>
+                          <td class="border-bottom-0 pb-0"></td>
+                          <td class="border-bottom-0 pb-0"></td>
+                          <td colspan="1" class="fw-medium text-dark ">
+                            <!-- text -->
+                            Grand Total :
+                          </td>
+                          <td class="fw-medium text-dark ">
+                            <!-- text -->
+                            ₹{{order.payable}}
+                          </td>
+                      </tr>
                       </tbody>
                     </table>
                   </div>
@@ -262,8 +207,7 @@
 
     </main>
 
-  </div>
-
+{% endblock  %}
 
   <!-- Libs JS -->
 <script src="../assets/libs/jquery/dist/jquery.min.js"></script>
