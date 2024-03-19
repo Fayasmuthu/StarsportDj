@@ -30,7 +30,8 @@ $(document).ready(function () {
             }
         });
     });
-    $(".remove-btn").click(function () {
+    $(".remove-btn").click(function (e) {
+        e.preventDefault();
         var product_Id = $(this).data("product_id");
         var remove_url= '/shop/wishlist/remove/'+product_Id+'/';
         $.ajax({
@@ -39,9 +40,29 @@ $(document).ready(function () {
             
             success: function (data) {
                 showAlert(data.message, "alert-success");
-                window.location.reload();
+                // window.location.reload();
                 
-            },
+                // Update the wishlist count on the page
+                $('#header_wishlist_count').html(data.wishlist_count);
+
+                $(e.target).closest('tr').remove();
+    
+                // Check if the wishlist is empty and display a message
+                if ($('#wishlist-table tbody tr').length === 0) {
+                    var shopUrl = $('#wishlist-table').data('shop-url');
+                    $('#wishlist-table').html(
+                        '<div class="py-3">' +
+                        '<div class="text-center">' +
+                        '<img src="/static/web/assets/images/assets/wishlist.png" alt="Tradoxi" class="img-responsive img-fluid ">' +
+                        '<h3>Your Wishlist is empty</h3>' +
+                        '<div class="text-center">' +
+                        '<a href="' + shopUrl + '" class="btn btn-primary">Continue Shopping</a>' +
+                        '</div>' +
+                        '</div>' +
+                        '</div>'
+                    );
+                }                
+            },         
             error: function (data) {
                 // Display error message
                 showAlert(data.responseJSON.message, "alert-danger");
@@ -60,3 +81,5 @@ $(document).ready(function () {
       }
     
   });
+
+  

@@ -15,6 +15,7 @@ $(document).ready(function () {
         var card = $(this).closest('.card-product');
         updatePricesAndOffer(card);
     });
+    
     // add cart ajax
     $(".cart-add-btn").click(function () {
         var card = $(this).closest('.card-product');

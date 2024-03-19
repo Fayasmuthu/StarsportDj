@@ -27,11 +27,11 @@ class WishlistListView(LoginRequiredMixin, ListView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        cart = Cart(self.request)
-        cart_instance = cart.cart
-        wishlist_count = Wishlist.objects.filter(user=self.request.user).count()
-        context["wishlist_count"] = wishlist_count
-        context["cart_count"] = len(cart_instance)
+        # cart = Cart(self.request)
+        # cart_instance = cart.cart
+        # wishlist_count = Wishlist.objects.filter(user=self.request.user).count()
+        # context["wishlist_count"] = wishlist_count
+        # context["cart_count"] = len(cart_instance)
         return context
 
 

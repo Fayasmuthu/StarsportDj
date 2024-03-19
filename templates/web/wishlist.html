@@ -37,8 +37,8 @@
         </div>
         <div>
           <!-- table -->
-          <div class="table-responsive">
-        {% if wishlist_items %}
+          <div class="table-responsive" id="wishlist-table">
+            {% if wishlist_items %}
             <table class="table text-nowrap table-with-checkbox">
               <thead class="table-light">
                 <tr>
@@ -106,3 +106,4 @@
 {% block js %}
 <script src="{% static 'web/assets/js/wishlist.js' %}"></script>
 {% endblock %}
+

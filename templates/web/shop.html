@@ -504,9 +504,11 @@
   {% endfor %}
   {% include "web/include/filter-checkbox.html" %}
 {% endblock %}
+
 {% block modal %}
   {% include 'web/include/modal/quickview.html' %}
 {% endblock %}
+
 {% block js %}
   <script src="{% static 'web/assets/js/index.js' %}"></script>
   <script src="{% static 'web/assets/js/filter-checkout.js' %}"></script>

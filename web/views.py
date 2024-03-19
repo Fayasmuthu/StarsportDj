@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.db.models import Min, Q
 import urllib.parse
 from django.shortcuts import get_object_or_404
@@ -67,7 +68,7 @@ class ShopView(ListView):
     model = Product
     template_name = "web/shop.html"
     context_object_name = "products"
-    paginate_by = 12
+    paginate_by = 3
 
     def get_queryset(self):
         products = Product.objects.all()
@@ -520,7 +521,7 @@ class CheckoutView(View):
                 }
             )
         return cart_items
-from django.conf import settings
+# from django.conf import settings
 
 client = razorpay.Client(auth=(settings.RAZOR_PAY_KEY, settings.RAZOR_PAY_SECRET))
 
@@ -693,17 +694,17 @@ class CompleteOrderView(DetailView):
             f"Pincode: {order.pin_code}\n"
             f"Mobile: {order.mobile_no}\n"
             f"Email: {order.email}\n\n"
-            f"Thank you for placing your order with TRADOXI. Your order has been confirmed.\n\n"
+            f"Thank you for placing your order with Starsport. Your order has been confirmed.\n\n"
         )
 
         email = order.email
-        subject = "Order Confirmation - TRADOXI"
+        subject = "Order Confirmation - Starsport"
         message = message
         send_mail(
             subject,
             message,
-            "tradoxiprivatelimited@gmail.com",
-            [email,"tradoxiprivatelimited@gmail.com"],
+            "privatelimited@gmail.com",
+            [email,"privatelimited@gmail.com"],
             fail_silently=False,
         )
         

@@ -172,7 +172,15 @@
                 {% if product.is_active %}
                 <tr>
                   <td>Availability:</td>
-                  <td>In Stock</td>
+                  <td>
+                    <div  class="badge {% if product.is_stock %}bg-success{% else %}bg-danger{% endif %}">
+                      {% if product.is_stock %}
+                          In Stock
+                      {% else %}
+                          Out of Stock
+                      {% endif %}
+                    </div>
+                  </td>
                 </tr>
                 {% endif %}
                 <tr>
